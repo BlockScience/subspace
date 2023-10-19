@@ -16,7 +16,8 @@ SUBSPACE_MODEL_BLOCKS = [
         }
     },
     {
-        'label': 'Block Rewards (Inflow)',
+        'label': 'Farmer Rewards (Inflow)',
+        'ignore': True,
         'desc': '#TODO',
         'policies': {
             'fund_rewards': None,
@@ -29,7 +30,8 @@ SUBSPACE_MODEL_BLOCKS = [
         }
     },
     {
-        'label': 'Block Rewards (Outflow)',
+        'label': 'Farmer Rewards (Outflow)',
+        'ignore': True,
         'desc': '#TODO',
         'policies': {
             'proposer_rewards': None,
@@ -42,7 +44,20 @@ SUBSPACE_MODEL_BLOCKS = [
         }
     }, 
     {
+        'label': 'Operator Rewards',
+        'ignore': True,
+        'desc': 'TODO',
+        'policies': {
+
+        },
+        'variables': {
+            'issuance_balance': None,
+            'operators_balance': None
+        }
+    }
+    {
         'label': 'Storage Fees',
+        'ignore': True,
         'desc': '#TODO',
         'policies': {
             #TODO
@@ -55,6 +70,7 @@ SUBSPACE_MODEL_BLOCKS = [
     }, 
     {
         'label': 'Compute Fees',
+        'ignore': True,
         'desc': '#TODO',
         'policies': {
             #TODO
@@ -65,5 +81,38 @@ SUBSPACE_MODEL_BLOCKS = [
             'operators_balance': None,
             'nominators_balance': None
         }
+    }, 
+    {
+        'label': 'Direct Allocations',
+        'ignore': True,
+        'desc': '#TODO',
+        'policies': {
+            #TODO
+        }
+        'variables': {
+            'holders_balance': None,
+            'issuance_balance': None
+        }
+    },
+    {
+        'label': 'Slash',
+        'variables': {
+            'operators_balance': None,
+            'fund_balance': None,
+            'holders_balance': None,
+            'burnt_balance': None
+        }
+    },
+    {
+        'label': 'Staking / Unstaking',
+        'variables': {
+            'operators_balance': None,
+            'nominators_balance': None,
+            'staking_pool_balance': None
+        }
+        
+    },
+    {
+        'label': 'Transfers'
     }
 ]

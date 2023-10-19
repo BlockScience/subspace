@@ -10,12 +10,14 @@ Year = Annotated[float, "year"]  # Number of years
 class SubspaceModelState(TypedDict):
     days_passed: Days
     delta_days: Days
+    issuance_balance: Credits
     operators_balance: Credits
     nominators_balance: Credits
     holders_balance: Credits
     farmers_balance: Credits
     staking_pool_balance: Credits
-    escrow_fund_balance: Credits
+    fund_balance: Credits
+    burnt_balance: Credits
 
 class SubspaceModelParams(TypedDict):
     label: str
