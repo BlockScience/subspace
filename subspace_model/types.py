@@ -1,7 +1,5 @@
 from typing import Annotated, TypedDict, Union
-from math import exp, log, nan
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 
 
 Days = Annotated[float, 'days']  # Number of days
