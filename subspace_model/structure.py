@@ -20,8 +20,8 @@ SUBSPACE_MODEL_BLOCKS = [
         'ignore': True,
         'desc': '#TODO',
         'policies': {
-            'fund_rewards': None,
-            'issuance_rewards': None
+            'fund_reward': p_fund_reward,
+            'issuance_reward': p_issuance_reward
         },
         'variables': {
             'fund_balance': None,
@@ -54,14 +54,14 @@ SUBSPACE_MODEL_BLOCKS = [
             'issuance_balance': None,
             'operators_balance': None
         }
-    }
+    },
     {
         'label': 'Storage Fees',
         'ignore': True,
         'desc': '#TODO',
         'policies': {
             #TODO
-        }
+        },
         'variables': {
             'holders_balance': None,
             'farmers_balance': None,
@@ -74,7 +74,7 @@ SUBSPACE_MODEL_BLOCKS = [
         'desc': '#TODO',
         'policies': {
             #TODO
-        }
+        },
         'variables': {
             'holders_balance': None,
             'farmers_balance': None,
@@ -88,7 +88,7 @@ SUBSPACE_MODEL_BLOCKS = [
         'desc': '#TODO',
         'policies': {
             #TODO
-        }
+        },
         'variables': {
             'holders_balance': None,
             'issuance_balance': None
@@ -96,6 +96,9 @@ SUBSPACE_MODEL_BLOCKS = [
     },
     {
         'label': 'Slash',
+        'policies': {
+            #TODO
+        },
         'variables': {
             'operators_balance': None,
             'fund_balance': None,
@@ -105,14 +108,25 @@ SUBSPACE_MODEL_BLOCKS = [
     },
     {
         'label': 'Staking / Unstaking',
+        'policies': {
+
+        },
         'variables': {
             'operators_balance': None,
             'nominators_balance': None,
             'staking_pool_balance': None
         }
-        
     },
     {
-        'label': 'Transfers'
+        'label': 'Transfers',
+        'policies': {
+            # TODO
+        },
+        'variables':  {
+            'operators_balance': None,
+            'nominators_balance': None,
+            'holders_balance': None,
+            'farmers_balance': None
+        }
     }
 ]
