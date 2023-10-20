@@ -12,35 +12,33 @@ SUBSPACE_MODEL_BLOCKS = [
         },
         'variables': {
             'days_passed': s_days_passed,
-            'delta_days': s_delta_days
+            'delta_days': replace_suf
         }
     },
     {
         'label': 'Farmer Rewards (Inflow)',
         'ignore': True,
-        'desc': '#TODO',
         'policies': {
             'fund_reward': p_fund_reward,
             'issuance_reward': p_issuance_reward
         },
         'variables': {
-            'fund_balance': None,
-            'issuance_balance': None,
-            'block_reward': None
+            'fund_balance': add_suf,
+            'issuance_balance': add_suf,
+            'block_reward': replace_suf
         }
     },
     {
         'label': 'Farmer Rewards (Outflow)',
         'ignore': True,
-        'desc': '#TODO',
         'policies': {
             'proposer_rewards': None,
             'voter_rewards': None,
             'data_rewards': None
         },
         'variables': {
-            'farmers_balance': None,
-            'fund_balance': None
+            'farmers_balance': add_suf,
+            'fund_balance': add_suf
         }
     }, 
     {
@@ -48,62 +46,58 @@ SUBSPACE_MODEL_BLOCKS = [
         'ignore': True,
         'desc': 'TODO',
         'policies': {
-
+            # TODO
         },
         'variables': {
-            'issuance_balance': None,
-            'operators_balance': None
+            'issuance_balance': add_suf,
+            'operators_balance': add_suf
         }
     },
     {
         'label': 'Storage Fees',
         'ignore': True,
-        'desc': '#TODO',
         'policies': {
-            #TODO
+            # TODO
         },
         'variables': {
-            'holders_balance': None,
-            'farmers_balance': None,
-            'fund_balance': None
+            'holders_balance': add_suf,
+            'farmers_balance': add_suf,
+            'fund_balance': add_suf
         }
     }, 
     {
         'label': 'Compute Fees',
         'ignore': True,
-        'desc': '#TODO',
         'policies': {
             #TODO
         },
         'variables': {
-            'holders_balance': None,
-            'farmers_balance': None,
-            'operators_balance': None,
-            'nominators_balance': None
+            'holders_balance': add_suf,
+            'farmers_balance': add_suf,
+            'operators_balance': add_suf,
+            'nominators_balance': add_suf
         }
     }, 
     {
         'label': 'Direct Allocations',
         'ignore': True,
-        'desc': '#TODO',
         'policies': {
             #TODO
         },
         'variables': {
-            'holders_balance': None,
-            'issuance_balance': None
+            'holders_balance': add_suf,
+            'issuance_balance': add_suf
         }
     },
     {
         'label': 'Slash',
         'policies': {
-            #TODO
         },
         'variables': {
-            'operators_balance': None,
-            'fund_balance': None,
-            'holders_balance': None,
-            'burnt_balance': None
+            'operators_balance': add_suf,
+            'fund_balance': add_suf,
+            'holders_balance': add_suf,
+            'burnt_balance': add_suf
         }
     },
     {
@@ -112,9 +106,9 @@ SUBSPACE_MODEL_BLOCKS = [
 
         },
         'variables': {
-            'operators_balance': None,
-            'nominators_balance': None,
-            'staking_pool_balance': None
+            'operators_balance': add_suf,
+            'nominators_balance': add_suf,
+            'staking_pool_balance': add_suf
         }
     },
     {
@@ -123,10 +117,10 @@ SUBSPACE_MODEL_BLOCKS = [
             # TODO
         },
         'variables':  {
-            'operators_balance': None,
-            'nominators_balance': None,
-            'holders_balance': None,
-            'farmers_balance': None
+            'operators_balance': add_suf,
+            'nominators_balance': add_suf,
+            'holders_balance': add_suf,
+            'farmers_balance': add_suf
         }
     }
 ]
