@@ -30,11 +30,9 @@ SUBSPACE_MODEL_BLOCKS = [
     },
     {
         'label': 'Farmer Rewards (Outflow)',
-        'ignore': True,
+        'ignore': False,
         'policies': {
-            'proposer_rewards': None,
-            'voter_rewards': None,
-            'data_rewards': None
+            'split_farmer_rewards': p_split_reward
         },
         'variables': {
             'farmers_balance': add_suf,
@@ -44,7 +42,6 @@ SUBSPACE_MODEL_BLOCKS = [
     {
         'label': 'Operator Rewards',
         'ignore': True,
-        'desc': 'TODO',
         'policies': {
             # TODO
         },
