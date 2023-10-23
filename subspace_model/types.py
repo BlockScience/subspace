@@ -10,7 +10,7 @@ Percentage = Annotated[float, '%']
 CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
 ComputeUnits = Annotated[float, 'CU']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
-
+ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
     
 class SubspaceModelState(TypedDict):
     # Time Variables
@@ -31,8 +31,8 @@ class SubspaceModelState(TypedDict):
     block_reward: Credits
 
     # Stochastic Variables
-    average_base_fee: CreditsPerComputeUnits
-    average_priority_fee: CreditsPerComputeUnits
+    average_base_fee: ShannonPerComputeUnits
+    average_priority_fee: ShannonPerComputeUnits
     average_compute_units: ComputeUnits
     transaction_count_per_timestep: int
 
@@ -41,9 +41,11 @@ class SubspaceModelParams(TypedDict):
     label: str
     timestep_in_days: Days
     reward_proposer_share: Percentage
+
     # Fees & Taxes
     fund_tax_on_proposer_reward: Percentage
     fund_tax_on_storage_fees: Percentage
+    farmer_tax_on_compute_priority_fees: Percentage
     operator_tax_on_compute_revenue: Percentage
 
 class SubspaceModelSweepParams(TypedDict):

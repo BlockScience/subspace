@@ -68,7 +68,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Storage Fees',
         'ignore': True,
         'policies': {
-            # TODO #6 add `storage fees` block logic
+            'storage_fees': p_storage_fees
         },
         'variables': {
             'holders_balance': add_suf,
@@ -77,13 +77,12 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         }
     },
     {
-        'label': 'Compute Fees 2/2',
+        'label': 'Compute Fees',
         'ignore': True,
         'policies': {
-            # TODO #5 add `compute fees` block logic
+            'compute_fees': p_compute_fees
         },
         'variables': {
-            'holders_balance': add_suf,
             'farmers_balance': add_suf,
             'operators_balance': add_suf,
             'nominators_balance': add_suf
