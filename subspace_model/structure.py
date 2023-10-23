@@ -2,7 +2,7 @@ from subspace_model.logic import *
 from typing import Callable
 from copy import deepcopy
 
-## Non processed blocks
+# Non processed blocks
 
 SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
@@ -15,6 +15,19 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'variables': {
             'days_passed': s_days_passed,
             'delta_days': replace_suf
+        }
+    },
+    {
+        'label': 'Environmental Processes',
+        'ignore': True,
+        'policies': {
+            # TODO: #8 add environmental processes block logic
+        },
+        'variables': {
+            'average_base_fee': None,
+            'average_priority_fee': None,
+            'average_compute_units': None,
+            'transaction_count': None
         }
     },
     {
@@ -40,12 +53,12 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'farmers_balance': add_suf,
             'fund_balance': add_suf
         }
-    }, 
+    },
     {
         'label': 'Operator Rewards',
         'ignore': False,
         'policies': {
-            'operator_rewards': p_operator_reward 
+            'operator_rewards': p_operator_reward
         },
         'variables': {
             'issuance_balance': add_suf,
@@ -63,12 +76,12 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'farmers_balance': add_suf,
             'fund_balance': add_suf
         }
-    }, 
+    },
     {
-        'label': 'Compute Fees',
+        'label': 'Compute Fees 2/2',
         'ignore': True,
         'policies': {
-            #TODO #5 add `compute fees` block logic
+            # TODO #5 add `compute fees` block logic
         },
         'variables': {
             'holders_balance': add_suf,
@@ -76,12 +89,12 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'operators_balance': add_suf,
             'nominators_balance': add_suf
         }
-    }, 
+    },
     {
         'label': 'Direct Allocations',
         'ignore': True,
         'policies': {
-            #TODO #4 add `direct allocations` block logic
+            # TODO #4 add `direct allocations` block logic
         },
         'variables': {
             'holders_balance': add_suf,
@@ -126,7 +139,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
 ]
 
 
-## Post Processing
+# Post Processing
 
 blocks: list[dict] = []
 for block in SUBSPACE_MODEL_BLOCKS:
@@ -140,7 +153,6 @@ for block in SUBSPACE_MODEL_BLOCKS:
             pass
 
 SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
-
 
 
 # TODO: #1 `add_suf` handling logic
