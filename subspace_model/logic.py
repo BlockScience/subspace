@@ -67,3 +67,8 @@ def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _
     reward_to_fund = reward * params['reward_proposer_share'] * params['fund_tax_on_proposer_reward']
     reward_to_farmers = reward - reward_to_fund
     return {'farmers_balance': reward_to_farmers, 'fund_balance': reward_to_fund}
+
+## Operator Rewards
+
+def p_operator_reward(_1, _2, _3, _4) ->  Signal:
+    return {}
