@@ -91,3 +91,25 @@ def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
 
 def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
     return ('transaction_count', max(poisson(1),0))
+
+## Compute & Operator Fees
+def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    # TODO
+    return {'holders_balance': None,
+            'farmers_balance': None,
+            'fund_balance': None}
+
+
+def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    compute_units = state['average_compute_fees'] * state['transaction_count_per_timestep']
+    base_fees = state['average_base_fee'] * compute_units
+    priority_fees = state['average_priority_fee'] * compute_units
+
+    fees_to_farmers = priority_fees * params['farmer_tax_on_compute_priority_fees']
+    fees_to_pool = base_fees + (priority_fees - fees_to_farmers)
+    # TODO distribute fees to farmers / nominators according to shares
+    fees_to_nominators = fees_to_pool / 2 # HACK: temporary assumption
+    fees_to_operators = fees_to_pool - fees_to_nominators # HACK: temporary assumption
+    return {'farmers_balance': fees_to_farmers,
+             'nominators_balance': fees_to_nominators,
+             'operators_balance': fees_to_operators}
