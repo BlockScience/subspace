@@ -1,8 +1,10 @@
 from subspace_model.logic import *
 from typing import Callable
+from copy import deepcopy
 
+## Non processed blocks
 
-SUBSPACE_MODEL_BLOCKS = [
+SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         'label': 'Time Tracking',
         'ignore': False,
@@ -41,9 +43,9 @@ SUBSPACE_MODEL_BLOCKS = [
     }, 
     {
         'label': 'Operator Rewards',
-        'ignore': True,
+        'ignore': False,
         'policies': {
-            # TODO
+            'operator_rewards': p_operator_reward 
         },
         'variables': {
             'issuance_balance': add_suf,
@@ -54,7 +56,7 @@ SUBSPACE_MODEL_BLOCKS = [
         'label': 'Storage Fees',
         'ignore': True,
         'policies': {
-            # TODO
+            # TODO #6 add `storage fees` block logic
         },
         'variables': {
             'holders_balance': add_suf,
@@ -66,7 +68,7 @@ SUBSPACE_MODEL_BLOCKS = [
         'label': 'Compute Fees',
         'ignore': True,
         'policies': {
-            #TODO
+            #TODO #5 add `compute fees` block logic
         },
         'variables': {
             'holders_balance': add_suf,
@@ -79,7 +81,7 @@ SUBSPACE_MODEL_BLOCKS = [
         'label': 'Direct Allocations',
         'ignore': True,
         'policies': {
-            #TODO
+            #TODO #4 add `direct allocations` block logic
         },
         'variables': {
             'holders_balance': add_suf,
@@ -89,6 +91,7 @@ SUBSPACE_MODEL_BLOCKS = [
     {
         'label': 'Slash',
         'policies': {
+            # TODO #3 add `slash` block logic
         },
         'variables': {
             'operators_balance': add_suf,
@@ -100,7 +103,7 @@ SUBSPACE_MODEL_BLOCKS = [
     {
         'label': 'Staking / Unstaking',
         'policies': {
-
+            # TODO
         },
         'variables': {
             'operators_balance': add_suf,
@@ -111,7 +114,7 @@ SUBSPACE_MODEL_BLOCKS = [
     {
         'label': 'Transfers',
         'policies': {
-            # TODO
+            # TODO #2 add `transfers` block logic
         },
         'variables':  {
             'operators_balance': add_suf,
@@ -121,3 +124,26 @@ SUBSPACE_MODEL_BLOCKS = [
         }
     }
 ]
+
+
+## Post Processing
+
+blocks: list[dict] = []
+for block in SUBSPACE_MODEL_BLOCKS:
+    _block = deepcopy(block)
+    for variable, suf in block.get('variables', {}).items():
+        if suf == add_suf:
+            _block['variables'][variable] = add_suf(variable)
+        elif suf == replace_suf:
+            _block['variables'][variable] = replace_suf(variable)
+        else:
+            pass
+
+SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
+
+
+
+# TODO: #1 `add_suf` handling logic
+# done!
+# TODO: #7 `replace_suf` handling logic
+# done!
