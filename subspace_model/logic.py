@@ -1,6 +1,7 @@
 from subspace_model.types import *
 from cadCAD_tools.types import Signal, VariableUpdate
 from typing import Callable
+from scipy.stats import poisson, norm
 
 def generic_policy(_1, _2, _3, _4) -> dict:
     """Function to generate pass through policy
@@ -72,3 +73,21 @@ def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _
 
 def p_operator_reward(_1, _2, _3, _4) ->  Signal:
     return {}
+
+
+## Environmental processes
+
+def s_average_base_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
+    # Roughly inspired by ETH
+    return ('average_base_fee', max(norm.rvs(35, 5), 0))
+
+def s_average_priority_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
+    # Roughly inspired by ETH
+    return ('average_priority_fee', max(norm.rvs(5, 5), 0))
+
+def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
+    # Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
+    return ('average_compute_units', max(norm(50_000, 20_000), 5_000))
+
+def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
+    return ('transaction_count', max(poisson(1),0))
