@@ -113,3 +113,13 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     return {'farmers_balance': fees_to_farmers,
              'nominators_balance': fees_to_nominators,
              'operators_balance': fees_to_operators}
+
+
+
+
+
+def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    return {'operators_balance': None, 
+            'holders_balance': None, 
+            'nominators_balance': None, 
+            'farmers_balance': None} 

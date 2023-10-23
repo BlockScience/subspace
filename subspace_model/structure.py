@@ -93,6 +93,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'ignore': True,
         'policies': {
             # TODO #4 add `direct allocations` block logic
+            'unvest': p_unvest
         },
         'variables': {
             'holders_balance': add_suf,
@@ -103,6 +104,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Slash',
         'policies': {
             # TODO #3 add `slash` block logic
+            'slash': p_slash
         },
         'variables': {
             'operators_balance': add_suf,
@@ -115,6 +117,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Staking / Unstaking',
         'policies': {
             # TODO
+            'staking': p_staking
         },
         'variables': {
             'operators_balance': add_suf,
@@ -126,6 +129,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Transfers',
         'policies': {
             # TODO #2 add `transfers` block logic
+            'transfers': p_transfers
         },
         'variables':  {
             'operators_balance': add_suf,
