@@ -152,9 +152,3 @@ for block in SUBSPACE_MODEL_BLOCKS:
             pass
 
 SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
-
-
-# TODO: #1 `add_suf` handling logic
-# done!
-# TODO: #7 `replace_suf` handling logic
-# done!
