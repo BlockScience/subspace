@@ -19,20 +19,19 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
     },
     {
         'label': 'Environmental Processes',
-        'ignore': True,
+        'ignore': False,
         'policies': {
-            # TODO: #8 add environmental processes block logic
         },
         'variables': {
-            'average_base_fee': None,
-            'average_priority_fee': None,
-            'average_compute_units': None,
-            'transaction_count': None
+            'average_base_fee': s_average_base_fee,
+            'average_priority_fee': s_average_priority_fee,
+            'average_compute_units': s_average_compute_units,
+            'transaction_count': s_transaction_count
         }
     },
     {
         'label': 'Farmer Rewards (Inflow)',
-        'ignore': True,
+        'ignore': False,
         'policies': {
             'fund_reward': p_fund_reward,
             'issuance_reward': p_issuance_reward
