@@ -93,37 +93,47 @@ def p_operator_reward(_1, _2, _3, _4) ->  Signal:
 ## Environmental processes
 
 def p_commit_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
-    new_sectors = randint(0, 3) # TODO: make an more nuanced model
+    """
+    TODO: make an more nuanced model
+    """
+    new_sectors = randint(0, 3) 
     new_bytes = new_sectors * params['sector_size_in_bytes']
     return {'commit_size_in_bytes': new_bytes}
 
 def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    TODO: check if underlying assumptions are valid. 
+    """
     timestep_in_seconds = params['timestep_in_days'] * (24 * 60 * 60)
     archival_count =  timestep_in_seconds / (params['block_time_in_seconds'] * params['archival_duration_in_blocks'])
-    new_bytes = archival_count * params['archive_size_in_bytes']
+    new_bytes = archival_count * params['archive_size_in_bytes'] 
     return {'commit_size_in_bytes': new_bytes}
 
 def s_average_base_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Roughly inspired by ETH
+    TODO: finalize
     """
     return ('average_base_fee', max(norm.rvs(35, 5), 0))
 
 def s_average_priority_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Roughly inspired by ETH
+    TODO: finalize
     """
     return ('average_priority_fee', max(norm.rvs(5, 5), 0))
 
 def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
+    TODO: finalize
     """
     return ('average_compute_units', max(norm(50_000, 20_000), 5_000))
 
 def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Arbitrary assumption
+    TODO: finalize
     """
     return ('transaction_count', max(poisson(1),0))
 
