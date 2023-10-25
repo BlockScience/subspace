@@ -132,6 +132,13 @@ def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     return ('average_compute_units', max(norm.rvs(50_000, 20_000), 5_000))
 
+def s_average_transaction_size(_1, _2, _3, _4, _5) -> VariableUpdate:
+    """
+    Arbitrary assumption
+    TODO: finalize
+    """
+    return ('average_transaction_size', max(norm.rvs(50_000, 20_000), 5_000))
+
 def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Arbitrary assumption

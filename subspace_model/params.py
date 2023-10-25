@@ -7,7 +7,7 @@ TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 SAMPLES = 1
 
 # Constants
-MAX_CREDIT_ISSUANCE = 100_000 # TODO
+MAX_CREDIT_ISSUANCE = 3_000_000_000 # TODO
 CHUNK_SIZE: Bytes = 32 # As per Subnomiconcal
 RECORD_SIZE: Chunk = 2 ** 15 # As per Subnomicon. 32*2^25 = 1 MiB.
 ARCHIVAL_DEPTH: Blocks = 100 # As per Subnomicon
@@ -54,7 +54,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     archival_duration_in_blocks=ARCHIVAL_DEPTH,
     archive_size_in_bytes=128 * 1e6, # TODO
     reward_proposer_share=0.0, # TODO
-    max_credit_supply=100_000, # TODO,
+    max_credit_supply=3_000_000_000, # TODO,
     fund_tax_on_proposer_reward=0.0, # TODO
     fund_tax_on_storage_fees=0.0, # TODO
     farmer_tax_on_compute_priority_fees=0.0, # TODO

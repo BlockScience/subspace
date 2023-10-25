@@ -29,6 +29,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'average_priority_fee': s_average_priority_fee,
             'average_compute_units': s_average_compute_units,
             'transaction_count': s_transaction_count,
+            'average_transaction_size': s_average_transaction_size,
             'commit_size_in_bytes': add_suf,
             'history_size_in_bytes': add_suf
         }
