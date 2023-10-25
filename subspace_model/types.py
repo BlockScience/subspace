@@ -11,12 +11,11 @@ CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
 ComputeUnits = Annotated[float, 'CU']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
 ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
-    
-class SubspaceModelState(TypedDict):
-    # Time Variables
-    days_passed: Days
-    delta_days: Days
+Bytes = Annotated[int, 'bytes']
 
+
+@dataclass
+class TokenDistribution():
     # Stocks
     issuance_balance: Credits
     operators_balance: Credits
@@ -27,6 +26,29 @@ class SubspaceModelState(TypedDict):
     fund_balance: Credits
     burnt_balance: Credits
 
+    @property
+    def circulating_supply(self):
+        return (self.operators_balance 
+                + self.nominators_balance 
+                + self.holders_balance
+                + self.farmers_balance)
+    
+    @property
+    def user_supply(self):
+        return self.circulating_supply + self.staking_pool_balance
+    
+    @property
+    def issued_supply(self):
+        return self.user_supply + self.fund_balance + self.burnt_balance
+
+class SubspaceModelState(TypedDict):
+    # Time Variables
+    days_passed: Days
+    delta_days: Days
+
+    # Stocks
+    token_distribution: TokenDistribution
+
     # Deterministic Variables
     block_reward: Credits
 
@@ -34,6 +56,7 @@ class SubspaceModelState(TypedDict):
     average_base_fee: ShannonPerComputeUnits
     average_priority_fee: ShannonPerComputeUnits
     average_compute_units: ComputeUnits
+    average_transaction_size: Bytes
     transaction_count_per_timestep: int
 
 

@@ -45,25 +45,35 @@ def add_suf(variable: str, default_value=0.0) -> Callable:
 
 def p_evolve_time(params: SubspaceModelParams, 
                   _2, _3, _4) -> Signal:
+    """
+    """
     return {'delta_days': params['timestep_in_days']}
 
 def s_days_passed(_1, _2, _3, 
                   state: SubspaceModelState, 
                   signal: Signal) -> VariableUpdate:
+    """
+    """
     return {'days_passed': signal['delta_days'] + state['days_passed']}
 
 ## Farmer Rewards ##
 
 def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    """
     reward = state['issuance_balance'] * 0.01 # TODO
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
+    """
+    """
     reward = state['fund'] * 0.01 # TODO
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 
 def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _4) ->  Signal:
+    """
+    """
     reward = state['block_reward']
     reward_to_fund = reward * params['reward_proposer_share'] * params['fund_tax_on_proposer_reward']
     reward_to_farmers = reward - reward_to_fund
@@ -72,35 +82,59 @@ def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _
 ## Operator Rewards
 
 def p_operator_reward(_1, _2, _3, _4) ->  Signal:
+    """
+    """
     return {}
 
 
 ## Environmental processes
 
 def s_average_base_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
-    # Roughly inspired by ETH
+    """
+    Roughly inspired by ETH
+    """
     return ('average_base_fee', max(norm.rvs(35, 5), 0))
 
 def s_average_priority_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
-    # Roughly inspired by ETH
+    """
+    Roughly inspired by ETH
+    """
     return ('average_priority_fee', max(norm.rvs(5, 5), 0))
 
 def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
-    # Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
+    """
+    Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
+    """
     return ('average_compute_units', max(norm(50_000, 20_000), 5_000))
 
 def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
+    """
+    Arbitrary assumption
+    """
     return ('transaction_count', max(poisson(1),0))
 
 ## Compute & Operator Fees
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
-    # TODO
-    return {'holders_balance': None,
-            'farmers_balance': None,
-            'fund_balance': None}
+    """
+    """
+    total_issued_credit_supply = state['token_distribution'].issued_supply
+    total_space_pledged = None # TODO
+    blockchain_size = None # TODO
+
+    storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
+    transaction_bytes = state['transaction_count_per_timestep'] * state['average_transaction_size']
+    total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
+
+    fees_to_fund = params['fund_tax_on_storage_fees'] * total_storage_fees
+    fees_to_farmers = total_storage_fees - fees_to_fund
+
+    return {'farmers_balance': fees_to_farmers,
+            'fund_balance': fees_to_fund}
 
 
 def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    """
     compute_units = state['average_compute_fees'] * state['transaction_count_per_timestep']
     base_fees = state['average_base_fee'] * compute_units
     priority_fees = state['average_priority_fee'] * compute_units
@@ -116,9 +150,9 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 
 
 
-
-
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    """
     return {'operators_balance': None, 
             'holders_balance': None, 
             'nominators_balance': None, 
