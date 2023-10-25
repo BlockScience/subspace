@@ -217,18 +217,32 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
 
 def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: implement
+    
     """
-    return {'operators_balance': None,
-            'staking_pool_balance': None,
-            'nominators_balance': None}
+    # TODO: parametrize
+    operator_stake += state['operators_balance'] * 0.5
+    nominator_stake += state['nominators_balance'] * 0.5
+    total_stake = operator_stake + nominator_stake
+
+    return {'operators_balance': -operator_stake,
+            'staking_pool_balance': total_stake,
+            'nominators_balance': -nominator_stake}
 
 
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: implement
     """
-    return {'operators_balance': None, 
-            'holders_balance': None, 
-            'nominators_balance': None, 
-            'farmers_balance': None} 
+    nominators_balance = 0.0
+    holders_balance = 0.0
+    farmers_balance = 0.0
+    operators_balance = 0.0
+
+    # Assumed Policy: transfer all Farmer balances towards Operators
+    transfer = state['farmers_balance']
+    farmers_balance -= transfer
+    operators_balance += transfer
+    
+    return {'operators_balance': operators_balance, 
+            'holders_balance': holders_balance, 
+            'nominators_balance': nominators_balance, 
+            'farmers_balance': farmers_balance} 
