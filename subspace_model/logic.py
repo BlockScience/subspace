@@ -172,17 +172,29 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
              'nominators_balance': fees_to_nominators,
              'operators_balance': fees_to_operators}
 
+def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    TODO: implement
+    """
+    return {'operators_balance': None, 
+            'fund_balance': None, 
+            'holders_balance': None, 
+            'burnt_balance': None} 
 
 ### User Behavioral Processes
 
 def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
-return {'operators_balance': None,
-        'staking_pool_balance': None,
-        'nominators_balance': None}
+    """
+    TODO: implement
+    """
+    return {'operators_balance': None,
+            'staking_pool_balance': None,
+            'nominators_balance': None}
 
 
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    TODO: implement
     """
     return {'operators_balance': None, 
             'holders_balance': None, 
