@@ -7,7 +7,7 @@ CHUNK_SIZE: Bytes = 32 # As per Subnomiconcal
 RECORD_SIZE: Chunk = 2 ** 15 # As per Subnomicon. 32*2^25 = 1 MiB.
 ARCHIVAL_DEPTH: Blocks = 100 # As per Subnomicon
 BLOCK_TIME: Seconds = 6 # As per Subnomicon. Approximate value.
-SECTOR_SIZE: Record = 1000 # As per Subnomicon.
+SECTOR_SIZE: Piece = 1000 # As per Subnomicon.
 
 
 NON_ISSUED_CREDIT_AT_START = MAX_CREDIT_ISSUANCE 

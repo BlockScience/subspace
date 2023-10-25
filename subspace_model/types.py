@@ -47,6 +47,7 @@ class SubspaceModelState(TypedDict):
     block_reward: Credits
     history_size_in_bytes: Bytes
     commit_size_in_bytes: Bytes
+    allocated_tokens: Credits
 
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
@@ -59,12 +60,17 @@ class SubspaceModelState(TypedDict):
 class SubspaceModelParams(TypedDict):
     label: str
     timestep_in_days: Days
-    reward_proposer_share: Percentage
+
+    # Implementation parameters
+    sector_size_in_bytes: int
     block_time_in_seconds: Seconds
     archival_duration_in_blocks: Blocks
     archive_size_in_bytes: Bytes
 
-    sector_size_in_bytes: int
+    # Economic Parameters
+    reward_proposer_share: Percentage
+    max_credit_supply: Credits
+    
 
     # Fees & Taxes
     fund_tax_on_proposer_reward: Percentage
