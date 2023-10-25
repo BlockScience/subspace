@@ -1,6 +1,11 @@
 from subspace_model.types import *
 
 
+SIMULATION_DAYS = 700
+TIMESTEP_IN_DAYS = 1
+TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+SAMPLES = 1
+
 # Constants
 MAX_CREDIT_ISSUANCE = 100_000 # TODO
 CHUNK_SIZE: Bytes = 32 # As per Subnomiconcal
