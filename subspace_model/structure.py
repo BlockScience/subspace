@@ -96,7 +96,6 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Direct Allocations',
         'ignore': True,
         'policies': {
-            # TODO #4 add `direct allocations` block logic
             'unvest': p_unvest
         },
         'variables': {

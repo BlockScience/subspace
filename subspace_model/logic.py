@@ -62,14 +62,16 @@ def s_days_passed(_1, _2, _3,
 
 def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    TODO: implement the correct form
     """
-    reward = state['issuance_balance'] * 0.01 # TODO: put correct form
+    reward = state['issuance_balance'] * 0.01
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     """
+    TODO: implement the correct form
     """
-    reward = state['fund'] * 0.01 # TODO: put correct form
+    reward = state['fund'] * 0.01
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 
@@ -141,14 +143,18 @@ def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    total_issued_credit_supply = issued_supply(state['token_distribution'])
+    # Input
+    total_issued_credit_supply = issued_supply(state)
     total_space_pledged = state['commit_size_in_bytes']
     blockchain_size = state['history_size_in_bytes']
 
+    # Compute total storage fees during this timestep
+    # TODO: use average storage fee rather than immediate storage fee instead
     storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
     transaction_bytes = state['transaction_count_per_timestep'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
+    # Fee distribution
     fees_to_fund = params['fund_tax_on_storage_fees'] * total_storage_fees
     fees_to_farmers = total_storage_fees - fees_to_fund
 
@@ -180,6 +186,32 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
             'fund_balance': None, 
             'holders_balance': None, 
             'burnt_balance': None} 
+
+def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    """
+    Impl notes: 30% of total. 
+    22% to be unvested with 24mo and 8% to be unvested with 48mo.
+    25% total to be unlocked after 12mo and linearly afterwards.
+    TODO: separate across domains
+    """
+
+    # TODO: parametrize / generalize
+    if state['days_passed'] < 365:
+        allocated_tokens = 0.0
+    elif state['days_passed'] >= 365:
+        allocated_tokens = 0.30 * 0.25
+        allocated_tokens += 0.22 * 0.75 * (365 * 2 - state['days_passed']) # Investors
+        allocated_tokens += 0.08 * 0.75 * (365 * 4 - state['days_passed']) # Team
+        allocated_tokens *= params['max_credit_supply']
+
+    tokens_to_allocate = allocated_tokens - state['allocated_tokens']
+    holders_balance = tokens_to_allocate
+    issuance_balance = -holders_balance
+    
+    return {'issuance_balance': issuance_balance,
+            'holders_balance': holders_balance,
+            'allocated_tokens': allocated_tokens} 
+
 
 ### User Behavioral Processes
 
