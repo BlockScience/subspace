@@ -107,7 +107,6 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         'label': 'Slash',
         'policies': {
-            # TODO #3 add `slash` block logic
             'slash': p_slash
         },
         'variables': {
@@ -131,7 +130,6 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         'label': 'Transfers',
         'policies': {
-            # TODO #2 add `transfers` block logic
             'transfers': p_transfers
         },
         'variables':  {
