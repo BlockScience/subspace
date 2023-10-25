@@ -4,7 +4,7 @@ from copy import deepcopy
 
 # Non processed blocks
 
-SUBSPACE_MODEL_BLOCKS: list[dict] = [
+_SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         'label': 'Time Tracking',
         'ignore': False,
@@ -144,7 +144,7 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
 # Post Processing
 
 blocks: list[dict] = []
-for block in SUBSPACE_MODEL_BLOCKS:
+for block in _SUBSPACE_MODEL_BLOCKS:
     _block = deepcopy(block)
     for variable, suf in block.get('variables', {}).items():
         if suf == add_suf:
@@ -153,5 +153,6 @@ for block in SUBSPACE_MODEL_BLOCKS:
             _block['variables'][variable] = replace_suf(variable)
         else:
             pass
+    blocks.append(_block)
 
 SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
