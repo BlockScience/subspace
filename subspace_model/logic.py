@@ -71,7 +71,7 @@ def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     """
     TODO: implement the correct form
     """
-    reward = state['fund'] * 0.01
+    reward = state['fund_balance'] * 0.01
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 
@@ -165,7 +165,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    compute_units = state['average_compute_fees'] * state['transaction_count_per_timestep']
+    compute_units = state['average_compute_units'] * state['transaction_count_per_timestep']
     base_fees = state['average_base_fee'] * compute_units
     priority_fees = state['average_priority_fee'] * compute_units
 
@@ -182,10 +182,10 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     """
     TODO: implement
     """
-    return {'operators_balance': None, 
-            'fund_balance': None, 
-            'holders_balance': None, 
-            'burnt_balance': None} 
+    return {'operators_balance': 0.0, 
+            'fund_balance': 0.0, 
+            'holders_balance': 0.0, 
+            'burnt_balance': 0.0} 
 
 def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
@@ -217,11 +217,11 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
 
 def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    
+
     """
     # TODO: parametrize
-    operator_stake += state['operators_balance'] * 0.5
-    nominator_stake += state['nominators_balance'] * 0.5
+    operator_stake = state['operators_balance'] * 0.5
+    nominator_stake = state['nominators_balance'] * 0.5
     total_stake = operator_stake + nominator_stake
 
     return {'operators_balance': -operator_stake,
