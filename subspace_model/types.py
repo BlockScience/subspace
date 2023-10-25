@@ -34,7 +34,8 @@ class SubspaceModelState(TypedDict):
     delta_days: Days
 
     # Stocks
-    issuance_balance: Credits
+    reward_issuance_balance: Credits
+    other_issuance_balance: Credits
     operators_balance: Credits
     nominators_balance: Credits
     holders_balance: Credits
