@@ -39,7 +39,10 @@ INITIAL_STATE = SubspaceModelState(
     average_priority_fee=nan,
     average_compute_units=nan,
     average_transaction_size=nan,
-    transaction_count_per_timestep=nan
+    transaction_count=nan,
+
+    compute_fee_volume=0.0,
+    storage_fee_volume=0.0
 )
 
 SINGLE_RUN_PARAMS = SubspaceModelParams(

@@ -56,7 +56,7 @@ def s_days_passed(_1, _2, _3,
                   signal: Signal) -> VariableUpdate:
     """
     """
-    return {'days_passed': signal['delta_days'] + state['days_passed']}
+    return ('days_passed', signal['delta_days'] + state['days_passed'])
 
 ## Farmer Rewards ##
 
@@ -75,7 +75,7 @@ def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 
-def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _4) ->  Signal:
+def p_split_reward(params: SubspaceModelParams, _2, _3,  state: SubspaceModelState) ->  Signal:
     """
     """
     reward = state['block_reward']
@@ -130,14 +130,14 @@ def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
     Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
     TODO: finalize
     """
-    return ('average_compute_units', max(norm(50_000, 20_000), 5_000))
+    return ('average_compute_units', max(norm.rvs(50_000, 20_000), 5_000))
 
 def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Arbitrary assumption
     TODO: finalize
     """
-    return ('transaction_count', max(poisson(1),0))
+    return ('transaction_count', max(poisson.rvs(1),0))
 
 ## Compute & Operator Fees
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
@@ -151,7 +151,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     # Compute total storage fees during this timestep
     # TODO: use average storage fee rather than immediate storage fee instead
     storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
-    transaction_bytes = state['transaction_count_per_timestep'] * state['average_transaction_size']
+    transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
     # Fee distribution
@@ -159,13 +159,14 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     fees_to_farmers = total_storage_fees - fees_to_fund
 
     return {'farmers_balance': fees_to_farmers,
-            'fund_balance': fees_to_fund}
+            'fund_balance': fees_to_fund,
+            'storage_fee_volume': total_storage_fees}
 
 
 def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    compute_units = state['average_compute_units'] * state['transaction_count_per_timestep']
+    compute_units = state['average_compute_units'] * state['transaction_count']
     base_fees = state['average_base_fee'] * compute_units
     priority_fees = state['average_priority_fee'] * compute_units
 
@@ -174,9 +175,12 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     # TODO distribute fees to farmers / nominators according to shares
     fees_to_nominators = fees_to_pool / 2 # HACK: temporary assumption
     fees_to_operators = fees_to_pool - fees_to_nominators # HACK: temporary assumption
+
+    total_fees = fees_to_farmers + fees_to_nominators + fees_to_operators
     return {'farmers_balance': fees_to_farmers,
              'nominators_balance': fees_to_nominators,
-             'operators_balance': fees_to_operators}
+             'operators_balance': fees_to_operators,
+             'compute_fee_volume': total_fees}
 
 def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """

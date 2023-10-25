@@ -54,7 +54,11 @@ class SubspaceModelState(TypedDict):
     average_priority_fee: ShannonPerComputeUnits
     average_compute_units: ComputeUnits
     average_transaction_size: Bytes
-    transaction_count_per_timestep: int
+    transaction_count: int
+
+    # Metrics
+    compute_fee_volume: Credits
+    storage_fee_volume: Credits
 
 
 class SubspaceModelParams(TypedDict):

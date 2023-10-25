@@ -70,31 +70,33 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     },
     {
         'label': 'Storage Fees',
-        'ignore': True,
+        'ignore': False,
         'policies': {
             'storage_fees': p_storage_fees
         },
         'variables': {
             'holders_balance': add_suf,
             'farmers_balance': add_suf,
-            'fund_balance': add_suf
+            'fund_balance': add_suf,
+            'storage_fee_volume': replace_suf
         }
     },
     {
         'label': 'Compute Fees',
-        'ignore': True,
+        'ignore': False,
         'policies': {
             'compute_fees': p_compute_fees
         },
         'variables': {
             'farmers_balance': add_suf,
             'operators_balance': add_suf,
-            'nominators_balance': add_suf
+            'nominators_balance': add_suf,
+            'compute_fee_volume': replace_suf
         }
     },
     {
         'label': 'Direct Allocations',
-        'ignore': True,
+        'ignore': False,
         'policies': {
             'unvest': p_unvest
         },
@@ -105,6 +107,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     },
     {
         'label': 'Slash',
+        'ignore': False,
         'policies': {
             'slash': p_slash
         },
@@ -117,17 +120,19 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     },
     {
         'label': 'Staking / Unstaking',
+        'ignore': False,
         'policies': {
             'staking': p_staking
         },
         'variables': {
-            'token_distribution': add_suf,
+            'operators_balance': add_suf,
             'nominators_balance': add_suf,
             'staking_pool_balance': add_suf
         }
     },
     {
         'label': 'Transfers',
+        'ignore': False,
         'policies': {
             'transfers': p_transfers
         },
@@ -144,7 +149,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
 # Post Processing
 
 blocks: list[dict] = []
-for block in _SUBSPACE_MODEL_BLOCKS:
+for block in [b for b in _SUBSPACE_MODEL_BLOCKS if b.get('ignore', False) != True]:
     _block = deepcopy(block)
     for variable, suf in block.get('variables', {}).items():
         if suf == add_suf:
