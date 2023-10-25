@@ -21,12 +21,16 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Environmental Processes',
         'ignore': False,
         'policies': {
+            'sector_onboarding': p_commit_sectors,
+            'archival': p_archive
         },
         'variables': {
             'average_base_fee': s_average_base_fee,
             'average_priority_fee': s_average_priority_fee,
             'average_compute_units': s_average_compute_units,
-            'transaction_count': s_transaction_count
+            'transaction_count': s_transaction_count,
+            'commit_size_in_bytes': add_suf,
+            'history_size_in_bytes': add_suf
         }
     },
     {

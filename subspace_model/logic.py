@@ -3,6 +3,7 @@ from cadCAD_tools.types import Signal, VariableUpdate
 from typing import Callable
 from scipy.stats import poisson, norm
 from subspace_model.metrics import *
+from random import randint
 
 def generic_policy(_1, _2, _3, _4) -> dict:
     """Function to generate pass through policy
@@ -91,6 +92,17 @@ def p_operator_reward(_1, _2, _3, _4) ->  Signal:
 
 ## Environmental processes
 
+def p_commit_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    new_sectors = randint(0, 3) # TODO: make an more nuanced model
+    new_bytes = new_sectors * params['sector_size_in_bytes']
+    return {'commit_size_in_bytes': new_bytes}
+
+def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+    timestep_in_seconds = params['timestep_in_days'] * (24 * 60 * 60)
+    archival_count =  timestep_in_seconds / (params['block_time_in_seconds'] * params['archival_duration_in_blocks'])
+    new_bytes = archival_count * params['archive_size_in_bytes']
+    return {'commit_size_in_bytes': new_bytes}
+
 def s_average_base_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
     """
     Roughly inspired by ETH
@@ -120,8 +132,8 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     """
     """
     total_issued_credit_supply = issued_supply(state['token_distribution'])
-    total_space_pledged = None # TODO: implement
-    blockchain_size = None # TODO: implement
+    total_space_pledged = state['commit_size_in_bytes']
+    blockchain_size = state['history_size_in_bytes']
 
     storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
     transaction_bytes = state['transaction_count_per_timestep'] * state['average_transaction_size']

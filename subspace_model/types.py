@@ -14,9 +14,11 @@ CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
 ComputeUnits = Annotated[float, 'CU']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
 ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
+
 Bytes = Annotated[int, 'bytes']
-Chunk = Annotated[int, 'chunk'] # As per spec: 1 chunk = 256 Bytes
-Record = Annotated[int, 'record']
+Chunk = Annotated[int, 'chunk'] # As per Subnomicon: 1 chunk = 256 Bytes
+Piece = Annotated[int, 'piece'] # As per Subnomicon: 1 piece = 1 record + proof
+Sector = Annotated[int, 'sector'] # As per Subnomicon: 1000 Pieces or ~ 1 GiB
 
 # Misc units
 Percentage = Annotated[float, '%']
@@ -24,9 +26,6 @@ Percentage = Annotated[float, '%']
 
 # Taxonomy:
 # Chunk < Record/Piece < Sector < Plot < History
-
-@dataclass
-class Sector():
 
 
 class SubspaceModelState(TypedDict):
@@ -46,6 +45,8 @@ class SubspaceModelState(TypedDict):
 
     # Deterministic Variables
     block_reward: Credits
+    history_size_in_bytes: Bytes
+    commit_size_in_bytes: Bytes
 
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
@@ -59,6 +60,11 @@ class SubspaceModelParams(TypedDict):
     label: str
     timestep_in_days: Days
     reward_proposer_share: Percentage
+    block_time_in_seconds: Seconds
+    archival_duration_in_blocks: Blocks
+    archive_size_in_bytes: Bytes
+
+    sector_size_in_bytes: int
 
     # Fees & Taxes
     fund_tax_on_proposer_reward: Percentage
@@ -69,3 +75,4 @@ class SubspaceModelParams(TypedDict):
 class SubspaceModelSweepParams(TypedDict):
     label: list[str]
     timestep_in_days: list[Days]
+    
