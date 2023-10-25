@@ -116,11 +116,10 @@ SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         'label': 'Staking / Unstaking',
         'policies': {
-            # TODO
             'staking': p_staking
         },
         'variables': {
-            'operators_balance': add_suf,
+            'token_distribution': add_suf,
             'nominators_balance': add_suf,
             'staking_pool_balance': add_suf
         }

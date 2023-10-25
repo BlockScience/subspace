@@ -14,8 +14,11 @@ ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
 Bytes = Annotated[int, 'bytes']
 
 
-@dataclass
-class TokenDistribution():
+class SubspaceModelState(TypedDict):
+    # Time Variables
+    days_passed: Days
+    delta_days: Days
+
     # Stocks
     issuance_balance: Credits
     operators_balance: Credits
@@ -25,29 +28,6 @@ class TokenDistribution():
     staking_pool_balance: Credits
     fund_balance: Credits
     burnt_balance: Credits
-
-    @property
-    def circulating_supply(self):
-        return (self.operators_balance 
-                + self.nominators_balance 
-                + self.holders_balance
-                + self.farmers_balance)
-    
-    @property
-    def user_supply(self):
-        return self.circulating_supply + self.staking_pool_balance
-    
-    @property
-    def issued_supply(self):
-        return self.user_supply + self.fund_balance + self.burnt_balance
-
-class SubspaceModelState(TypedDict):
-    # Time Variables
-    days_passed: Days
-    delta_days: Days
-
-    # Stocks
-    token_distribution: TokenDistribution
 
     # Deterministic Variables
     block_reward: Credits

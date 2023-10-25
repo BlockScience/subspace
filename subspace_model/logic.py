@@ -2,6 +2,7 @@ from subspace_model.types import *
 from cadCAD_tools.types import Signal, VariableUpdate
 from typing import Callable
 from scipy.stats import poisson, norm
+from subspace_model.metrics import *
 
 def generic_policy(_1, _2, _3, _4) -> dict:
     """Function to generate pass through policy
@@ -61,13 +62,13 @@ def s_days_passed(_1, _2, _3,
 def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    reward = state['issuance_balance'] * 0.01 # TODO
+    reward = state['issuance_balance'] * 0.01 # TODO: put correct form
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     """
     """
-    reward = state['fund'] * 0.01 # TODO
+    reward = state['fund'] * 0.01 # TODO: put correct form
     return {'block_reward': reward, 'issuance_balance': -reward}
 
 
@@ -84,6 +85,7 @@ def p_split_reward(params: SubspaceModelParams, _2, state: SubspaceModelState, _
 def p_operator_reward(_1, _2, _3, _4) ->  Signal:
     """
     """
+    # TODO: implement
     return {}
 
 
@@ -117,9 +119,9 @@ def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    total_issued_credit_supply = state['token_distribution'].issued_supply
-    total_space_pledged = None # TODO
-    blockchain_size = None # TODO
+    total_issued_credit_supply = issued_supply(state['token_distribution'])
+    total_space_pledged = None # TODO: implement
+    blockchain_size = None # TODO: implement
 
     storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
     transaction_bytes = state['transaction_count_per_timestep'] * state['average_transaction_size']
@@ -148,6 +150,13 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
              'nominators_balance': fees_to_nominators,
              'operators_balance': fees_to_operators}
 
+
+### User Behavioral Processes
+
+def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+return {'operators_balance': None,
+        'staking_pool_balance': None,
+        'nominators_balance': None}
 
 
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
