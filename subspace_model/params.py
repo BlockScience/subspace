@@ -15,13 +15,14 @@ BLOCK_TIME: Seconds = 6 # As per Subnomicon. Approximate value.
 SECTOR_SIZE: Piece = 1000 # As per Subnomicon.
 
 
-NON_ISSUED_CREDIT_AT_START = MAX_CREDIT_ISSUANCE 
+ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
     delta_days=0,
 
-    issuance_balance=NON_ISSUED_CREDIT_AT_START,
+    reward_issuance_balance=ISSUANCE_FOR_FARMERS,
+    other_issuance_balance=MAX_CREDIT_ISSUANCE-ISSUANCE_FOR_FARMERS,
     operators_balance=0.0,
     nominators_balance=0.0,
     holders_balance=0.0,

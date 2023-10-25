@@ -43,7 +43,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         },
         'variables': {
             'fund_balance': add_suf,
-            'issuance_balance': add_suf,
+            'reward_issuance_balance': add_suf,
             'block_reward': replace_suf
         }
     },
@@ -65,7 +65,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'operator_rewards': p_operator_reward
         },
         'variables': {
-            'issuance_balance': add_suf,
+            'other_issuance_balance': add_suf,
             'operators_balance': add_suf
         }
     },
@@ -103,7 +103,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         },
         'variables': {
             'holders_balance': add_suf,
-            'issuance_balance': add_suf
+            'other_issuance_balance': add_suf,
+            'allocated_tokens': replace_suf
         }
     },
     {

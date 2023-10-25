@@ -64,15 +64,15 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
     """
     TODO: implement the correct form
     """
-    reward = state['issuance_balance'] * 0.01
-    return {'block_reward': reward, 'issuance_balance': -reward}
+    reward = state['fund_balance'] * 0.01
+    return {'block_reward': reward, 'fund_balance': -reward}
 
 def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     """
     TODO: implement the correct form
     """
-    reward = state['fund_balance'] * 0.01
-    return {'block_reward': reward, 'issuance_balance': -reward}
+    reward = state['reward_issuance_balance'] * 0.01
+    return {'block_reward': reward, 'reward_issuance_balance': -reward}
 
 
 def p_split_reward(params: SubspaceModelParams, _2, _3,  state: SubspaceModelState) ->  Signal:
@@ -211,15 +211,15 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
         allocated_tokens = 0.0
     elif state['days_passed'] >= 365:
         allocated_tokens = 0.30 * 0.25
-        allocated_tokens += 0.22 * 0.75 * (365 * 2 - state['days_passed']) # Investors
-        allocated_tokens += 0.08 * 0.75 * (365 * 4 - state['days_passed']) # Team
+        allocated_tokens += 0.22 * 0.75 * min((state['days_passed'] - 365) / (365 * 2), 1) # Investors
+        allocated_tokens += 0.08 * 0.75 * min((state['days_passed'] - 365) / (4 * 365), 1) # Team
         allocated_tokens *= params['max_credit_supply']
 
     tokens_to_allocate = allocated_tokens - state['allocated_tokens']
     holders_balance = tokens_to_allocate
-    issuance_balance = -holders_balance
+    other_issuance_balance = -holders_balance
     
-    return {'issuance_balance': issuance_balance,
+    return {'other_issuance_balance': other_issuance_balance,
             'holders_balance': holders_balance,
             'allocated_tokens': allocated_tokens} 
 
@@ -248,10 +248,10 @@ def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) 
     farmers_balance = 0.0
     operators_balance = 0.0
 
-    # Assumed Policy: transfer all Farmer balances towards Operators
-    transfer = state['farmers_balance']
-    farmers_balance -= transfer
-    operators_balance += transfer
+    # # Assumed Policy: transfer all Farmer balances towards Operators
+    # transfer = state['farmers_balance']
+    # farmers_balance -= transfer
+    # operators_balance += transfer
     
     return {'operators_balance': operators_balance, 
             'holders_balance': holders_balance, 
