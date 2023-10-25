@@ -1,17 +1,32 @@
 from typing import Annotated, TypedDict, Union
 from dataclasses import dataclass
 
-
+# Time units
+Blocks = Annotated[float, 'blocks'] # 1 block ~ 6s. Or 1 day ~ 14400 blocks
 Days = Annotated[float, 'days']  # Number of days
-Credits = Annotated[float, "SSC"] 
+Seconds = Annotated[float, 's']
 PerYear = Annotated[float, "1/year"]  # Yearly rate
 Year = Annotated[float, "year"]  # Number of years
-Percentage = Annotated[float, '%']
+
+# Measurement units
+Credits = Annotated[float, "SSC"] 
 CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
 ComputeUnits = Annotated[float, 'CU']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
 ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
 Bytes = Annotated[int, 'bytes']
+Chunk = Annotated[int, 'chunk'] # As per spec: 1 chunk = 256 Bytes
+Record = Annotated[int, 'record']
+
+# Misc units
+Percentage = Annotated[float, '%']
+
+
+# Taxonomy:
+# Chunk < Record/Piece < Sector < Plot < History
+
+@dataclass
+class Sector():
 
 
 class SubspaceModelState(TypedDict):
