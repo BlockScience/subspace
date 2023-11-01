@@ -89,9 +89,11 @@ def p_split_reward(params: SubspaceModelParams, _2, _3,  state: SubspaceModelSta
 
 def p_operator_reward(_1, _2, _3, _4) ->  Signal:
     """
+    Protocol issued rewards to Staked Operators.
+    NOTE: Assumed to be zero.
     """
-    # TODO: implement
-    return {}
+    reward = 0.0
+    return {'other_issuance_balance': -reward, 'operators_balance': reward}
 
 
 ## Environmental processes
