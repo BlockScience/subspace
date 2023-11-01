@@ -100,9 +100,9 @@ def p_operator_reward(_1, _2, _3, _4) ->  Signal:
 
 def p_commit_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: make an more nuanced model
+    Decide amount of commited bytes to be added
     """
-    new_sectors = randint(0, 3) 
+    new_sectors = int(max(norm.rvs(params['avg_new_sectors_per_day'], params['std_new_sectors_per_day']), 0))
     new_bytes = new_sectors * params['sector_size_in_bytes']
     return {'commit_size_in_bytes': new_bytes}
 

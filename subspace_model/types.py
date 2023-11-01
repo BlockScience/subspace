@@ -115,4 +115,6 @@ class SubspaceModelParams(TypedDict):
     min_transaction_size: Bytes
     avg_transaction_count: int
     avg_slash_per_day: int # NOTE: tbc
+    avg_new_sectors_per_day: float
+    std_new_sectors_per_day: float
     
