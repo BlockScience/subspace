@@ -34,6 +34,10 @@ INITIAL_STATE = SubspaceModelState(
     staking_pool_balance=0.0,
     fund_balance=0.0,
     burnt_balance=0.0,
+    
+    # Staking Pool Shares
+    nominator_pool_shares=0.0,
+    operator_pool_shares=0.0,
 
     # Variables
     block_reward=nan,
@@ -51,6 +55,13 @@ INITIAL_STATE = SubspaceModelState(
     compute_fee_volume=0.0,
     storage_fee_volume=0.0
 )
+
+
+def DEFAULT_ISSUANCE_FUNCTION(state: SubspaceModelState):
+    return 100 # TODO
+
+def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
+    return 1.0 # TODO
 
 SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
