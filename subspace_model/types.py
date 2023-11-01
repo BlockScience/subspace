@@ -55,6 +55,10 @@ class SubspaceModelState(TypedDict):
     fund_balance: Credits
     burnt_balance: Credits
 
+    # Staking Pool Shares
+    nominator_pool_shares: float
+    operator_pool_shares: float
+
     # Deterministic Variables
     block_reward: Credits
     history_size_in_bytes: Bytes
@@ -94,8 +98,8 @@ class SubspaceModelParams(TypedDict):
     # Fees & Taxes
     fund_tax_on_proposer_reward: Percentage
     fund_tax_on_storage_fees: Percentage
-    farmer_tax_on_compute_priority_fees: Percentage
-    operator_tax_on_compute_revenue: Percentage
+    compute_fees_to_farmers: Percentage
+    compute_fees_tax_to_operators: Percentage
 
     # Behavioral Parameters
     operator_balance_stake_per_ts: Percentage

@@ -129,7 +129,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'variables': {
             'operators_balance': add_suf,
             'nominators_balance': add_suf,
-            'staking_pool_balance': add_suf
+            'staking_pool_balance': add_suf,
+            'operators_pool_share': add_suf,
+            'nominators_pool_share': add_suf
         }
     },
     {
