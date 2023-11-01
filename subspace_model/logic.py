@@ -195,8 +195,11 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     eff_total_fees = min(total_fees, state['holders_balance'])
     eff_scale = eff_total_fees / total_fees
 
-    fees_to_farmers = priority_fees * params['compute_fees_to_farmers'] * eff_scale
-    fees_to_pool = base_fees + (priority_fees - fees_to_farmers) * eff_scale
+    eff_base_fees = base_fees * eff_scale
+    eff_priority_fees = priority_fees * eff_scale
+
+    fees_to_farmers = eff_priority_fees * params['compute_fees_to_farmers']
+    fees_to_pool = eff_base_fees + (eff_priority_fees - fees_to_farmers)
 
     denominator = (state['operator_pool_shares'] + state['nominator_pool_shares'])
     if denominator == 0:
@@ -218,7 +221,7 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     """
 
     slash_count = poisson.rvs(params['avg_slash_per_day'])
-    slash_value = slash_count * params['slash_function'](state)
+    slash_value = min(slash_count * params['slash_function'](state), state['operators_balance']) # TODO: check
 
     slash_to_fund = slash_value * params['slash_to_fund']
     slash_to_holders = slash_value * params['slash_to_holders']
@@ -277,17 +280,36 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    nominators_balance = 0.0
-    holders_balance = 0.0
-    farmers_balance = 0.0
-    operators_balance = 0.0
+    delta_nominators = 0.0
+    delta_holders = 0.0
+    delta_farmers = 0.0
+    delta_operators = 0.0
 
-    # # Assumed Policy: transfer all Farmer balances towards Operators
-    # transfer = state['farmers_balance']
-    # farmers_balance -= transfer
-    # operators_balance += transfer
+    # Farmers to Holders
+    delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day']
+    delta_farmers -= delta
+    delta_holders += delta
+
+    # Operators to Holders
+    delta = state['operators_balance'] * params['transfer_operator_to_holder_per_day']
+    delta_operators -= delta
+    delta_holders += delta
+
+    # Holder to Nominators
+    delta = state['holders_balance'] * params['transfer_holder_to_nominator_per_day']
+    delta_holders -= delta
+    delta_nominators += delta
+
+
+    # Holder to Operators
+    delta = state['holders_balance'] * params['transfer_holder_to_operator_per_day']
+    delta_holders -= delta
+    delta_operators += delta
+
+    # TODO: add check on the resulting balances?
+
     
-    return {'operators_balance': operators_balance, 
-            'holders_balance': holders_balance, 
-            'nominators_balance': nominators_balance, 
-            'farmers_balance': farmers_balance} 
+    return {'operators_balance': delta_operators, 
+            'holders_balance': delta_holders, 
+            'nominators_balance': delta_nominators, 
+            'farmers_balance': delta_farmers} 

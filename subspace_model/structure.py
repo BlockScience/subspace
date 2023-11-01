@@ -156,7 +156,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'variables': {
             'circulating_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', circulating_supply(s)),
             'user_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', user_supply(s)),
-            'issued_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', issued_supply(s))
+            'issued_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', issued_supply(s)),
+            'sum_of_stocks': lambda _1, _2, _3, s, _5: ('sum_of_stocks', sum_of_stocks(s))
         }
     }
 ]
