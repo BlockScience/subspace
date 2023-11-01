@@ -24,14 +24,6 @@ Sector = Annotated[int, 'sector'] # As per Subnomicon: 1000 Pieces or ~ 1 GiB
 # Misc units
 Percentage = Annotated[float, '%']
 
-
-class SlashAffectedBalances(NamedTuple):
-    operators_balance: Credits
-    fund_balance: Credits
-    holders_balance: Credits
-    burnt_balance: Credits
-
-
 # Taxonomy:
 # Chunk < Record/Piece < Sector < Plot < History
 
@@ -83,7 +75,7 @@ class SubspaceModelParams(TypedDict):
 
     # Mechanisms to be determined
     issuance_function: Callable[[SubspaceModelState], CreditsPerDay]
-    slash_function: Callable[[SubspaceModelState], SlashAffectedBalances]
+    slash_function: Callable[[SubspaceModelState], Credits]
 
     # Implementation parameters
     sector_size_in_bytes: int
@@ -100,6 +92,11 @@ class SubspaceModelParams(TypedDict):
     fund_tax_on_storage_fees: Percentage
     compute_fees_to_farmers: Percentage
     compute_fees_tax_to_operators: Percentage
+
+    # Slash Parameters
+    slash_to_fund: Percentage
+    slash_to_holders: Percentage
+    slash_to_operators: Percentage
 
     # Behavioral Parameters
     operator_balance_stake_per_ts: Percentage
