@@ -56,14 +56,43 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
     timestep_in_days=TIMESTEP_IN_DAYS,
 
+    # Mechanisms TBD
+    issuance_function=DEFAULT_ISSUANCE_FUNCTION, # TODO
+    slash_function=DEFAULT_SLASH_FUNCTION, # TODO
+
+    # Implementation params
     sector_size_in_bytes=SECTOR_SIZE * RECORD_SIZE,
     block_time_in_seconds=BLOCK_TIME,
     archival_duration_in_blocks=ARCHIVAL_DEPTH,
     archive_size_in_bytes=128 * 1e6, # TODO
+
+    # Economic Parameters
     reward_proposer_share=0.0, # TODO
     max_credit_supply=3_000_000_000, # TODO,
+
+    # Fees & Taxes
     fund_tax_on_proposer_reward=0.0, # TODO
     fund_tax_on_storage_fees=0.0, # TODO
-    farmer_tax_on_compute_priority_fees=0.0, # TODO
-    operator_tax_on_compute_revenue=0.0 # TODO
+    compute_fees_to_farmers=0.0, # TODO
+    compute_fees_tax_to_operators=0.3, # TODO
+
+    # Slash Parameters
+    slash_to_fund=0.0,
+    slash_to_holders=0.05,
+
+    # Environmental Parameters
+    avg_base_fee=30,
+    std_base_fee=5,
+    min_base_fee=1,
+    avg_priority_fee=5,
+    std_priority_fee=10,
+    avg_compute_units_per_tx=50_000, # TODO
+    std_compute_units_per_tx=20_000, # TODO
+    min_compute_units_per_tx=10_000, # TODO
+    avg_transaction_size=1_000, # TODO
+    std_transaction_size=5_000, # TODO
+    avg_slash_per_day=1, # TODO
+    avg_new_sectors_per_day=30, # TODO
+    std_new_sectors_per_day=30 # TODO
+
 )
