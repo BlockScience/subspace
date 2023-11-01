@@ -194,6 +194,11 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     """
     TODO: implement
     """
+
+    slash_count = poisson.rvs(params['avg_slash_per_day'])
+    avg_slash_amount = [el * slash_count 
+                        for el in params['slash_function'](state)]
+    # TODO
     return {'operators_balance': 0.0, 
             'fund_balance': 0.0, 
             'holders_balance': 0.0, 
@@ -204,7 +209,6 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
     Impl notes: 30% of total. 
     22% to be unvested with 24mo and 8% to be unvested with 48mo.
     25% total to be unlocked after 12mo and linearly afterwards.
-    TODO: separate across domains
     """
 
     # TODO: parametrize / generalize
@@ -231,6 +235,8 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     """
     NOTE: this assumes that operators and nominators will always
     stake a given % of their free balance every timestep.
+
+    TODO: enforce minimum staking amounts
     """
     operator_stake = state['operators_balance'] * params['operator_balance_stake_per_ts']
     nominator_stake = state['nominators_balance'] * params['nominator_balance_stake_per_ts']

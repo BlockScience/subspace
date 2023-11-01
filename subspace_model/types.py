@@ -1,4 +1,4 @@
-from typing import Annotated, TypedDict, Union, Callable
+from typing import Annotated, TypedDict, Union, Callable, NamedTuple
 from dataclasses import dataclass
 
 # Time units
@@ -23,6 +23,13 @@ Sector = Annotated[int, 'sector'] # As per Subnomicon: 1000 Pieces or ~ 1 GiB
 
 # Misc units
 Percentage = Annotated[float, '%']
+
+
+class SlashAffectedBalances(NamedTuple):
+    operators_balance: Credits
+    fund_balance: Credits
+    holders_balance: Credits
+    burnt_balance: Credits
 
 
 # Taxonomy:
@@ -72,6 +79,7 @@ class SubspaceModelParams(TypedDict):
 
     # Mechanisms to be determined
     issuance_function: Callable[[SubspaceModelState], CreditsPerDay]
+    slash_function: Callable[[SubspaceModelState], SlashAffectedBalances]
 
     # Implementation parameters
     sector_size_in_bytes: int
@@ -89,6 +97,10 @@ class SubspaceModelParams(TypedDict):
     farmer_tax_on_compute_priority_fees: Percentage
     operator_tax_on_compute_revenue: Percentage
 
+    # Behavioral Parameters
+    operator_balance_stake_per_ts: Percentage
+    nominator_balance_stake_per_ts: Percentage
+
     # Environmental Parameters
     avg_base_fee: Credits
     std_base_fee: Credits
@@ -102,4 +114,5 @@ class SubspaceModelParams(TypedDict):
     std_transaction_size: Bytes
     min_transaction_size: Bytes
     avg_transaction_count: int
+    avg_slash_per_day: int # NOTE: tbc
     
