@@ -74,6 +74,13 @@ def p_issuance_reward(params: SubspaceModelParams, _2, _3, state: SubspaceModelS
     """
     issuance_per_day = params['issuance_function'](state)
     reward = issuance_per_day * state['delta_days']
+
+    # Make sure that the protocol has tokens to issue
+    if reward > state['reward_issuance_balance']:
+        reward = state['reward_issuance_balance']
+    else:
+        pass
+
     return {'block_reward': reward, 'reward_issuance_balance': -reward}
 
 
