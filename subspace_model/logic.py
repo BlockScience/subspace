@@ -120,7 +120,7 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     timestep_in_seconds = params['timestep_in_days'] * (24 * 60 * 60)
     archival_count =  timestep_in_seconds / (params['block_time_in_seconds'] * params['archival_duration_in_blocks'])
     new_bytes = archival_count * params['archive_size_in_bytes'] 
-    return {'commit_size_in_bytes': new_bytes}
+    return {'history_size_in_bytes': new_bytes}
 
 def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
@@ -192,7 +192,7 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     
      # HACK: lack of holders balance is handled by capping the total fees paid
     total_fees = base_fees + priority_fees
-    eff_total_fees = min(total_fees, state['holders_balance'])
+    eff_total_fees = min(total_fees, state['holders_balance'] * 2)
     eff_scale = eff_total_fees / total_fees
 
     eff_base_fees = base_fees * eff_scale
