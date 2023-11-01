@@ -96,7 +96,6 @@ class SubspaceModelParams(TypedDict):
     # Slash Parameters
     slash_to_fund: Percentage
     slash_to_holders: Percentage
-    slash_to_operators: Percentage
 
     # Behavioral Parameters
     operator_balance_stake_per_ts: Percentage
