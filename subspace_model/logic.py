@@ -115,40 +115,37 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     new_bytes = archival_count * params['archive_size_in_bytes'] 
     return {'commit_size_in_bytes': new_bytes}
 
-def s_average_base_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Roughly inspired by ETH
-    TODO: finalize
+    Simulate the ts-average base fee during an timestep through
+    a Gaussian process.
     """
-    return ('average_base_fee', max(norm.rvs(35, 5), 0))
+    return ('average_base_fee', max(norm.rvs(params['avg_base_fee'], params['std_base_fee']), params['min_base_fee']))
 
-def s_average_priority_fee(_1, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_priority_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Roughly inspired by ETH
-    TODO: finalize
+    Simulate the ts-average priority fee during an timestep through
+    a Gaussian process.
     """
-    return ('average_priority_fee', max(norm.rvs(5, 5), 0))
+    return ('average_priority_fee', max(norm.rvs(params['avg_priority_fee'], params['std_priority_fee']), 0))
 
-def s_average_compute_units(_1, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_compute_units(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Roughly inspired by https://coinmetrics.io/the-ethereum-gas-report/
-    TODO: finalize
+    Simulate the ts-average compute units per transaction through a Gaussian process.
     """
-    return ('average_compute_units', max(norm.rvs(50_000, 20_000), 5_000))
+    return ('average_compute_units', max(norm.rvs(params['avg_compute_units_per_tx'], params['std_compute_units_per_tx']), params['min_compute_units_per_tx']))
 
-def s_average_transaction_size(_1, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_transaction_size(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Arbitrary assumption
-    TODO: finalize
+    Simulate the ts-average transaction size through a Gaussian process.
     """
-    return ('average_transaction_size', max(norm.rvs(50_000, 20_000), 5_000))
+    return ('average_transaction_size', max(norm.rvs(params['avg_transaction_size'], params['std_transaction_size']), params['min_transaction_size']))
 
-def s_transaction_count(_1, _2, _3, _4, _5) -> VariableUpdate:
+def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Arbitrary assumption
-    TODO: finalize
+    Simulate the ts-average transaction size through a Poisson process.
     """
-    return ('transaction_count', max(poisson.rvs(1),0))
+    return ('transaction_count', max(poisson.rvs(params['avg_transaction_count']),0))
 
 ## Compute & Operator Fees
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
