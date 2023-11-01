@@ -229,11 +229,11 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
 
 def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-
+    NOTE: this assumes that operators and nominators will always
+    stake a given % of their free balance every timestep.
     """
-    # TODO: parametrize
-    operator_stake = state['operators_balance'] * 0.5
-    nominator_stake = state['nominators_balance'] * 0.5
+    operator_stake = state['operators_balance'] * params['operator_balance_stake_per_ts']
+    nominator_stake = state['nominators_balance'] * params['nominator_balance_stake_per_ts']
     total_stake = operator_stake + nominator_stake
 
     return {'operators_balance': -operator_stake,
