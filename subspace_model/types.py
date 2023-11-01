@@ -33,6 +33,11 @@ class SubspaceModelState(TypedDict):
     days_passed: Days
     delta_days: Days
 
+    # Metrics
+    circulating_supply: Credits
+    user_supply: Credits
+    issued_supply: Credits
+
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
 
