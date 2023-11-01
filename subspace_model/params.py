@@ -92,8 +92,8 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_holders=0.05,
 
     # Behavioral Parameters
-    operator_balance_stake_per_ts=0.5,
-    nominator_balance_stake_per_ts=0.5,
+    operator_stake_per_ts=0.5,
+    nominator_stake_per_ts=0.5,
 
     # Environmental Parameters
     avg_base_fee=30,
