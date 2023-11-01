@@ -194,17 +194,19 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 
 def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: implement
     """
 
     slash_count = poisson.rvs(params['avg_slash_per_day'])
-    avg_slash_amount = [el * slash_count 
-                        for el in params['slash_function'](state)]
-    # TODO
-    return {'operators_balance': 0.0, 
-            'fund_balance': 0.0, 
-            'holders_balance': 0.0, 
-            'burnt_balance': 0.0} 
+    slash_value = slash_count * params['slash_function'](state)
+
+    slash_to_fund = slash_value * params['slash_to_fund']
+    slash_to_holders = slash_value * params['slash_to_holders']
+    slash_to_burn = slash_value - (slash_to_fund + slash_to_holders)
+
+    return {'operators_balance': -slash_value, 
+            'fund_balance': slash_to_fund, 
+            'holders_balance': slash_to_holders, 
+            'burnt_balance': slash_to_burn} 
 
 def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
