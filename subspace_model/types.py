@@ -37,6 +37,7 @@ class SubspaceModelState(TypedDict):
     circulating_supply: Credits
     user_supply: Credits
     issued_supply: Credits
+    sum_of_stocks: Credits
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
@@ -105,6 +106,10 @@ class SubspaceModelParams(TypedDict):
     # Behavioral Parameters
     operator_stake_per_ts: Percentage
     nominator_stake_per_ts: Percentage
+    transfer_farmer_to_holder_per_day: Percentage
+    transfer_operator_to_holder_per_day: Percentage
+    transfer_holder_to_nominator_per_day: Percentage
+    transfer_holder_to_operator_per_day: Percentage
 
     # Environmental Parameters
     avg_base_fee: Credits

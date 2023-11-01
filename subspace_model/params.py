@@ -25,6 +25,7 @@ INITIAL_STATE = SubspaceModelState(
     circulating_supply=nan,
     user_supply=nan,
     issued_supply=nan,
+    sum_of_stocks=nan,
 
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0, # How much %/day of DSF's goes to farmers
@@ -46,8 +47,8 @@ INITIAL_STATE = SubspaceModelState(
 
     # Variables
     block_reward=nan,
-    history_size_in_bytes=0.0,
-    commit_size_in_bytes=0.0,
+    history_size_in_bytes=0,
+    commit_size_in_bytes=0,
     allocated_tokens=0.0,
 
     # Environmental Variables
@@ -63,10 +64,10 @@ INITIAL_STATE = SubspaceModelState(
 
 
 def DEFAULT_ISSUANCE_FUNCTION(state: SubspaceModelState):
-    return 100 # TODO
+    return state['reward_issuance_balance'] * 0.02 # HACK
 
 def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
-    return 1.0 # TODO
+    return state['staking_pool_balance'] * 0.01 # HACK
 
 SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
@@ -97,8 +98,12 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_holders=0.05,
 
     # Behavioral Parameters
-    operator_stake_per_ts=0.0,
-    nominator_stake_per_ts=0.0,
+    operator_stake_per_ts=0.2, # TODO
+    nominator_stake_per_ts=0.5, # TODO
+    transfer_farmer_to_holder_per_day=0.3, # TODO
+    transfer_operator_to_holder_per_day=0.3, # TODO
+    transfer_holder_to_nominator_per_day=0.1, # TODO
+    transfer_holder_to_operator_per_day=0.05, # TODO
 
     # Environmental Parameters
     avg_base_fee=30,
