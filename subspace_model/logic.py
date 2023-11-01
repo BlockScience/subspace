@@ -72,7 +72,8 @@ def p_issuance_reward(params: SubspaceModelParams, _2, _3, state: SubspaceModelS
     """
     Farmer rewards that originates from protocol issuance.
     """
-    reward = params['issuance_function'](state)
+    issuance_per_day = params['issuance_function'](state)
+    reward = issuance_per_day * state['delta_days']
     return {'block_reward': reward, 'reward_issuance_balance': -reward}
 
 

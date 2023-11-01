@@ -11,6 +11,7 @@ Year = Annotated[float, "year"]  # Number of years
 # Measurement units
 Credits = Annotated[float, "SSC"] 
 CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
+CreditsPerDay = Annotated[float, 'SSC/day']
 ComputeUnits = Annotated[float, 'CU']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
 ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
@@ -70,7 +71,7 @@ class SubspaceModelParams(TypedDict):
     timestep_in_days: Days
 
     # Mechanisms to be determined
-    issuance_function: Callable[[SubspaceModelState], Credits]
+    issuance_function: Callable[[SubspaceModelState], CreditsPerDay]
 
     # Implementation parameters
     sector_size_in_bytes: int
