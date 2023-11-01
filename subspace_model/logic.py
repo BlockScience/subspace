@@ -188,7 +188,10 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     fees_to_farmers = priority_fees * params['compute_fees_to_farmers']
     fees_to_pool = base_fees + (priority_fees - fees_to_farmers)
 
-    nominators_share = state['nominator_pool_shares'] / (state['operator_pool_shares'] + state['nominator_pool_shares'])
+    denominator = (state['operator_pool_shares'] + state['nominator_pool_shares'])
+    if denominator == 0:
+        denominator = 1/2
+    nominators_share = state['nominator_pool_shares'] / denominator
 
     fees_to_nominators = fees_to_pool * nominators_share * (1 - params['compute_fees_tax_to_operators'])
     fees_to_operators = fees_to_pool - fees_to_nominators
@@ -254,8 +257,8 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     total_stake = operator_stake + nominator_stake
 
     return {'operators_balance': -operator_stake,
-            'operators_pool_share': operator_stake,
-            'nominators_pool_share': nominator_stake,
+            'operator_pool_shares': operator_stake,
+            'nominator_pool_shares': nominator_stake,
             'nominators_balance': -nominator_stake,
             'staking_pool_balance': total_stake}
 

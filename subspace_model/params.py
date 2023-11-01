@@ -91,6 +91,10 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_fund=0.0,
     slash_to_holders=0.05,
 
+    # Behavioral Parameters
+    operator_balance_stake_per_ts=0.5,
+    nominator_balance_stake_per_ts=0.5,
+
     # Environmental Parameters
     avg_base_fee=30,
     std_base_fee=5,
@@ -102,6 +106,8 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     min_compute_units_per_tx=10_000, # TODO
     avg_transaction_size=1_000, # TODO
     std_transaction_size=5_000, # TODO
+    min_transaction_size=100, # TODO
+    avg_transaction_count=30, # TODO
     avg_slash_per_day=1, # TODO
     avg_new_sectors_per_day=30, # TODO
     std_new_sectors_per_day=30 # TODO
