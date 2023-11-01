@@ -98,8 +98,8 @@ class SubspaceModelParams(TypedDict):
     slash_to_holders: Percentage
 
     # Behavioral Parameters
-    operator_balance_stake_per_ts: Percentage
-    nominator_balance_stake_per_ts: Percentage
+    operator_stake_per_ts: Percentage
+    nominator_stake_per_ts: Percentage
 
     # Environmental Parameters
     avg_base_fee: Credits

@@ -252,8 +252,8 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
     TODO: enforce minimum staking amounts
     """
-    operator_stake = state['operators_balance'] * params['operator_balance_stake_per_ts']
-    nominator_stake = state['nominators_balance'] * params['nominator_balance_stake_per_ts']
+    operator_stake = state['operators_balance'] * params['operator_stake_per_ts']
+    nominator_stake = state['nominators_balance'] * params['nominator_stake_per_ts']
     total_stake = operator_stake + nominator_stake
 
     return {'operators_balance': -operator_stake,
