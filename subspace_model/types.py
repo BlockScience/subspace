@@ -1,4 +1,4 @@
-from typing import Annotated, TypedDict, Union
+from typing import Annotated, TypedDict, Union, Callable
 from dataclasses import dataclass
 
 # Time units
@@ -69,6 +69,9 @@ class SubspaceModelParams(TypedDict):
     label: str
     timestep_in_days: Days
 
+    # Mechanisms to be determined
+    issuance_function: Callable[[SubspaceModelState], Credits]
+
     # Implementation parameters
     sector_size_in_bytes: int
     block_time_in_seconds: Seconds
@@ -79,14 +82,9 @@ class SubspaceModelParams(TypedDict):
     reward_proposer_share: Percentage
     max_credit_supply: Credits
     
-
     # Fees & Taxes
     fund_tax_on_proposer_reward: Percentage
     fund_tax_on_storage_fees: Percentage
     farmer_tax_on_compute_priority_fees: Percentage
     operator_tax_on_compute_revenue: Percentage
-
-class SubspaceModelSweepParams(TypedDict):
-    label: list[str]
-    timestep_in_days: list[Days]
     

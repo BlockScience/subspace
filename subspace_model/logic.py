@@ -68,12 +68,11 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
     reward = state['fund_balance'] * dsf_share
     return {'block_reward': reward, 'fund_balance': -reward}
 
-def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
+def p_issuance_reward(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->  Signal:
     """
     Farmer rewards that originates from protocol issuance.
-    TODO: implement the correct form
     """
-    reward = state['reward_issuance_balance'] * 0.01
+    reward = params['issuance_function'](state)
     return {'block_reward': reward, 'reward_issuance_balance': -reward}
 
 
