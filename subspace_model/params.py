@@ -109,17 +109,22 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     avg_base_fee=30,
     std_base_fee=5,
     min_base_fee=1,
+
     avg_priority_fee=5,
     std_priority_fee=10,
-    avg_compute_units_per_tx=50_000, # TODO
-    std_compute_units_per_tx=20_000, # TODO
-    min_compute_units_per_tx=10_000, # TODO
+
+    avg_compute_units_per_tx=1_000, # TODO
+    std_compute_units_per_tx=1_000, # TODO
+    min_compute_units_per_tx=10, # TODO
+
     avg_transaction_size=1_000, # TODO
     std_transaction_size=5_000, # TODO
+
     min_transaction_size=100, # TODO
     avg_transaction_count=30, # TODO
+
     avg_slash_per_day=1, # TODO
-    avg_new_sectors_per_day=30, # TODO
-    std_new_sectors_per_day=30 # TODO
+    avg_new_sectors_per_day=700, # TODO
+    std_new_sectors_per_day=200 # TODO
 
 )
