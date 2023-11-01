@@ -88,4 +88,18 @@ class SubspaceModelParams(TypedDict):
     fund_tax_on_storage_fees: Percentage
     farmer_tax_on_compute_priority_fees: Percentage
     operator_tax_on_compute_revenue: Percentage
+
+    # Environmental Parameters
+    avg_base_fee: Credits
+    std_base_fee: Credits
+    min_base_fee: Credits
+    avg_priority_fee: Credits
+    std_priority_fee: Credits
+    avg_compute_units_per_tx: ComputeUnits
+    std_compute_units_per_tx: ComputeUnits
+    min_compute_units_per_tx: ComputeUnits
+    avg_transaction_size: Bytes
+    std_transaction_size: Bytes
+    min_transaction_size: Bytes
+    avg_transaction_count: int
     
