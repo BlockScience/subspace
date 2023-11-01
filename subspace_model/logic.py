@@ -169,12 +169,16 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
+    # TODO: norm to holders balance
+
     # Fee distribution
     fees_to_fund = params['fund_tax_on_storage_fees'] * total_storage_fees
     fees_to_farmers = total_storage_fees - fees_to_fund
+    
 
     return {'farmers_balance': fees_to_farmers,
             'fund_balance': fees_to_fund,
+            'holders_balance': -total_storage_fees,
             'storage_fee_volume': total_storage_fees}
 
 
@@ -184,6 +188,8 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     compute_units = state['average_compute_units'] * state['transaction_count']
     base_fees = state['average_base_fee'] * compute_units
     priority_fees = state['average_priority_fee'] * compute_units
+    
+    # TODO: norm to holders balance
 
     fees_to_farmers = priority_fees * params['compute_fees_to_farmers']
     fees_to_pool = base_fees + (priority_fees - fees_to_farmers)
@@ -200,6 +206,7 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     return {'farmers_balance': fees_to_farmers,
              'nominators_balance': fees_to_nominators,
              'operators_balance': fees_to_operators,
+             'holders_balance': -total_fees,
              'compute_fee_volume': total_fees}
 
 def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:

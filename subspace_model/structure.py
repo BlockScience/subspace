@@ -79,6 +79,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'holders_balance': add_suf,
             'farmers_balance': add_suf,
             'fund_balance': add_suf,
+            'holders_balance': add_suf,
             'storage_fee_volume': replace_suf
         }
     },
@@ -92,6 +93,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'farmers_balance': add_suf,
             'operators_balance': add_suf,
             'nominators_balance': add_suf,
+            'holders_balance': add_suf,
             'compute_fee_volume': replace_suf
         }
     },
@@ -145,6 +147,16 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'nominators_balance': add_suf,
             'holders_balance': add_suf,
             'farmers_balance': add_suf
+        }
+    }, {
+        'label': 'Metrics',
+        'policies': {
+
+        }, 
+        'variables': {
+            'circulating_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', circulating_supply(s)),
+            'user_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', user_supply(s)),
+            'issued_supply': lambda _1, _2, _3, s, _5: ('circulating_supply', issued_supply(s))
         }
     }
 ]

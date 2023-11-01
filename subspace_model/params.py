@@ -21,6 +21,11 @@ INITIAL_STATE = SubspaceModelState(
     days_passed=0,
     delta_days=0,
 
+    # Metrics
+    circulating_supply=nan,
+    user_supply=nan,
+    issued_supply=nan,
+
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0, # How much %/day of DSF's goes to farmers
 
@@ -66,7 +71,7 @@ def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
 SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
     timestep_in_days=TIMESTEP_IN_DAYS,
-
+    
     # Mechanisms TBD
     issuance_function=DEFAULT_ISSUANCE_FUNCTION, # TODO
     slash_function=DEFAULT_SLASH_FUNCTION, # TODO
@@ -92,8 +97,8 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_holders=0.05,
 
     # Behavioral Parameters
-    operator_stake_per_ts=0.5,
-    nominator_stake_per_ts=0.5,
+    operator_stake_per_ts=0.0,
+    nominator_stake_per_ts=0.0,
 
     # Environmental Parameters
     avg_base_fee=30,
