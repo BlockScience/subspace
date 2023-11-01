@@ -62,13 +62,15 @@ def s_days_passed(_1, _2, _3,
 
 def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: implement the correct form
+    Farmer rewards that originates from the DSF.
     """
-    reward = state['fund_balance'] * 0.01
+    dsf_share = state['dsf_relative_disbursal_per_day'] ** state['delta_days']
+    reward = state['fund_balance'] * dsf_share
     return {'block_reward': reward, 'fund_balance': -reward}
 
 def p_issuance_reward(_1, _2, _3, state: SubspaceModelState) ->  Signal:
     """
+    Farmer rewards that originates from protocol issuance.
     TODO: implement the correct form
     """
     reward = state['reward_issuance_balance'] * 0.01

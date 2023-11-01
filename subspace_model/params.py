@@ -21,6 +21,10 @@ INITIAL_STATE = SubspaceModelState(
     days_passed=0,
     delta_days=0,
 
+    # Governance Variables
+    dsf_relative_disbursal_per_day=0.0, # How much %/day of DSF's goes to farmers
+
+    # Stock Balances
     reward_issuance_balance=ISSUANCE_FOR_FARMERS,
     other_issuance_balance=MAX_CREDIT_ISSUANCE-ISSUANCE_FOR_FARMERS,
     operators_balance=0.0,
@@ -31,11 +35,13 @@ INITIAL_STATE = SubspaceModelState(
     fund_balance=0.0,
     burnt_balance=0.0,
 
+    # Variables
     block_reward=nan,
     history_size_in_bytes=0.0,
     commit_size_in_bytes=0.0,
     allocated_tokens=0.0,
 
+    # Environmental Variables
     average_base_fee=nan,
     average_priority_fee=nan,
     average_compute_units=nan,

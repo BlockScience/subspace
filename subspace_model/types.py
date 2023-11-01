@@ -33,6 +33,9 @@ class SubspaceModelState(TypedDict):
     days_passed: Days
     delta_days: Days
 
+    # Governance Variables
+    dsf_relative_disbursal_per_day: Percentage
+
     # Stocks
     reward_issuance_balance: Credits
     other_issuance_balance: Credits
