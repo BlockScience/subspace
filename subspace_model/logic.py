@@ -105,13 +105,13 @@ def p_operator_reward(_1, _2, _3, _4) ->  Signal:
 
 ## Environmental processes
 
-def p_commit_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_pledge_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     Decide amount of commited bytes to be added
     """
     new_sectors = int(max(norm.rvs(params['avg_new_sectors_per_day'], params['std_new_sectors_per_day']), 0))
     new_bytes = new_sectors * params['sector_size_in_bytes']
-    return {'commit_size_in_bytes': new_bytes}
+    return {'space_pledged': new_bytes}
 
 def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
@@ -160,7 +160,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     """
     # Input
     total_issued_credit_supply = issued_supply(state)
-    total_space_pledged = state['commit_size_in_bytes']
+    total_space_pledged = state['space_pledged']
     blockchain_size = state['history_size_in_bytes']
 
     # Compute total storage fees during this timestep

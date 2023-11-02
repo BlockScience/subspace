@@ -48,7 +48,7 @@ INITIAL_STATE = SubspaceModelState(
     # Variables
     block_reward=nan,
     history_size_in_bytes=0,
-    commit_size_in_bytes=0,
+    space_pledged=0,
     allocated_tokens=0.0,
 
     # Environmental Variables
