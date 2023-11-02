@@ -136,11 +136,11 @@ def s_average_priority_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> Varia
     """
     return ('average_priority_fee', max(norm.rvs(params['avg_priority_fee'], params['std_priority_fee']), 0))
 
-def s_average_compute_units(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_compute_weights(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
     Simulate the ts-average compute units per transaction through a Gaussian process.
     """
-    return ('average_compute_units', max(norm.rvs(params['avg_compute_units_per_tx'], params['std_compute_units_per_tx']), params['min_compute_units_per_tx']))
+    return ('average_compute_weights', max(norm.rvs(params['avg_compute_weights_per_tx'], params['std_compute_weights_per_tx']), params['min_compute_weights_per_tx']))
 
 def s_average_transaction_size(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
@@ -186,9 +186,9 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     """
-    compute_units = state['average_compute_units'] * state['transaction_count']
-    base_fees = state['average_base_fee'] * compute_units
-    priority_fees = state['average_priority_fee'] * compute_units
+    compute_weights = state['average_compute_weights'] * state['transaction_count']
+    base_fees = state['average_base_fee'] * compute_weights
+    priority_fees = state['average_priority_fee'] * compute_weights
     
      # HACK: lack of holders balance is handled by capping the total fees paid
     total_fees = base_fees + priority_fees
