@@ -66,7 +66,7 @@ class SubspaceModelState(TypedDict):
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
     average_priority_fee: ShannonPerComputeUnits
-    average_compute_units: ComputeUnits
+    average_compute_weights: ComputeUnits
     average_transaction_size: Bytes
     transaction_count: int
 
@@ -117,9 +117,9 @@ class SubspaceModelParams(TypedDict):
     min_base_fee: Credits
     avg_priority_fee: Credits
     std_priority_fee: Credits
-    avg_compute_units_per_tx: ComputeUnits
-    std_compute_units_per_tx: ComputeUnits
-    min_compute_units_per_tx: ComputeUnits
+    avg_compute_weights_per_tx: ComputeUnits
+    std_compute_weights_per_tx: ComputeUnits
+    min_compute_weights_per_tx: ComputeUnits
     avg_transaction_size: Bytes
     std_transaction_size: Bytes
     min_transaction_size: Bytes

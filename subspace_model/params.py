@@ -54,7 +54,7 @@ INITIAL_STATE = SubspaceModelState(
     # Environmental Variables
     average_base_fee=nan,
     average_priority_fee=nan,
-    average_compute_units=nan,
+    average_compute_weights=nan,
     average_transaction_size=nan,
     transaction_count=nan,
 
@@ -113,9 +113,9 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     avg_priority_fee=5,
     std_priority_fee=10,
 
-    avg_compute_units_per_tx=1_000, # TODO
-    std_compute_units_per_tx=1_000, # TODO
-    min_compute_units_per_tx=10, # TODO
+    avg_compute_weights_per_tx=1_000, # TODO
+    std_compute_weights_per_tx=1_000, # TODO
+    min_compute_weights_per_tx=10, # TODO
 
     avg_transaction_size=1_000, # TODO
     std_transaction_size=5_000, # TODO
