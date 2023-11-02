@@ -71,6 +71,7 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
 def p_issuance_reward(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->  Signal:
     """
     Farmer rewards that originates from protocol issuance.
+    XXX: there's a hard cap on how much can be issued.
     """
     issuance_per_day = params['issuance_function'](state)
     reward = issuance_per_day * state['delta_days']
@@ -97,7 +98,7 @@ def p_split_reward(params: SubspaceModelParams, _2, _3,  state: SubspaceModelSta
 def p_operator_reward(_1, _2, _3, _4) ->  Signal:
     """
     Protocol issued rewards to Staked Operators.
-    NOTE: Assumed to be zero.
+    XXX: Assumed to be zero
     """
     reward = 0.0
     return {'other_issuance_balance': -reward, 'operators_balance': reward}
@@ -107,7 +108,10 @@ def p_operator_reward(_1, _2, _3, _4) ->  Signal:
 
 def p_pledge_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    Decide amount of commited bytes to be added
+    Decide amount of commited bytes to be added based on an
+    gaussian process.
+
+    XXX: depends on an stochastic process assumption.
     """
     new_sectors = int(max(norm.rvs(params['avg_new_sectors_per_day'], params['std_new_sectors_per_day']), 0))
     new_bytes = new_sectors * params['sector_size_in_bytes']
@@ -115,7 +119,8 @@ def p_pledge_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelSt
 
 def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    TODO: check if underlying assumptions are valid. 
+    TODO: check if underlying assumptions / terminology are valid. 
+    FIXME: homogenize terminology
     """
     timestep_in_seconds = params['timestep_in_days'] * (24 * 60 * 60)
     archival_count =  timestep_in_seconds / (params['block_time_in_seconds'] * params['archival_duration_in_blocks'])
@@ -126,6 +131,7 @@ def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableU
     """
     Simulate the ts-average base fee during an timestep through
     a Gaussian process.
+    XXX: depends on an stochastic process assumption.
     """
     return ('average_base_fee', max(norm.rvs(params['avg_base_fee'], params['std_base_fee']), params['min_base_fee']))
 
@@ -133,30 +139,36 @@ def s_average_priority_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> Varia
     """
     Simulate the ts-average priority fee during an timestep through
     a Gaussian process.
+    XXX: depends on an stochastic process assumption.
     """
     return ('average_priority_fee', max(norm.rvs(params['avg_priority_fee'], params['std_priority_fee']), 0))
 
 def s_average_compute_weight_per_tx(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
     Simulate the ts-average compute units per transaction through a Gaussian process.
+    XXX: depends on an stochastic process assumption.
     """
     return ('average_compute_weight_per_tx', max(norm.rvs(params['avg_compute_weights_per_tx'], params['std_compute_weights_per_tx']), params['min_compute_weights_per_tx']))
 
 def s_average_transaction_size(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Gaussian process.
+    XXX: depends on an stochastic process assumption.
     """
     return ('average_transaction_size', max(norm.rvs(params['avg_transaction_size'], params['std_transaction_size']), params['min_transaction_size']))
 
 def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Poisson process.
+    XXX: depends on an stochastic process assumption.
     """
     return ('transaction_count', max(poisson.rvs(params['avg_transaction_count']),0))
 
 ## Compute & Operator Fees
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    HACK: If holders balance is insufficient, then the amount of paid fees 
+    will be lower even though the transactions still go through.
     """
     # Input
     total_issued_credit_supply = issued_supply(state)
@@ -169,7 +181,6 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
-    # HACK: lack of holders balance is handled by capping the total fees paid
     eff_total_storage_fees = min(total_storage_fees, state['holders_balance'])
 
     # Fee distribution
@@ -185,12 +196,13 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 
 def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    HACK: If holders balance is insufficient, then the amount of paid fees 
+    will be lower even though the transactions still go through.
     """
     compute_weights = state['average_compute_weight_per_tx'] * state['transaction_count']
     base_fees = state['average_base_fee'] * compute_weights
     priority_fees = state['average_priority_fee'] * compute_weights
     
-     # HACK: lack of holders balance is handled by capping the total fees paid
     total_fees = base_fees + priority_fees
     eff_total_fees = min(total_fees, state['holders_balance'] * 2)
     eff_scale = eff_total_fees / total_fees
@@ -218,10 +230,11 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
 
 def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    XXX: depends on an stochastic process assumption.
     """
 
     slash_count = poisson.rvs(params['avg_slash_per_day'])
-    slash_value = min(slash_count * params['slash_function'](state), state['operators_balance']) # TODO: check
+    slash_value = min(slash_count * params['slash_function'](state), state['operators_balance'])
 
     slash_to_fund = slash_value * params['slash_to_fund']
     slash_to_holders = slash_value * params['slash_to_holders']
@@ -237,9 +250,10 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
     Impl notes: 30% of total. 
     22% to be unvested with 24mo and 8% to be unvested with 48mo.
     25% total to be unlocked after 12mo and linearly afterwards.
-    """
 
-    # TODO: parametrize / generalize
+    # TODO: parametrize / generalize the schedule
+    # TODO: what happens if there's less than 51% community owned?
+    """
     if state['days_passed'] < 365:
         allocated_tokens = 0.0
     elif state['days_passed'] >= 365:
@@ -261,9 +275,8 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
 
 def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
-    NOTE: this assumes that operators and nominators will always
+    XXX: this assumes that operators and nominators will always
     stake a given % of their free balance every timestep.
-
     TODO: enforce minimum staking amounts
     """
     operator_stake = state['operators_balance'] * params['operator_stake_per_ts']
@@ -279,6 +292,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
 def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
+    XXX: stakeholders will always transfer a give % of their balance every ts
     """
     delta_nominators = 0.0
     delta_holders = 0.0
