@@ -60,7 +60,7 @@ class SubspaceModelState(TypedDict):
     # Deterministic Variables
     block_reward: Credits
     history_size_in_bytes: Bytes
-    commit_size_in_bytes: Bytes
+    space_pledged: Bytes
     allocated_tokens: Credits
 
     # Stochastic Variables
