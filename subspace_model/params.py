@@ -54,7 +54,7 @@ INITIAL_STATE = SubspaceModelState(
     # Environmental Variables
     average_base_fee=nan,
     average_priority_fee=nan,
-    average_compute_weights=nan,
+    average_compute_weight_per_tx=nan,
     average_transaction_size=nan,
     transaction_count=nan,
 

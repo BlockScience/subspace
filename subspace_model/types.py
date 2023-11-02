@@ -66,7 +66,7 @@ class SubspaceModelState(TypedDict):
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
     average_priority_fee: ShannonPerComputeUnits
-    average_compute_weights: ComputeUnits
+    average_compute_weight_per_tx: ComputeUnits
     average_transaction_size: Bytes
     transaction_count: int
 
