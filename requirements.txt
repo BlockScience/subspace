@@ -1,5 +1,5 @@
-cadCAD
-cadCAD-tools==0.0.1.7
+cadCAD-legacy-devel
+cadCAD-tools
 millify
 numpy
 pandas

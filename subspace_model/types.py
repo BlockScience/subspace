@@ -88,6 +88,7 @@ class SubspaceModelParams(TypedDict):
     block_time_in_seconds: Seconds
     archival_duration_in_blocks: Blocks
     archive_size_in_bytes: Bytes
+    replication_factor: float
 
     # Economic Parameters
     reward_proposer_share: Percentage

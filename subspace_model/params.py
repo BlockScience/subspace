@@ -82,6 +82,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     block_time_in_seconds=BLOCK_TIME,
     archival_duration_in_blocks=ARCHIVAL_DEPTH,
     archive_size_in_bytes=128 * 1e6, # TODO
+    replication_factor=10,
 
     # Economic Parameters
     reward_proposer_share=0.0, # TODO
