@@ -26,6 +26,7 @@ INITIAL_STATE = SubspaceModelState(
     user_supply=nan,
     issued_supply=nan,
     sum_of_stocks=nan,
+    block_utilization=nan,
 
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0, # How much %/day of DSF's goes to farmers
@@ -83,6 +84,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     archival_duration_in_blocks=ARCHIVAL_DEPTH,
     archive_size_in_bytes=128 * 1e6, # TODO
     replication_factor=10,
+    max_block_size=3.75 * 1048576, # 3.75 MiB
 
     # Economic Parameters
     reward_proposer_share=0.0, # TODO
