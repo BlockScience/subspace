@@ -22,8 +22,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Environmental Processes',
         'ignore': False,
         'policies': {
-            'sector_onboarding': p_pledge_sectors,
-            'archival': p_archive
+            'sector_onboarding': p_pledge_sectors
         },
         'variables': {
             'average_base_fee': s_average_base_fee,
@@ -31,8 +30,17 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'average_compute_weight_per_tx': s_average_compute_weight_per_tx,
             'transaction_count': s_transaction_count,
             'average_transaction_size': s_average_transaction_size,
-            'space_pledged': add_suf,
-            'history_size': add_suf
+            'space_pledged': add_suf
+        }
+    },
+    {
+        'label': 'Archival Process',
+        'policies': {
+            'archival': p_archive
+        },
+        'variables': {
+            'history_size': add_suf,
+            'buffer_size': add_suf
         }
     },
     {
