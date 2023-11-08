@@ -174,10 +174,11 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     total_issued_credit_supply = issued_supply(state)
     total_space_pledged = state['space_pledged']
     blockchain_size = state['history_size_in_bytes']
+    replication_factor = params['replication_factor']
 
     # Compute total storage fees during this timestep
     # TODO: use average storage fee rather than immediate storage fee instead
-    storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - blockchain_size)
+    storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - replication_factor * blockchain_size)
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
