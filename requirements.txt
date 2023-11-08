@@ -1,4 +1,4 @@
-cadCAD-legacy-devel
+cadCAD
 cadCAD-tools==0.0.1.7
 millify
 numpy
