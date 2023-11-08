@@ -1,8 +1,8 @@
 from subspace_model.types import *
 from subspace_model.const import *
-from cadCAD_tools.types import Signal, VariableUpdate
+from cadCAD_tools.types import Signal, VariableUpdate # type: ignore
 from typing import Callable
-from scipy.stats import poisson, norm
+from scipy.stats import poisson, norm # type: ignore
 from subspace_model.metrics import *
 from random import randint
 
@@ -58,6 +58,18 @@ def s_days_passed(_1, _2, _3,
     """
     """
     return ('days_passed', signal['delta_days'] + state['days_passed'])
+
+def s_delta_blocks(params: SubspaceModelParams, 
+                        _2, 
+                        _3, 
+                        state: SubspaceModelState, 
+                        signal) -> VariableUpdate:
+    """
+    """
+    delta_seconds = signal['delta_days'] * (24 * 60 * 60)
+    delta_blocks = delta_seconds / params['block_time_in_seconds']
+    return ('delta_blocks', delta_blocks)
+
 
 ## Farmer Rewards ##
 
@@ -115,18 +127,28 @@ def p_pledge_sectors(params: SubspaceModelParams, _2, _3, state: SubspaceModelSt
     XXX: depends on an stochastic process assumption.
     """
     new_sectors = int(max(norm.rvs(params['avg_new_sectors_per_day'], params['std_new_sectors_per_day']), 0))
-    new_bytes = new_sectors * params['sector_size_in_bytes']
+    new_bytes = new_sectors * SECTOR_SIZE
     return {'space_pledged': new_bytes}
 
 def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     TODO: check if underlying assumptions / terminology are valid. 
+    TODO: revisit assumption on the supply & demand matching.
     FIXME: homogenize terminology
     """
-    timestep_in_seconds = params['timestep_in_days'] * (24 * 60 * 60)
-    archival_count =  timestep_in_seconds / (params['block_time_in_seconds'] * params['archival_duration_in_blocks'])
-    new_bytes = archival_count * params['archive_size_in_bytes'] 
-    return {'history_size_in_bytes': new_bytes}
+    realized_depth = state['delta_blocks']
+    segments_supply = realized_depth / params['archival_depth']
+    
+    tx_volume = state['transaction_count'] * state['average_transaction_size']
+    current_buffer = tx_volume + state['history_buffer']
+    segments_demand = current_buffer / params['archival_buffer_segment_size']
+
+    segments_being_archived = min(segments_supply, segments_demand)
+    new_buffer_bytes = -1 * SEGMENT_SIZE * segments_being_archived
+    new_history_bytes = SEGMENT_HISTORY_SIZE * segments_being_archived
+    
+    return {'history_size': new_history_bytes,
+            'buffer_size': new_buffer_bytes}
 
 def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
@@ -177,7 +199,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     # Input
     credit_supply = issued_supply(state)
     total_space_pledged = state['space_pledged']
-    blockchain_size = state['history_size_in_bytes']
+    blockchain_size = state['history_size']
     replication_factor = params['replication_factor']
 
     free_space = total_space_pledged - blockchain_size * replication_factor
