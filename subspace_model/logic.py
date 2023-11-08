@@ -1,4 +1,5 @@
 from subspace_model.types import *
+from subspace_model.const import *
 from cadCAD_tools.types import Signal, VariableUpdate
 from typing import Callable
 from scipy.stats import poisson, norm
@@ -169,16 +170,26 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     """
     HACK: If holders balance is insufficient, then the amount of paid fees 
     will be lower even though the transactions still go through.
+
+    References: 
+    - https://github.com/subspace/subspace/blob/53dca169379e65b4fb97b5c7753f5d00bded2ef2/crates/pallet-transaction-fees/src/lib.rs#L271
     """
     # Input
-    total_issued_credit_supply = issued_supply(state)
+    credit_supply = issued_supply(state)
     total_space_pledged = state['space_pledged']
     blockchain_size = state['history_size_in_bytes']
     replication_factor = params['replication_factor']
 
+    free_space = total_space_pledged - blockchain_size * replication_factor
+
+    if free_space > 0:
+        storage_fee_in_credits_per_bytes = credit_supply / free_space
+    else:
+        storage_fee_in_credits_per_bytes = credit_supply
+
     # Compute total storage fees during this timestep
     # TODO: use average storage fee rather than immediate storage fee instead
-    storage_fee_in_credits_per_bytes = total_issued_credit_supply / (total_space_pledged - replication_factor * blockchain_size)
+    
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
