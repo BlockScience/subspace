@@ -73,7 +73,7 @@ class SubspaceModelState(TypedDict):
     history_size: Bytes
     space_pledged: Bytes
     allocated_tokens: Credits
-    history_buffer: Bytes
+    buffer_size: Bytes
 
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
@@ -136,7 +136,7 @@ class SubspaceModelParams(TypedDict):
     avg_transaction_size: Bytes
     std_transaction_size: Bytes
     min_transaction_size: Bytes
-    avg_transaction_count: int
+    avg_transaction_count_per_day: float
     avg_slash_per_day: int # NOTE: tbc
     avg_new_sectors_per_day: float
     std_new_sectors_per_day: float

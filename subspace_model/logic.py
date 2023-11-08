@@ -5,6 +5,7 @@ from typing import Callable
 from scipy.stats import poisson, norm # type: ignore
 from subspace_model.metrics import *
 from random import randint
+from math import ceil, floor
 
 def generic_policy(_1, _2, _3, _4) -> dict:
     """Function to generate pass through policy
@@ -140,12 +141,15 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     segments_supply = realized_depth / params['archival_depth']
     
     tx_volume = state['transaction_count'] * state['average_transaction_size']
-    current_buffer = tx_volume + state['history_buffer']
+    new_buffer_bytes = tx_volume
+    current_buffer = new_buffer_bytes + state['buffer_size']
     segments_demand = current_buffer / params['archival_buffer_segment_size']
+    segments_being_archived = floor(int(min(segments_supply, segments_demand)))
 
-    segments_being_archived = min(segments_supply, segments_demand)
-    new_buffer_bytes = -1 * SEGMENT_SIZE * segments_being_archived
-    new_history_bytes = SEGMENT_HISTORY_SIZE * segments_being_archived
+    new_history_bytes = 0
+    if segments_being_archived > 0:
+        new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
+        new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
     
     return {'history_size': new_history_bytes,
             'buffer_size': new_buffer_bytes}
@@ -185,7 +189,7 @@ def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> Variable
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
     """
-    return ('transaction_count', max(poisson.rvs(params['avg_transaction_count']),0))
+    return ('transaction_count', max(poisson.rvs(params['avg_transaction_count_per_day']),0))
 
 ## Compute & Operator Fees
 def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:

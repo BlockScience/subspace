@@ -11,15 +11,15 @@ ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
-    delta_days=nan,
-    delta_blocks=nan,
+    delta_days=None,
+    delta_blocks=None,
 
     # Metrics
-    circulating_supply=nan,
-    user_supply=nan,
-    issued_supply=nan,
-    sum_of_stocks=nan,
-    block_utilization=nan,
+    circulating_supply=None,
+    user_supply=None,
+    issued_supply=None,
+    sum_of_stocks=None,
+    block_utilization=None,
 
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0, # How much %/day of DSF's goes to farmers
@@ -40,18 +40,18 @@ INITIAL_STATE = SubspaceModelState(
     operator_pool_shares=0.0,
 
     # Variables
-    block_reward=nan,
+    block_reward=None,
     history_size=0,
     space_pledged=0,
     allocated_tokens=0.0,
-    history_buffer=0,
+    buffer_size=0,
 
     # Environmental Variables
-    average_base_fee=nan,
-    average_priority_fee=nan,
-    average_compute_weight_per_tx=nan,
-    average_transaction_size=nan,
-    transaction_count=nan,
+    average_base_fee=None,
+    average_priority_fee=None,
+    average_compute_weight_per_tx=None,
+    average_transaction_size=None,
+    transaction_count=None,
 
     compute_fee_volume=0.0,
     storage_fee_volume=0.0
@@ -113,14 +113,13 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     std_compute_weights_per_tx=1_000, # TODO
     min_compute_weights_per_tx=10, # TODO
 
-    avg_transaction_size=1_000, # TODO
-    std_transaction_size=5_000, # TODO
-
+    avg_transaction_size=25_000, # TODO
+    std_transaction_size=25_000, # TODO
     min_transaction_size=100, # TODO
-    avg_transaction_count=30, # TODO
+    avg_transaction_count_per_day=0.1 * (24*60*60/BLOCK_TIME), # XXX: 0.1 tx per block
 
     avg_slash_per_day=1, # TODO
-    avg_new_sectors_per_day=700, # TODO
-    std_new_sectors_per_day=200 # TODO
+    avg_new_sectors_per_day=10, # TODO
+    std_new_sectors_per_day=5 # TODO
 
 )
