@@ -38,6 +38,7 @@ class SubspaceModelState(TypedDict):
     user_supply: Credits
     issued_supply: Credits
     sum_of_stocks: Credits
+    block_utilization: Percentage
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
@@ -89,6 +90,7 @@ class SubspaceModelParams(TypedDict):
     archival_duration_in_blocks: Blocks
     archive_size_in_bytes: Bytes
     replication_factor: float
+    max_block_size: Bytes
 
     # Economic Parameters
     reward_proposer_share: Percentage

@@ -328,3 +328,15 @@ def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) 
             'holders_balance': delta_holders, 
             'nominators_balance': delta_nominators, 
             'farmers_balance': delta_farmers} 
+
+def s_block_utilization(params: SubspaceModelParams, 
+                        _2, 
+                        _3, 
+                        state: SubspaceModelState, 
+                        _5) -> VariableUpdate:
+    """
+    """
+    size = state['transaction_count'] * state['average_transaction_size']
+    max_size = params['max_block_size']
+    value = size / max_size
+    return ('block_utilization', value)
