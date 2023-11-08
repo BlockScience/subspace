@@ -17,9 +17,18 @@ Shannon = Annotated[float, "Shannon"] # 1e-18 SSC
 ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
 
 Bytes = Annotated[int, 'bytes']
-Chunk = Annotated[int, 'chunk'] # As per Subnomicon: 1 chunk = 256 Bytes
-Piece = Annotated[int, 'piece'] # As per Subnomicon: 1 piece = 1 record + proof
-Sector = Annotated[int, 'sector'] # As per Subnomicon: 1000 Pieces or ~ 1 GiB
+Chunk = Annotated[int, 'chunk'] # As per Subnomicon: 1 chunk = 32 Bytes
+RawRecord = Annotated[Chunk, 'raw_record'] # As per Subnomicon: 2**15 Chunks (~1MB)
+Piece = Annotated[int, 'piece'] # As per Subnomicon: 1 piece = 1 record + commitment + witness
+Record = Annotated[Piece,'record'] # As per Subnomicon: a transformed raw record.
+Sector = Annotated[Piece, 'sector'] # As per Subnomicon: 1000 Pieces or ~ 1 GiB
+
+# As per Subnomicon: A collection of potential partial or full blocks.
+# Can be either a fixed-size portion of the Blockchain History
+# or a fixed-size portion of the Archived History
+Segment = Annotated[Bytes, 'segment'] 
+RecordedHistorySegment = Annotated[Record, 'record_segment']
+ArchivedHistorySegment = Annotated[Piece, 'archive_segment'] 
 
 # Misc units
 Percentage = Annotated[float, '%']
@@ -32,6 +41,7 @@ class SubspaceModelState(TypedDict):
     # Time Variables
     days_passed: Days
     delta_days: Days
+    delta_blocks: Blocks
 
     # Metrics
     circulating_supply: Credits
@@ -60,9 +70,10 @@ class SubspaceModelState(TypedDict):
 
     # Deterministic Variables
     block_reward: Credits
-    history_size_in_bytes: Bytes
+    history_size: Bytes
     space_pledged: Bytes
     allocated_tokens: Credits
+    history_buffer: Bytes
 
     # Stochastic Variables
     average_base_fee: ShannonPerComputeUnits
@@ -85,10 +96,9 @@ class SubspaceModelParams(TypedDict):
     slash_function: Callable[[SubspaceModelState], Credits]
 
     # Implementation parameters
-    sector_size_in_bytes: int
     block_time_in_seconds: Seconds
-    archival_duration_in_blocks: Blocks
-    archive_size_in_bytes: Bytes
+    archival_depth: Blocks
+    archival_buffer_segment_size: Bytes
     replication_factor: float
     max_block_size: Bytes
 

@@ -14,7 +14,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         },
         'variables': {
             'days_passed': s_days_passed,
-            'delta_days': replace_suf
+            'delta_days': replace_suf,
+            'delta_blocks': s_delta_blocks
         }
     },
     {
@@ -31,7 +32,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'transaction_count': s_transaction_count,
             'average_transaction_size': s_average_transaction_size,
             'space_pledged': add_suf,
-            'history_size_in_bytes': add_suf
+            'history_size': add_suf
         }
     },
     {

@@ -1,4 +1,5 @@
 from subspace_model.types import *
+from subspace_model.const import *
 from numpy import nan
 
 SIMULATION_DAYS = 700
@@ -6,20 +7,12 @@ TIMESTEP_IN_DAYS = 1
 TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 SAMPLES = 1
 
-# Constants
-MAX_CREDIT_ISSUANCE = 3_000_000_000 # TODO
-CHUNK_SIZE: Bytes = 32 # As per Subnomiconcal
-RECORD_SIZE: Chunk = 2 ** 15 # As per Subnomicon. 32*2^25 = 1 MiB.
-ARCHIVAL_DEPTH: Blocks = 100 # As per Subnomicon
-BLOCK_TIME: Seconds = 6 # As per Subnomicon. Approximate value.
-SECTOR_SIZE: Piece = 1000 # As per Subnomicon.
-
-
 ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
-    delta_days=0,
+    delta_days=nan,
+    delta_blocks=nan,
 
     # Metrics
     circulating_supply=nan,
@@ -48,9 +41,10 @@ INITIAL_STATE = SubspaceModelState(
 
     # Variables
     block_reward=nan,
-    history_size_in_bytes=0,
+    history_size=0,
     space_pledged=0,
     allocated_tokens=0.0,
+    history_buffer=0,
 
     # Environmental Variables
     average_base_fee=nan,
@@ -79,12 +73,11 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_function=DEFAULT_SLASH_FUNCTION, # TODO
 
     # Implementation params
-    sector_size_in_bytes=SECTOR_SIZE * RECORD_SIZE,
     block_time_in_seconds=BLOCK_TIME,
-    archival_duration_in_blocks=ARCHIVAL_DEPTH,
-    archive_size_in_bytes=128 * 1e6, # TODO
+    archival_depth=ARCHIVAL_DEPTH,
+    archival_buffer_segment_size=SEGMENT_SIZE,
     replication_factor=10,
-    max_block_size=3.75 * 1048576, # 3.75 MiB
+    max_block_size=3.75 * MIB_IN_BYTES, # 3.75 MiB
 
     # Economic Parameters
     reward_proposer_share=0.0, # TODO
