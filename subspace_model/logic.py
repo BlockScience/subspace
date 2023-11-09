@@ -400,7 +400,7 @@ def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) 
         delta_holders += delta
 
     # Operators to Holders
-    if state['farmers_balance'] > 0:
+    if state['operators_balance'] > 0:
         delta = state['operators_balance'] * params['transfer_operator_to_holder_per_day']
         delta_operators -= delta
         delta_holders += delta
