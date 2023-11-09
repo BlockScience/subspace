@@ -2,8 +2,19 @@
 
 A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 
-
 *A stock and flow description on the tokeconomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
+
+## Notes on modelling
+
+This Digital Twin is a Stock & Flow representation for the SSC token dynamics as they
+flow through Subspace's distinct mechanisms. Balances on the system are split
+across economic sectors of interest: Farmers, Operators, Nominators and Holders,
+each one with distinct admissible actions.
+
+The parameters, mechanisms and their constituint logic were based mainly on 
+Subnomicon and Token Economics design documents that were provided. Several
+assumptions were required to be done, and they're indicated with `XXX` tags
+through this repo.
 
 ## How to run it
 
