@@ -281,7 +281,7 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     pool_balance = state['staking_pool_balance']
     if pool_balance > 0:
         slash_count = poisson.rvs(params['avg_slash_per_day'])
-        slash_value = min(slash_count * params['slash_function'](state), state['operators_balance'])
+        slash_value = min(slash_count * params['slash_function'](state), pool_balance)
         if slash_value > 0:
             slash_to_fund = slash_value * params['slash_to_fund']
             slash_to_holders = slash_value * params['slash_to_holders']
