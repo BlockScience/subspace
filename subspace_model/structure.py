@@ -88,7 +88,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'holders_balance': add_suf,
             'farmers_balance': add_suf,
             'fund_balance': add_suf,
-            'holders_balance': add_suf,
             'storage_fee_volume': replace_suf
         }
     },
@@ -125,9 +124,10 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'slash': p_slash
         },
         'variables': {
-            'operators_balance': add_suf,
-            'fund_balance': add_suf,
+            'staking_pool_balance': add_suf,
+            'fund_balance': add_suf, 
             'holders_balance': add_suf,
+            'operator_pool_shares': add_suf,
             'burnt_balance': add_suf
         }
     },

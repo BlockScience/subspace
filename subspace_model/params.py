@@ -62,7 +62,7 @@ def DEFAULT_ISSUANCE_FUNCTION(state: SubspaceModelState):
     return state['reward_issuance_balance'] * 0.01 # HACK
 
 def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
-    return state['staking_pool_balance'] * 0.01 # HACK
+    return state['staking_pool_balance'] * 0.001 # HACK
 
 SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
@@ -120,7 +120,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     min_transaction_size=100, # TODO
     avg_transaction_count_per_day=1 * (24*60*60/BLOCK_TIME), # XXX: X tx per block
 
-    avg_slash_per_day=1, # TODO
+    avg_slash_per_day=0.1, # TODO
     avg_new_sectors_per_day=1_000, # TODO
     std_new_sectors_per_day=500 # TODO
 
