@@ -135,7 +135,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Staking / Unstaking',
         'ignore': False,
         'policies': {
-            'staking': p_staking
+            'staking': p_staking,
         },
         'variables': {
             'operators_balance': add_suf,
@@ -157,7 +157,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'holders_balance': add_suf,
             'farmers_balance': add_suf
         }
-    }, {
+    }, 
+    {
         'label': 'Metrics',
         'policies': {
 
