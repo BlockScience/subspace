@@ -335,15 +335,47 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     """
     XXX: this assumes that operators and nominators will always
     stake a given % of their free balance every timestep.
+    XXX: assumes an invariant product
     TODO: enforce minimum staking amounts
     """
-    operator_stake = state['operators_balance'] * params['operator_stake_per_ts']
-    nominator_stake = state['nominators_balance'] * params['nominator_stake_per_ts']
+    if state['operator_pool_shares'] > 0 or state['nominator_pool_shares'] > 0:
+        invariant = state['staking_pool_balance'] / (state['operator_pool_shares'] + state['nominator_pool_shares'])
+    elif state['operator_pool_shares'] == 0 and state['nominator_pool_shares'] == 0:
+        invariant = 1.0
+    else:
+        invariant = None
+
+    # Stake operation
+    operator_stake_fraction = norm.rvs(params['operator_avg_stake_per_ts'], params['operator_std_stake_per_ts'])
+    if operator_stake_fraction > 0:
+        operator_stake = state['operators_balance'] * operator_stake_fraction
+    elif invariant > 0:
+        operator_stake = state['operator_pool_shares']  * operator_stake_fraction / invariant
+    else:
+        operator_stake = 0.0
+
+    nominator_stake_fraction = norm.rvs(params['nominator_avg_stake_per_ts'], params['nominator_avg_stake_per_ts'])
+    if nominator_stake_fraction > 0:
+        nominator_stake = state['nominators_balance'] * nominator_stake_fraction
+    elif invariant > 0:
+        nominator_stake = state['nominator_pool_shares']* nominator_stake_fraction / invariant
+    else:
+        nominator_stake = 0.0
+
     total_stake = operator_stake + nominator_stake
 
+    # NOTE: for handling withdraws bigger than the pool itself.
+    if -total_stake > state['staking_pool_balance']:
+        old_total_stake = total_stake
+        total_stake = -state['staking_pool_balance']
+        scale = total_stake / old_total_stake
+        operator_stake *= scale
+        nominator_stake *= scale
+
+
     return {'operators_balance': -operator_stake,
-            'operator_pool_shares': operator_stake,
-            'nominator_pool_shares': nominator_stake,
+            'operator_pool_shares': operator_stake * invariant,
+            'nominator_pool_shares': nominator_stake * invariant,
             'nominators_balance': -nominator_stake,
             'staking_pool_balance': total_stake}
 

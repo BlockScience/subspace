@@ -117,8 +117,10 @@ class SubspaceModelParams(TypedDict):
     slash_to_holders: Percentage
 
     # Behavioral Parameters
-    operator_stake_per_ts: Percentage
-    nominator_stake_per_ts: Percentage
+    operator_avg_stake_per_ts: Percentage
+    nominator_avg_stake_per_ts: Percentage
+    operator_std_stake_per_ts: Percentage
+    nominator_std_stake_per_ts: Percentage
     transfer_farmer_to_holder_per_day: Percentage
     transfer_operator_to_holder_per_day: Percentage
     transfer_holder_to_nominator_per_day: Percentage

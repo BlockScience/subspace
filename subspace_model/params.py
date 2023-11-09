@@ -94,20 +94,22 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_holders=0.05,
 
     # Behavioral Parameters
-    operator_stake_per_ts=0.05, # TODO
-    nominator_stake_per_ts=0.05, # TODO
+    operator_avg_stake_per_ts=0.01, # TODO
+    nominator_avg_stake_per_ts=0.01, # TODO
+    operator_std_stake_per_ts=0.02, # TODO
+    nominator_std_stake_per_ts=0.02, #TODO
     transfer_farmer_to_holder_per_day=0.05, # TODO
     transfer_operator_to_holder_per_day=0.05, # TODO
     transfer_holder_to_nominator_per_day=0.01, # TODO
     transfer_holder_to_operator_per_day=0.01, # TODO
 
     # Environmental Parameters
-    avg_base_fee=15,
+    avg_base_fee=5,
     std_base_fee=15,
     min_base_fee=1,
 
-    avg_priority_fee=5,
-    std_priority_fee=10,
+    avg_priority_fee=3,
+    std_priority_fee=5,
 
     avg_compute_weights_per_tx=200, # TODO
     std_compute_weights_per_tx=500, # TODO
