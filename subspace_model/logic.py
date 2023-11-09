@@ -172,7 +172,7 @@ def s_average_priority_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> Varia
 
 def s_average_compute_weight_per_tx(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
     """
-    Simulate the ts-average compute units per transaction through a Gaussian process.
+    Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
     """
     return ('average_compute_weight_per_tx', max(norm.rvs(params['avg_compute_weights_per_tx'], params['std_compute_weights_per_tx']), params['min_compute_weights_per_tx']))
