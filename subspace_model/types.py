@@ -10,11 +10,11 @@ Year = Annotated[float, "year"]  # Number of years
 
 # Measurement units
 Credits = Annotated[float, "SSC"] 
-CreditsPerComputeUnits = Annotated[float, 'SSC/CU']
+CreditsPerComputeWeights = Annotated[float, 'SSC/CW']
 CreditsPerDay = Annotated[float, 'SSC/day']
-ComputeUnits = Annotated[float, 'CU']
+ComputeWeights = Annotated[float, 'CW']
 Shannon = Annotated[float, "Shannon"] # 1e-18 SSC 
-ShannonPerComputeUnits = Annotated[float, 'Shannon/CU']
+ShannonPerComputeWeights = Annotated[float, 'Shannon/CW']
 
 Bytes = Annotated[int, 'bytes']
 Chunk = Annotated[int, 'chunk'] # As per Subnomicon: 1 chunk = 32 Bytes
@@ -76,9 +76,9 @@ class SubspaceModelState(TypedDict):
     buffer_size: Bytes
 
     # Stochastic Variables
-    average_base_fee: ShannonPerComputeUnits
-    average_priority_fee: ShannonPerComputeUnits
-    average_compute_weight_per_tx: ComputeUnits
+    average_base_fee: ShannonPerComputeWeights
+    average_priority_fee: ShannonPerComputeWeights
+    average_compute_weight_per_tx: ComputeWeights
     average_transaction_size: Bytes
     transaction_count: int
 
@@ -132,9 +132,9 @@ class SubspaceModelParams(TypedDict):
     min_base_fee: Credits
     avg_priority_fee: Credits
     std_priority_fee: Credits
-    avg_compute_weights_per_tx: ComputeUnits
-    std_compute_weights_per_tx: ComputeUnits
-    min_compute_weights_per_tx: ComputeUnits
+    avg_compute_weights_per_tx: ComputeWeights
+    std_compute_weights_per_tx: ComputeWeights
+    min_compute_weights_per_tx: ComputeWeights
     avg_transaction_size: Bytes
     std_transaction_size: Bytes
     min_transaction_size: Bytes
