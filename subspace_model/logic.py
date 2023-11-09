@@ -219,7 +219,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
-    eff_total_storage_fees = min(total_storage_fees, state['holders_balance'])
+    eff_total_storage_fees = min(total_storage_fees, state['holders_balance'] / 2) # HACK
 
     # Fee distribution
     fees_to_fund = params['fund_tax_on_storage_fees'] * eff_total_storage_fees
@@ -242,7 +242,7 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     priority_fees = state['average_priority_fee'] * compute_weights
     
     total_fees = base_fees + priority_fees
-    eff_total_fees = min(total_fees, state['holders_balance'] * 2)
+    eff_total_fees = min(total_fees, state['holders_balance']) # HACK
     eff_scale = eff_total_fees / total_fees
 
     eff_base_fees = base_fees * eff_scale
@@ -271,36 +271,37 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     XXX: depends on an stochastic process assumption.
     TODO: validate if correct
     """
-    
+    slash_value = 0.0
+    slash_to_fund = 0.0
+    slash_to_holders = 0.0
+    operator_shares_to_subtract = 0.0
+    slash_to_burn = 0.0
+
     # XXX: no slash occurs if the pool balance is zero.
     pool_balance = state['staking_pool_balance']
     if pool_balance > 0:
-
         slash_count = poisson.rvs(params['avg_slash_per_day'])
         slash_value = min(slash_count * params['slash_function'](state), state['operators_balance'])
+        if slash_value > 0:
+            slash_to_fund = slash_value * params['slash_to_fund']
+            slash_to_holders = slash_value * params['slash_to_holders']
+            slash_to_burn = slash_value - (slash_to_fund + slash_to_holders)
 
-        slash_to_fund = slash_value * params['slash_to_fund']
-        slash_to_holders = slash_value * params['slash_to_holders']
-        slash_to_burn = slash_value - (slash_to_fund + slash_to_holders)
+            # XXX: we assume that the slash is aplied on the staking pool
+            # and that its effect is to reduce the operator shares
+            # by using an invariant product as a assumption.
+            
+            pool_balance_after = pool_balance - slash_value
+            total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
+            operator_shares_to_subtract = total_shares * (pool_balance_after / pool_balance - 1.0)
+        else:
+            slash_value = 0.0
 
-        # XXX: we assume that the slash is aplied on the staking pool
-        # and that its effect is to reduce the operator shares
-        # by using an invariant product as a assumption.
-        
-        pool_balance_after =  state['staking_pool_balance'] - slash_value
-        total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
-        operator_shares_to_subtract = total_shares * (pool_balance_after / pool_balance - 1)
-    else:
-        slash_value = 0.0
-        slash_to_fund = 0.0
-        slash_to_holders = 0.0
-        operator_shares_to_subtract = 0.0
-        slash_to_burn = 0.0
 
     return {'staking_pool_balance': -slash_value, 
             'fund_balance': slash_to_fund, 
             'holders_balance': slash_to_holders, 
-            'operator_pool_shares': -operator_shares_to_subtract,
+            'operator_pool_shares': operator_shares_to_subtract,
             'burnt_balance': slash_to_burn} 
 
 def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
@@ -340,8 +341,9 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     """
     if state['operator_pool_shares'] > 0 or state['nominator_pool_shares'] > 0:
         invariant = state['staking_pool_balance'] / (state['operator_pool_shares'] + state['nominator_pool_shares'])
+        #invariant = 1
     elif state['operator_pool_shares'] == 0 and state['nominator_pool_shares'] == 0:
-        invariant = 1.0
+        invariant = 1
     else:
         invariant = None
 
@@ -350,7 +352,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     if operator_stake_fraction > 0:
         operator_stake = state['operators_balance'] * operator_stake_fraction
     elif invariant > 0:
-        operator_stake = state['operator_pool_shares']  * operator_stake_fraction / invariant
+        operator_stake = state['operator_pool_shares']  * operator_stake_fraction * invariant
     else:
         operator_stake = 0.0
 
@@ -358,7 +360,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     if nominator_stake_fraction > 0:
         nominator_stake = state['nominators_balance'] * nominator_stake_fraction
     elif invariant > 0:
-        nominator_stake = state['nominator_pool_shares']* nominator_stake_fraction / invariant
+        nominator_stake = state['nominator_pool_shares'] * nominator_stake_fraction * invariant
     else:
         nominator_stake = 0.0
 
@@ -373,9 +375,11 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
         nominator_stake *= scale
 
 
+
+
     return {'operators_balance': -operator_stake,
-            'operator_pool_shares': operator_stake * invariant,
-            'nominator_pool_shares': nominator_stake * invariant,
+            'operator_pool_shares': operator_stake / invariant,
+            'nominator_pool_shares': nominator_stake / invariant,
             'nominators_balance': -nominator_stake,
             'staking_pool_balance': total_stake}
 
@@ -390,28 +394,27 @@ def p_transfers(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) 
     delta_operators = 0.0
 
     # Farmers to Holders
-    delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day']
-    delta_farmers -= delta
-    delta_holders += delta
+    if state['farmers_balance'] > 0:
+        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day']
+        delta_farmers -= delta
+        delta_holders += delta
 
     # Operators to Holders
-    delta = state['operators_balance'] * params['transfer_operator_to_holder_per_day']
-    delta_operators -= delta
-    delta_holders += delta
+    if state['farmers_balance'] > 0:
+        delta = state['operators_balance'] * params['transfer_operator_to_holder_per_day']
+        delta_operators -= delta
+        delta_holders += delta
 
     # Holder to Nominators
-    delta = state['holders_balance'] * params['transfer_holder_to_nominator_per_day']
-    delta_holders -= delta
-    delta_nominators += delta
+    if state['holders_balance'] > 0:
+        delta = state['holders_balance'] * params['transfer_holder_to_nominator_per_day']
+        delta_holders -= delta
+        delta_nominators += delta
 
-
-    # Holder to Operators
-    delta = state['holders_balance'] * params['transfer_holder_to_operator_per_day']
-    delta_holders -= delta
-    delta_operators += delta
-
-    # TODO: add check on the resulting balances?
-
+        # Holder to Operators
+        delta = state['holders_balance'] * params['transfer_holder_to_operator_per_day']
+        delta_holders -= delta
+        delta_operators += delta
     
     return {'operators_balance': delta_operators, 
             'holders_balance': delta_holders, 
