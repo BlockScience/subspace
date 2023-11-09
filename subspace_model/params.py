@@ -59,7 +59,7 @@ INITIAL_STATE = SubspaceModelState(
 
 
 def DEFAULT_ISSUANCE_FUNCTION(state: SubspaceModelState):
-    return state['reward_issuance_balance'] * 0.02 # HACK
+    return state['reward_issuance_balance'] * 0.01 # HACK
 
 def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
     return state['staking_pool_balance'] * 0.01 # HACK
@@ -77,7 +77,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     archival_depth=ARCHIVAL_DEPTH,
     archival_buffer_segment_size=SEGMENT_SIZE,
     replication_factor=10,
-    max_block_size=3.75 * MIB_IN_BYTES, # 3.75 MiB
+    max_block_size=int(3.75 * MIB_IN_BYTES), # 3.75 MiB
 
     # Economic Parameters
     reward_proposer_share=0.0, # TODO
@@ -94,32 +94,32 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_holders=0.05,
 
     # Behavioral Parameters
-    operator_stake_per_ts=0.2, # TODO
-    nominator_stake_per_ts=0.5, # TODO
-    transfer_farmer_to_holder_per_day=0.3, # TODO
-    transfer_operator_to_holder_per_day=0.3, # TODO
-    transfer_holder_to_nominator_per_day=0.1, # TODO
-    transfer_holder_to_operator_per_day=0.05, # TODO
+    operator_stake_per_ts=0.05, # TODO
+    nominator_stake_per_ts=0.05, # TODO
+    transfer_farmer_to_holder_per_day=0.05, # TODO
+    transfer_operator_to_holder_per_day=0.05, # TODO
+    transfer_holder_to_nominator_per_day=0.01, # TODO
+    transfer_holder_to_operator_per_day=0.01, # TODO
 
     # Environmental Parameters
-    avg_base_fee=30,
-    std_base_fee=5,
+    avg_base_fee=15,
+    std_base_fee=15,
     min_base_fee=1,
 
     avg_priority_fee=5,
     std_priority_fee=10,
 
-    avg_compute_weights_per_tx=1_000, # TODO
-    std_compute_weights_per_tx=1_000, # TODO
+    avg_compute_weights_per_tx=200, # TODO
+    std_compute_weights_per_tx=500, # TODO
     min_compute_weights_per_tx=10, # TODO
 
-    avg_transaction_size=25_000, # TODO
-    std_transaction_size=25_000, # TODO
+    avg_transaction_size=600_000, # TODO
+    std_transaction_size=100_000, # TODO
     min_transaction_size=100, # TODO
-    avg_transaction_count_per_day=0.1 * (24*60*60/BLOCK_TIME), # XXX: 0.1 tx per block
+    avg_transaction_count_per_day=1 * (24*60*60/BLOCK_TIME), # XXX: X tx per block
 
     avg_slash_per_day=1, # TODO
-    avg_new_sectors_per_day=10, # TODO
-    std_new_sectors_per_day=5 # TODO
+    avg_new_sectors_per_day=1_000, # TODO
+    std_new_sectors_per_day=500 # TODO
 
 )
