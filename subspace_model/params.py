@@ -85,9 +85,9 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
 
     # Fees & Taxes
     fund_tax_on_proposer_reward=0.0, # TODO
-    fund_tax_on_storage_fees=0.0, # TODO
+    fund_tax_on_storage_fees=1/10,
     compute_fees_to_farmers=0.0, # TODO
-    compute_fees_tax_to_operators=0.3, # TODO
+    compute_fees_tax_to_operators=0.05, # or `nomination_tax`
 
     # Slash Parameters
     slash_to_fund=0.0,
