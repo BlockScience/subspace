@@ -6,10 +6,10 @@ MIB_IN_BYTES = 1048576
 DAY_TO_SECONDS = (24 * 60 * 60)
 
 # Subspace Constants
-MAX_CREDIT_ISSUANCE = 3_000_000_000 # TODO: check if true
+MAX_CREDIT_ISSUANCE: Credits = 3_000_000_000 # TODO: check if true
 KZG_COMMITMENT: Bytes = 32 # As per Subnomicon
-WITNESS: Bytes = 32 # As per Subnomicon
-CHUNK_SIZE: Bytes = 32 # As per Subnomicon
+WITNESS: Bytes = 48 # As per Subnomicon
+CHUNK_SIZE: Bytes = 48 # As per Subnomicon
 ARCHIVAL_DEPTH: Blocks = 100 # As per Subnomicon
 BLOCK_TIME: Seconds = 6 # As per Subnomicon. Approximate value.
 RAW_RECORD_IN_CHUNKS: Chunk = 2 ** 15 # As per Subnomicon
