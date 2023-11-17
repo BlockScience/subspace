@@ -31,3 +31,58 @@ def standard_run() -> DataFrame:
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
+
+
+def sanity_check_run() -> DataFrame:
+    """Function which runs the cadCAD simulations
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 1
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
+
+
+
+def standard_stochastic_run() -> DataFrame:
+    """Function which runs the cadCAD simulations
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 30
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
