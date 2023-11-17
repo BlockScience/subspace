@@ -2,8 +2,12 @@ import pandas as pd
 from subspace_model.params import INITIAL_STATE
 from subspace_model.params import SINGLE_RUN_PARAMS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
-from cadCAD_tools import easy_run
+from subspace_model.types import SubspaceModelParams
+from subspace_model.const import *
+from subspace_model.params import ISSUANCE_FOR_FARMERS
+from cadCAD_tools import easy_run # type: ignore
 from pandas import DataFrame
+from copy import deepcopy
 
 
 def standard_run() -> DataFrame:
@@ -75,6 +79,107 @@ def standard_stochastic_run() -> DataFrame:
     # %%
     # Get the sweep params in the form of single length arrays
     sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
+
+
+def escrow_inclusion_sweep_run() -> DataFrame:
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 15
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+
+    param_set_1 = SINGLE_RUN_PARAMS
+    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
+    param_set_2['label'] = 'no-fund'
+    param_set_2['fund_tax_on_proposer_reward'] = 0.0
+    param_set_2['fund_tax_on_storage_fees'] = 0.0
+    param_set_2['slash_to_fund'] = 0.0
+
+    param_sets = [param_set_1, param_set_2]
+
+    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    for param_set in param_sets:
+        for k, v in param_set.items():
+            sweep_params[k].append(v)
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
+
+
+def issuance_sweep() -> DataFrame:
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 15
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+
+    param_set_1 = SINGLE_RUN_PARAMS
+    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
+    param_set_2['label'] = 'alternate-issuance-function'
+    param_set_2['issuance_function'] = lambda _: ISSUANCE_FOR_FARMERS / 5 * 365
+
+    param_sets = [param_set_1, param_set_2]
+
+    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    for param_set in param_sets:
+        for k, v in param_set.items():
+            sweep_params[k].append(v)
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
+
+
+def reward_split_sweep() -> DataFrame:
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 15
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+
+    param_set_1 = SINGLE_RUN_PARAMS
+    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
+    param_set_2['label'] = 'alternate-split'
+    param_set_2['reward_proposer_share'] = 0.5
+
+    param_sets = [param_set_1, param_set_2]
+
+    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    for param_set in param_sets:
+        for k, v in param_set.items():
+            sweep_params[k].append(v)
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE,
