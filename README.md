@@ -3,8 +3,11 @@
 A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 
 
-![](resources/stock-flow.png)
-*A stock and flow description on the tokeconomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
+![](resources/ssc-stock-flow.png)
+*A stock and flow description for SSC on the tokeconomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
+
+![](resources/shares-stock-flow.png)
+*A stock and flow description for Staking Pool Shares*
 
 ## Notes on modelling
 
