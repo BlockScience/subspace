@@ -54,7 +54,8 @@ INITIAL_STATE = SubspaceModelState(
     transaction_count=None,
 
     compute_fee_volume=0.0,
-    storage_fee_volume=0.0
+    storage_fee_volume=0.0,
+    rewards_to_nominators=0.0
 )
 
 

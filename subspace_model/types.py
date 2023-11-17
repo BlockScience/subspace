@@ -1,4 +1,4 @@
-from typing import Annotated, TypedDict, Union, Callable, NamedTuple
+from typing import Annotated, TypedDict, Union, Callable, NamedTuple, Optional
 from dataclasses import dataclass
 
 # Time units
@@ -40,15 +40,15 @@ Percentage = Annotated[float, '%']
 class SubspaceModelState(TypedDict):
     # Time Variables
     days_passed: Days
-    delta_days: Days
-    delta_blocks: Blocks
+    delta_days: Optional[Days]
+    delta_blocks: Optional[Blocks]
 
     # Metrics
-    circulating_supply: Credits
-    user_supply: Credits
-    issued_supply: Credits
-    sum_of_stocks: Credits
-    block_utilization: Percentage
+    circulating_supply: Optional[Credits]
+    user_supply: Optional[Credits]
+    issued_supply: Optional[Credits]
+    sum_of_stocks: Optional[Credits]
+    block_utilization: Optional[Percentage]
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
@@ -69,22 +69,23 @@ class SubspaceModelState(TypedDict):
     operator_pool_shares: float
 
     # Deterministic Variables
-    block_reward: Credits
+    block_reward: Optional[Credits]
     history_size: Bytes
     space_pledged: Bytes
     allocated_tokens: Credits
     buffer_size: Bytes
 
     # Stochastic Variables
-    average_base_fee: ShannonPerComputeWeights
-    average_priority_fee: ShannonPerComputeWeights
-    average_compute_weight_per_tx: ComputeWeights
-    average_transaction_size: Bytes
-    transaction_count: int
+    average_base_fee: Optional[ShannonPerComputeWeights]
+    average_priority_fee: Optional[ShannonPerComputeWeights]
+    average_compute_weight_per_tx: Optional[ComputeWeights]
+    average_transaction_size: Optional[Bytes]
+    transaction_count: Optional[int]
 
     # Metrics
     compute_fee_volume: Credits
     storage_fee_volume: Credits
+    rewards_to_nominators: Credits
 
 
 class SubspaceModelParams(TypedDict):
@@ -139,7 +140,7 @@ class SubspaceModelParams(TypedDict):
     std_transaction_size: Bytes
     min_transaction_size: Bytes
     avg_transaction_count_per_day: float
-    avg_slash_per_day: int # NOTE: tbc
+    avg_slash_per_day: float
     avg_new_sectors_per_day: float
     std_new_sectors_per_day: float
     

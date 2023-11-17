@@ -264,7 +264,8 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
              'nominators_balance': fees_to_nominators,
              'operators_balance': fees_to_operators,
              'holders_balance': -eff_total_fees,
-             'compute_fee_volume': eff_total_fees}
+             'compute_fee_volume': eff_total_fees,
+             'rewards_to_nominators': fees_to_nominators}
 
 def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """

@@ -102,7 +102,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'operators_balance': add_suf,
             'nominators_balance': add_suf,
             'holders_balance': add_suf,
-            'compute_fee_volume': replace_suf
+            'compute_fee_volume': replace_suf,
+            'rewards_to_nominators': replace_suf
         }
     },
     {
