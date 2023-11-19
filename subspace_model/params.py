@@ -77,6 +77,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     block_time_in_seconds=BLOCK_TIME,
     archival_depth=ARCHIVAL_DEPTH,
     archival_buffer_segment_size=SEGMENT_SIZE,
+    header_size=6_500, #how much data does every block contain on top of txs: signature, solution, consensus logs, etc. + votes + PoT
     replication_factor=10,
     max_block_size=int(3.75 * MIB_IN_BYTES), # 3.75 MiB
 
@@ -112,14 +113,25 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     avg_priority_fee=3,
     std_priority_fee=5,
 
-    avg_compute_weights_per_tx=200, # TODO
-    std_compute_weights_per_tx=500, # TODO
-    min_compute_weights_per_tx=10, # TODO
+    avg_compute_weights_per_tx=60_000_000, # TODO
+    std_compute_weights_per_tx=15_000_000, # TODO
+    min_compute_weights_per_tx=6_000_000, # TODO
 
-    avg_transaction_size=600_000, # TODO
-    std_transaction_size=100_000, # TODO
+    #bundles are usually compute heavy
+    avg_compute_weights_per_bundle=10_000_000_000, # TODO
+    std_compute_weights_per_bundle=5_000_000_000, # TODO
+    min_compute_weights_per_bundle=2_000_000_000, # TODO
+
+    avg_transaction_size=256, # TODO
+    std_transaction_size=100, # TODO
     min_transaction_size=100, # TODO
+
+    avg_bundle_size=1500, # TODO
+    std_bundle_size=1000, # TODO
+    min_bundle_size=250, # TODO
+
     avg_transaction_count_per_day=1 * (24*60*60/BLOCK_TIME), # XXX: X tx per block
+    avg_bundle_count_per_day= 6 * (24*60*60/BLOCK_TIME), # 6 bundles per block, 1 every second
 
     avg_slash_per_day=0.1, # TODO
     avg_new_sectors_per_day=1_000, # TODO
