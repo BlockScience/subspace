@@ -100,6 +100,7 @@ class SubspaceModelParams(TypedDict):
     block_time_in_seconds: Seconds
     archival_depth: Blocks
     archival_buffer_segment_size: Bytes
+    header_size: Bytes
     replication_factor: float
     max_block_size: Bytes
 

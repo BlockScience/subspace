@@ -137,14 +137,13 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     TODO: revisit assumption on the supply & demand matching.
     FIXME: homogenize terminology
     """
-    realized_depth = state['delta_blocks']
-    segments_supply = realized_depth / params['archival_depth']
+    #how much data does every block contain aside from tx data
+    header_volume = state['delta_blocks'] * params['header_size']
     
     tx_volume = state['transaction_count'] * state['average_transaction_size']
-    new_buffer_bytes = tx_volume
+    new_buffer_bytes = tx_volume + header_volume
     current_buffer = new_buffer_bytes + state['buffer_size']
-    segments_demand = current_buffer / params['archival_buffer_segment_size']
-    segments_being_archived = floor(int(min(segments_supply, segments_demand)))
+    segments_being_archived = int(floor(current_buffer / params['archival_buffer_segment_size']))
 
     new_history_bytes = 0
     if segments_being_archived > 0:
