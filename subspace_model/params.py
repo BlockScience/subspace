@@ -106,8 +106,8 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     transfer_holder_to_operator_per_day=0.01, # TODO
 
     # Environmental Parameters
-    avg_base_fee=5,
-    std_base_fee=15,
+    avg_base_fee=1,
+    std_base_fee=1,
     min_base_fee=1,
 
     avg_priority_fee=3,
