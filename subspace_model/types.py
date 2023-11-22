@@ -132,15 +132,29 @@ class SubspaceModelParams(TypedDict):
     avg_base_fee: Credits
     std_base_fee: Credits
     min_base_fee: Credits
+
     avg_priority_fee: Credits
     std_priority_fee: Credits
+
     avg_compute_weights_per_tx: ComputeWeights
     std_compute_weights_per_tx: ComputeWeights
     min_compute_weights_per_tx: ComputeWeights
+
+    avg_compute_weights_per_bundle: ComputeWeights
+    std_compute_weights_per_bundle: ComputeWeights
+    min_compute_weights_per_bundle: ComputeWeights
+
     avg_transaction_size: Bytes
     std_transaction_size: Bytes
     min_transaction_size: Bytes
+    
+    avg_bundle_size: Bytes # TODO: confirm
+    std_bundle_size: Bytes # TODO: confirm
+    min_bundle_size: Bytes # TODO: confirm
+
     avg_transaction_count_per_day: float
+    avg_bundle_count_per_day: float
+
     avg_slash_per_day: float
     avg_new_sectors_per_day: float
     std_new_sectors_per_day: float
