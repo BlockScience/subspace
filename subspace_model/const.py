@@ -18,3 +18,4 @@ SECTOR_IN_PIECES: Piece = 1_000 # As per Subnomicon
 SECTOR_SIZE = SECTOR_IN_PIECES * PIECE_SIZE # ~= 1 MiB
 SEGMENT_SIZE: Bytes = 128 * MIB_IN_BYTES # As per discussions
 SEGMENT_HISTORY_SIZE: Bytes = SEGMENT_SIZE * 2 # As per discussions
+SHANNON_IN_CREDITS: Credits = 1e-18

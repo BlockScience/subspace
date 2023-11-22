@@ -236,9 +236,9 @@ def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
     HACK: If holders balance is insufficient, then the amount of paid fees 
     will be lower even though the transactions still go through.
     """
-    compute_weights = state['average_compute_weight_per_tx'] * state['transaction_count']
-    base_fees = state['average_base_fee'] * compute_weights
-    priority_fees = state['average_priority_fee'] * compute_weights
+    compute_weights: ComputeWeights = state['average_compute_weight_per_tx'] * state['transaction_count']
+    base_fees: Credits = state['average_base_fee'] * compute_weights * SHANNON_IN_CREDITS
+    priority_fees: Credits = state['average_priority_fee'] * compute_weights * SHANNON_IN_CREDITS
     
     total_fees = base_fees + priority_fees
     eff_total_fees = min(total_fees, state['holders_balance']) # HACK
