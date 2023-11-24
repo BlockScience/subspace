@@ -11,3 +11,5 @@ numpy
 joblib
 dataclasses_json
 kaleido
+seaborn
+scipy
