@@ -1,4 +1,4 @@
-# subspace
+# The Subspace Network Economic Digital Twin 
 
 A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 
@@ -47,17 +47,40 @@ and use them as arguments to the `cadCAD_tools.execution.easy_run` method. Refer
 └── subspace_model
     ├── __init__.py
     ├── __main__.py
-│   ├── experiment.py: Code for running experiments, parameter sweeps, and scenario planning.
-│   ├── logic.py: All logic for substeps of blocks. Informs how state is mutated.
-│   ├── params.py: System parameters, initial state, and standard parameters.
-│   ├── structure.py: The model structure as a netlist that wires state update blocks. 
-│   └── types.py: Type definitions for the model state and parameters.
-    ├── const.py: System constants.
-    ├── metrics.py: System metrics.
-    ├── trajectory_metrics.py: Metrics that require trajectory dataset. Simulation post processing. 
+│   ├── experiment.py
+│   ├── logic.py
+│   ├── params.py
+│   ├── structure.py 
+│   └── types.py
+    ├── const.py
+    ├── metrics.py
+    ├── trajectory_metrics.py 
 ```
 
+Digital twin python modules.
+    
+| Python Module | Purpose |
+|:--------|:--------|
+|  [experiment.py](subspace_model/experiment.py)  |  Code for running experiments, parameter sweeps, and scenario planning.  |
+|  [logic.py](subspace_model/logic.py)  |  All logic for substeps of blocks. Informs how state is mutated.  |
+|  [params.py](subspace_model/params.py)  |  System parameters, initial state, and standard parameters.  |
+|  [structure.py](subspace_model/structure.py)  |  The model structure as a netlist that wires state update blocks.  |
+|  [types.py](subspace_model/types.py)  |  Type definitions for the model state and parameters.  |
+|  [const.py](subspace_model/const.py)  |  System constants  |
+|  [metrics.py](subspace_model/metrics.py)  |  System metrics  |
+|  [trajectory_metrics.py](subspace_model/trajectory_metrics.py)  |  Metrics that require trajectory dataset.  |
+
+
 ## What is cadCAD
+cadCAD (complex adaptive dynamics Computer-Aided Design) is a python based modeling framework for research, validation, and Computer Aided Design of complex systems. Given a model of a complex system, cadCAD can simulate the impact that a set of actions might have on it. This helps users make informed, rigorously tested decisions on how best to modify or interact with the system in order to achieve their goals. cadCAD supports different system modeling approaches and can be easily integrated with common empirical data science workflows. Monte Carlo methods, A/B testing and parameter sweeping features are natively supported and optimized for.
+
+For more information on cadCAD:
+
+* https://community.cadcad.org/t/introduction-to-cadcad/15
+* https://community.cadcad.org/t/putting-cadcad-in-context/19
+* https://github.com/cadCAD-org/demos
+
+
 ## Installing cadCAD for running this repo
 
 ### 1. Pre-installation Virtual Environments with [`venv`](https://docs.python.org/3/library/venv.html) (Optional):
