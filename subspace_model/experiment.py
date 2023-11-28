@@ -90,11 +90,17 @@ def standard_stochastic_run() -> DataFrame:
 
 
 @pn.cache(to_disk=True)
-def escrow_inclusion_sweep_run() -> DataFrame:
-    SIMULATION_DAYS = 700
+def escrow_inclusion_sweep_run(
+    fund_tax_on_proposer_reward=0,
+    fund_tax_on_storage_fees=0,
+    slash_to_fund=0,
+    SIMULATION_DAYS=700,
+    SAMPLES=15,
+) -> DataFrame:
+    SIMULATION_DAYS = SIMULATION_DAYS
     TIMESTEP_IN_DAYS = 1
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
-    SAMPLES = 15
+    SAMPLES = SAMPLES
 
     # %%
     # Get the sweep params in the form of single length arrays
@@ -102,9 +108,9 @@ def escrow_inclusion_sweep_run() -> DataFrame:
     param_set_1 = SINGLE_RUN_PARAMS
     param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
     param_set_2['label'] = 'no-fund'
-    param_set_2['fund_tax_on_proposer_reward'] = 0.0
-    param_set_2['fund_tax_on_storage_fees'] = 0.0
-    param_set_2['slash_to_fund'] = 0.0
+    param_set_2['fund_tax_on_proposer_reward'] = fund_tax_on_proposer_reward
+    param_set_2['fund_tax_on_storage_fees'] = fund_tax_on_storage_fees
+    param_set_2['slash_to_fund'] = slash_to_fund
 
     param_sets = [param_set_1, param_set_2]
 
