@@ -33,39 +33,28 @@ and use them as arguments to the `cadCAD_tools.execution.easy_run` method. Refer
 ## File structure
 
 ```
-.
-├── LICENSE
+├── notebooks
+│   ├── fund_inclusion.ipynb
+│   ├── issuance_sweep.ipynb
+│   ├── reward_split_sweep.ipynb
+│   ├── sanity_check.ipynb
+│   └── standard_stochastic.ipynb
 ├── README.md
-├── SPEC.md
-├── app: The `streamlit` app
-│   ├── assets
-│   │   ├── icon.png
-│   │   └── logo.png
-│   ├── chart.py
-│   ├── const.yaml
-│   ├── description.py
-│   ├── glossary.py
-│   ├── main.py
-│   ├── model.py
-│   └── utils.py
-├── subspace_model: the `cadCAD` model as encapsulated by a Python Module
-│   ├── __init__.py
-│   ├── __main__.py
-│   ├── experiment.py: Code for running experiments
-│   ├── logic.py: All logic for substeps
-│   ├── params.py: System parameters
-│   ├── structure.py: The PSUB structure
-│   └── types.py: Types used in model
-├── notebooks: Notebooks for aiding in development
-├── profiling
-│   ├── output.png
-│   ├── output.pstats
-│   └── profile_default_run.sh
-├── requirements-dev.txt: Dev requirements
-├── requirements.txt: Production requirements
-└── tests: Test scenarios
+├── requirements.txt
+├── resources
+│   ├── shares-stock-flow.png
+│   └── ssc-stock-flow.png
+└── subspace_model
     ├── __init__.py
-    └── test_scenario.py
+    ├── __main__.py
+│   ├── experiment.py: Code for running experiments, parameter sweeps, and scenario planning.
+│   ├── logic.py: All logic for substeps of blocks. Informs how state is mutated.
+│   ├── params.py: System parameters, initial state, and standard parameters.
+│   ├── structure.py: The model structure as a netlist that wires state update blocks. 
+│   └── types.py: Type definitions for the model state and parameters.
+    ├── const.py: System constants.
+    ├── metrics.py: System metrics.
+    ├── trajectory_metrics.py: Metrics that require trajectory dataset. Simulation post processing. 
 ```
 
 ## What is cadCAD
