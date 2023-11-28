@@ -43,3 +43,5 @@ default_run_args = (
     TIMESTEPS,
     SAMPLES,
 )
+
+print(default_run_args)
