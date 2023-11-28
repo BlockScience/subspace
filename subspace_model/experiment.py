@@ -1,15 +1,17 @@
-import pandas as pd
-from subspace_model.params import INITIAL_STATE
-from subspace_model.params import SINGLE_RUN_PARAMS
-from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
-from subspace_model.types import SubspaceModelParams
-from subspace_model.const import *
-from subspace_model.params import ISSUANCE_FOR_FARMERS
-from cadCAD_tools import easy_run # type: ignore
-from pandas import DataFrame
 from copy import deepcopy
 
+import pandas as pd
+import panel as pn
+from cadCAD_tools import easy_run  # type: ignore
+from pandas import DataFrame
 
+from subspace_model.const import *
+from subspace_model.params import INITIAL_STATE, ISSUANCE_FOR_FARMERS, SINGLE_RUN_PARAMS
+from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
+from subspace_model.types import SubspaceModelParams
+
+
+@pn.cache(to_disk=True)
 def standard_run() -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -26,17 +28,20 @@ def standard_run() -> DataFrame:
     sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                N_timesteps,
-                N_samples)
+    sim_args = (
+        INITIAL_STATE,
+        sweep_params,
+        SUBSPACE_MODEL_BLOCKS,
+        N_timesteps,
+        N_samples,
+    )
 
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
 
 
+@pn.cache(to_disk=True)
 def sanity_check_run() -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -53,18 +58,14 @@ def sanity_check_run() -> DataFrame:
     sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                TIMESTEPS,
-                SAMPLES)
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
 
 
-
+@pn.cache(to_disk=True)
 def standard_stochastic_run() -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -81,17 +82,14 @@ def standard_stochastic_run() -> DataFrame:
     sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                TIMESTEPS,
-                SAMPLES)
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
 
 
+@pn.cache(to_disk=True)
 def escrow_inclusion_sweep_run() -> DataFrame:
     SIMULATION_DAYS = 700
     TIMESTEP_IN_DAYS = 1
@@ -116,17 +114,14 @@ def escrow_inclusion_sweep_run() -> DataFrame:
             sweep_params[k].append(v)
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                TIMESTEPS,
-                SAMPLES)
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
 
 
+@pn.cache(to_disk=True)
 def issuance_sweep() -> DataFrame:
     SIMULATION_DAYS = 700
     TIMESTEP_IN_DAYS = 1
@@ -149,17 +144,14 @@ def issuance_sweep() -> DataFrame:
             sweep_params[k].append(v)
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                TIMESTEPS,
-                SAMPLES)
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
     sim_df = easy_run(*sim_args)
     return sim_df
 
 
+@pn.cache(to_disk=True)
 def reward_split_sweep() -> DataFrame:
     SIMULATION_DAYS = 700
     TIMESTEP_IN_DAYS = 1
@@ -182,11 +174,7 @@ def reward_split_sweep() -> DataFrame:
             sweep_params[k].append(v)
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE,
-                sweep_params,
-                SUBSPACE_MODEL_BLOCKS,
-                TIMESTEPS,
-                SAMPLES)
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
     sim_df = easy_run(*sim_args)
