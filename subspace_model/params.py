@@ -62,14 +62,14 @@ def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
     return state['staking_pool_balance'] * 0.001   # HACK
 
 
-def NORMAL(mu, sigma, deterministic=False):
+def NORMAL(mu: float, sigma: float, deterministic: bool):
     if deterministic:
         return mu
     else:
         return norm.rvs(mu, sigma)
 
 
-def POISSON(mu, deterministic=False):
+def POISSON(mu: float, deterministic: bool):
     if deterministic:
         return mu
     else:
