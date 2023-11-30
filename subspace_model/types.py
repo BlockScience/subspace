@@ -92,6 +92,8 @@ class SubspaceModelParams(TypedDict):
     label: str
     timestep_in_days: Days
 
+    ### Protocol Parameters ###
+
     # Mechanisms to be determined
     issuance_function: Callable[[SubspaceModelState], CreditsPerDay]
     slash_function: Callable[[SubspaceModelState], Credits]
@@ -118,6 +120,8 @@ class SubspaceModelParams(TypedDict):
     slash_to_fund: Percentage
     slash_to_holders: Percentage
 
+    ### Behavioral & Environmental Parameters ###
+
     # Behavioral Parameters
     operator_avg_stake_per_ts: Percentage
     nominator_avg_stake_per_ts: Percentage
@@ -129,33 +133,43 @@ class SubspaceModelParams(TypedDict):
     transfer_holder_to_operator_per_day: Percentage
 
     # Environmental Parameters
-    avg_base_fee: Credits
-    std_base_fee: Credits
-    min_base_fee: Credits
 
-    avg_priority_fee: Credits
-    std_priority_fee: Credits
+    avg_slash_per_day: float
+    avg_new_sectors_per_day: float
+    std_new_sectors_per_day: float
+
+    ## Consensus Chain related
+    avg_transaction_count_per_day: float
+
+    avg_tx_base_fee: ShannonPerComputeWeights
+    std_tx_base_fee: ShannonPerComputeWeights
+    min_tx_base_fee: ShannonPerComputeWeights
+
+    avg_tx_priority_fee: ShannonPerComputeWeights
+    std_tx_priority_fee: ShannonPerComputeWeights
+
+    avg_transaction_size: Bytes
+    std_transaction_size: Bytes
+    min_transaction_size: Bytes
 
     avg_compute_weights_per_tx: ComputeWeights
     std_compute_weights_per_tx: ComputeWeights
     min_compute_weights_per_tx: ComputeWeights
 
+    ## Domains related
+    avg_bundle_count_per_day: float
+
+    avg_bundle_base_fee: ShannonPerComputeWeights
+    std_bundle_base_fee: ShannonPerComputeWeights
+
+    avg_bundle_priority_fee: ShannonPerComputeWeights
+    std_bundle_priority_fee: ShannonPerComputeWeights
+    
+    avg_bundle_size: Bytes
+    std_bundle_size: Bytes
+    min_bundle_size: Bytes
+
     avg_compute_weights_per_bundle: ComputeWeights
     std_compute_weights_per_bundle: ComputeWeights
     min_compute_weights_per_bundle: ComputeWeights
-
-    avg_transaction_size: Bytes
-    std_transaction_size: Bytes
-    min_transaction_size: Bytes
-    
-    avg_bundle_size: Bytes # TODO: confirm
-    std_bundle_size: Bytes # TODO: confirm
-    min_bundle_size: Bytes # TODO: confirm
-
-    avg_transaction_count_per_day: float
-    avg_bundle_count_per_day: float
-
-    avg_slash_per_day: float
-    avg_new_sectors_per_day: float
-    std_new_sectors_per_day: float
     

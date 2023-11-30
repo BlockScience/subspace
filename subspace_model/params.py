@@ -106,18 +106,24 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     transfer_holder_to_operator_per_day=0.01, # TODO
 
     # Environmental Parameters
-    avg_base_fee=1,
-    std_base_fee=1,
-    min_base_fee=1,
+    avg_tx_base_fee=1,
+    std_tx_base_fee=1,
+    min_tx_base_fee=1,
 
-    avg_priority_fee=3,
-    std_priority_fee=5,
+    avg_tx_priority_fee=3,
+    std_tx_priority_fee=5,
+
+    avg_bundle_base_fee=1, # TODO
+    std_bundle_base_fee=1, # TODO
+
+    avg_bundle_priority_fee=3, # TODO
+    std_bundle_priority_fee=5, # TODO
 
     avg_compute_weights_per_tx=60_000_000, # TODO
     std_compute_weights_per_tx=15_000_000, # TODO
     min_compute_weights_per_tx=6_000_000, # TODO
 
-    #bundles are usually compute heavy
+    # bundles are usually compute heavy
     avg_compute_weights_per_bundle=10_000_000_000, # TODO
     std_compute_weights_per_bundle=5_000_000_000, # TODO
     min_compute_weights_per_bundle=2_000_000_000, # TODO
