@@ -134,7 +134,7 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     avg_bundle_count_per_day= 6 * (24*60*60/BLOCK_TIME), # 6 bundles per block, 1 every second
 
     avg_slash_per_day=0.1, # TODO
-    avg_new_sectors_per_day=1_000, # TODO
-    std_new_sectors_per_day=500 # TODO
+    avg_new_sectors_per_day=150_000, # TODO
+    std_new_sectors_per_day=180_000 # TODO
 
 )
