@@ -146,7 +146,12 @@ def p_pledge_sectors(
     XXX: depends on an stochastic process assumption.
     """
     new_sectors = int(
-        max(params['new_sectors_per_day'](deterministic=params['deterministic']), 0)
+        max(
+            params['new_sectors_per_day_function'](
+                deterministic=params['deterministic']
+            ),
+            0,
+        )
     )
     new_bytes = new_sectors * SECTOR_SIZE
     return {'space_pledged': new_bytes}
@@ -185,7 +190,7 @@ def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableU
     return (
         'average_base_fee',
         max(
-            params['base_fee'](deterministic=params['deterministic']),
+            params['base_fee_function'](deterministic=params['deterministic']),
             params['min_base_fee'],
         ),
     )
@@ -201,7 +206,7 @@ def s_average_priority_fee(
     """
     return (
         'average_priority_fee',
-        max(params['priority_fee'](deterministic=params['deterministic']), 0),
+        max(params['priority_fee_function'](deterministic=params['deterministic']), 0),
     )
 
 
@@ -215,7 +220,9 @@ def s_average_compute_weight_per_tx(
     return (
         'average_compute_weight_per_tx',
         max(
-            params['compute_weight_per_tx'](deterministic=params['deterministic']),
+            params['compute_weight_per_tx_function'](
+                deterministic=params['deterministic']
+            ),
             params['min_compute_weights_per_tx'],
         ),
     )
@@ -231,7 +238,7 @@ def s_average_transaction_size(
     return (
         'average_transaction_size',
         max(
-            params['transaction_size'](deterministic=params['deterministic']),
+            params['transaction_size_function'](deterministic=params['deterministic']),
             params['min_transaction_size'],
         ),
     )
@@ -245,7 +252,9 @@ def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> Variable
     return (
         'transaction_count',
         max(
-            params['transaction_count_per_day'](deterministic=params['deterministic']),
+            params['transaction_count_per_day_function'](
+                deterministic=params['deterministic']
+            ),
             0,
         ),
     )
@@ -359,7 +368,9 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     # XXX: no slash occurs if the pool balance is zero.
     pool_balance = state['staking_pool_balance']
     if pool_balance > 0:
-        slash_count = params['slash_per_day'](deterministic=params['deterministic'])
+        slash_count = params['slash_per_day_function'](
+            deterministic=params['deterministic']
+        )
         slash_value = min(slash_count * params['slash_function'](state), pool_balance)
         if slash_value > 0:
             slash_to_fund = slash_value * params['slash_to_fund']
@@ -442,7 +453,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
         invariant = None
 
     # Stake operation
-    operator_stake_fraction = params['operator_stake_per_ts'](
+    operator_stake_fraction = params['operator_stake_per_ts_function'](
         deterministic=params['deterministic']
     )
 
@@ -455,7 +466,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     else:
         operator_stake = 0.0
 
-    nominator_stake_fraction = params['nominator_stake_per_ts'](
+    nominator_stake_fraction = params['nominator_stake_per_ts_function'](
         deterministic=params['deterministic']
     )
 

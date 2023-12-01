@@ -102,10 +102,10 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_fund=0.0,
     slash_to_holders=0.05,
     # Behavioral Parameters
-    operator_stake_per_ts=lambda deterministic: NORMAL(
+    operator_stake_per_ts_function=lambda deterministic: NORMAL(
         0.01, 0.02, deterministic=deterministic
     ),
-    nominator_stake_per_ts=lambda deterministic: NORMAL(
+    nominator_stake_per_ts_function=lambda deterministic: NORMAL(
         0.01, 0.02, deterministic=deterministic
     ),
     # operator_avg_stake_per_ts=0.01,  # TODO
@@ -117,46 +117,50 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     transfer_holder_to_nominator_per_day=0.01,  # TODO
     transfer_holder_to_operator_per_day=0.01,  # TODO
     # Environmental Parameters
-    base_fee=lambda deterministic: NORMAL(1, 1, deterministic=deterministic),
+    base_fee_function=lambda deterministic: NORMAL(1, 1, deterministic=deterministic),
     # avg_base_fee=1,
     # std_base_fee=1,
     min_base_fee=1,
-    priority_fee=lambda deterministic: NORMAL(3, 5, deterministic=deterministic),
+    priority_fee_function=lambda deterministic: NORMAL(
+        3, 5, deterministic=deterministic
+    ),
     # avg_priority_fee=3,
     # std_priority_fee=5,
-    compute_weight_per_tx=lambda deterministic: NORMAL(
+    compute_weight_per_tx_function=lambda deterministic: NORMAL(
         60_000_000, 15_000_000, deterministic=deterministic
     ),
     # avg_compute_weights_per_tx=60_000_000,  # TODO
     # std_compute_weights_per_tx=15_000_000,  # TODO
     min_compute_weights_per_tx=6_000_000,  # TODO
     # bundles are usually compute heavy
-    compute_weight_per_bundle=lambda deterministic: NORMAL(
+    compute_weight_per_bundle_function=lambda deterministic: NORMAL(
         10_000_000_000, 5_000_000_000, deterministic=deterministic
     ),
     # avg_compute_weights_per_bundle=10_000_000_000,  # TODO
     # std_compute_weights_per_bundle=5_000_000_000,  # TODO
     min_compute_weights_per_bundle=2_000_000_000,  # TODO
-    transaction_size=lambda deterministic: NORMAL(
+    transaction_size_function=lambda deterministic: NORMAL(
         256, 100, deterministic=deterministic
     ),
     # avg_transaction_size=256,  # TODO
     # std_transaction_size=100,  # TODO
     min_transaction_size=100,  # TODO
-    bundle_size=lambda deterministic: NORMAL(1500, 1000, deterministic=deterministic),
+    bundle_size_function=lambda deterministic: NORMAL(
+        1500, 1000, deterministic=deterministic
+    ),
     # avg_bundle_size=1500,  # TODO
     # std_bundle_size=1000,  # TODO
     min_bundle_size=250,  # TODO
-    transaction_count_per_day=lambda deterministic: POISSON(
+    transaction_count_per_day_function=lambda deterministic: POISSON(
         1 * (24 * 60 * 60 / BLOCK_TIME), deterministic=deterministic
     ),  # XXX: X tx per block
-    bundle_count_per_day=lambda deterministic: POISSON(
+    bundle_count_per_day_function=lambda deterministic: POISSON(
         6 * (24 * 60 * 60 / BLOCK_TIME), deterministic=deterministic
     ),  # 6 bundles per block, 1 every second
-    slash_per_day=lambda deterministic: POISSON(
+    slash_per_day_function=lambda deterministic: POISSON(
         0.1, deterministic=deterministic
     ),  # TODO
-    new_sectors_per_day=lambda deterministic: NORMAL(
+    new_sectors_per_day_function=lambda deterministic: NORMAL(
         1000, 500, deterministic=deterministic
     ),
     # avg_new_sectors_per_day=1_000,  # TODO
