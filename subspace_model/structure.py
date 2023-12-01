@@ -173,4 +173,4 @@ for block in [b for b in _SUBSPACE_MODEL_BLOCKS if b.get('ignore', False) != Tru
 
 SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
 
-logger.info('SUBSPACE_MODEL_BLOCKS: \n%s', [b['label'] for b in SUBSPACE_MODEL_BLOCKS])
+logger.debug('SUBSPACE_MODEL_BLOCKS: \n%s', [b['label'] for b in SUBSPACE_MODEL_BLOCKS])

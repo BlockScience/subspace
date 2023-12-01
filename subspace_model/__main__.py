@@ -7,10 +7,18 @@ from datetime import datetime
 
 import click
 import IPython
+import panel as pn
 from cadCAD_tools.execution import easy_run
 
 from subspace_model import default_run_args
-from subspace_model.experiment import standard_run
+from subspace_model.experiment import (
+    escrow_inclusion_sweep_run,
+    issuance_sweep,
+    reward_split_sweep,
+    sanity_check_run,
+    standard_run,
+    standard_stochastic_run,
+)
 
 # Define a dictionary to map string log levels to their corresponding constants in logging module
 log_levels = {
@@ -21,15 +29,25 @@ log_levels = {
     'critical': logging.CRITICAL,
 }
 
+experiments = {
+    'escrow_inclusion_sweep_run': escrow_inclusion_sweep_run,
+    'issuance_sweep': issuance_sweep,
+    'reward_split_sweep': reward_split_sweep,
+    'sanity_check_run': sanity_check_run,
+    'standard_run': standard_run,
+    'standard_stochastic_run': standard_stochastic_run,
+    'easy_run': easy_run,
+}
+
 
 @click.command()
 @click.option(
     '-e',
-    '--experiment-run',
-    'experiment_run',
-    default=False,
-    is_flag=True,
-    help='Run an experiment.',
+    '--experiment',
+    'experiment',
+    type=click.Choice(experiments.keys(), case_sensitive=False),
+    default='standard_run',
+    help='Select an experiment to run.',
 )
 @click.option(
     '-p',
@@ -55,19 +73,37 @@ log_levels = {
     default='info',
     help='Set the logging level.',
 )
-def main(experiment_run: bool, pickle: bool, interactive: bool, log_level: str) -> None:
+@click.option(
+    '-c',
+    '--clear-cache',
+    'clear_cache',
+    default=False,
+    is_flag=True,
+    help='Clear cache for all experiments.',
+)
+def main(
+    experiment: str,
+    pickle: bool,
+    interactive: bool,
+    log_level: str,
+    clear_cache: bool,
+) -> None:
+    if clear_cache:
+        logger.info(f'Clearing caches for all experiments.')
+        pn.state.clear_caches()
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     logger.info(f'Initializing main at {timestamp}')
     logger.info(f'Setting log level to {log_level}')
     logger.setLevel(log_levels[log_level])
-    if experiment_run is False:
+    if experiment == 'easy_run':
         df = easy_run(*default_run_args)
         logger.info('Easy run executed.')
     else:
-        df = standard_run()
-        logger.info('Standard run executed.')
+        experiment_run = experiments[experiment]
+        df = experiment_run()
+        logger.info(f'{experiment} executed.')
     if pickle:
-        filename = f'data/simulations/multi-run-{timestamp}.pkl.gz'
+        filename = f'data/simulations/multi-run-{experiment}-{timestamp}.pkl.gz'
         df.to_pickle(filename, compression='gzip')
         logger.info(f'Results saved to {filename}.')
 
