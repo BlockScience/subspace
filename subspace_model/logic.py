@@ -314,16 +314,15 @@ def p_compute_fees(
     will be lower even though the transactions still go through.
     """
     
-    
-    compute_weights: ComputeWeights = (
-        state['average_compute_weight_per_tx'] * state['transaction_count']
-        + state['average_compute_weight_per_bundle'] * state['bundle_count']
-    )
+    tx_compute_weight = state['average_compute_weight_per_tx'] * state['transaction_count']
+    bundles_compute_weight = state['average_compute_weight_per_bundle'] * state['bundle_count']
+
+    total_compute_weights: ComputeWeights = tx_compute_weight + bundles_compute_weight
     base_fees: Credits = (
-        state['average_base_fee'] * compute_weights * SHANNON_IN_CREDITS
+        state['average_base_fee'] * total_compute_weights * SHANNON_IN_CREDITS
     )
     priority_fees: Credits = (
-        state['average_priority_fee'] * compute_weights * SHANNON_IN_CREDITS
+        state['average_priority_fee'] * total_compute_weights * SHANNON_IN_CREDITS
     )
 
     total_fees = base_fees + priority_fees
@@ -334,7 +333,11 @@ def p_compute_fees(
     eff_priority_fees = priority_fees * eff_scale
 
     fees_to_farmers = eff_priority_fees * params['compute_fees_to_farmers']
-    fees_to_pool = eff_base_fees + (eff_priority_fees - fees_to_farmers)
+    fees_to_distribute = eff_base_fees + (eff_priority_fees - fees_to_farmers)
+
+    bundle_share_of_fees = bundles_compute_weight / total_compute_weights
+    fees_to_pool = fees_to_distribute * bundle_share_of_fees
+    fees_to_farmers += fees_to_distribute - fees_to_pool
 
     denominator = state['operator_pool_shares'] + state['nominator_pool_shares']
     if denominator == 0:
@@ -344,9 +347,13 @@ def p_compute_fees(
     fees_to_nominators = (
         fees_to_pool * nominators_share * (1 - params['compute_fees_tax_to_operators'])
     )
+
     fees_to_operators = fees_to_pool - fees_to_nominators
 
     total_fees = fees_to_farmers + fees_to_nominators + fees_to_operators
+
+    # TODO: check if fees goes to the farmers/nominators balance
+    # or if is auto-staked
     return {
         'farmers_balance': fees_to_farmers,
         'nominators_balance': fees_to_nominators,
