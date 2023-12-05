@@ -181,7 +181,9 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     return {'history_size': new_history_bytes, 'buffer_size': new_buffer_bytes}
 
 
-def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_base_fee(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
     """
     Simulate the ts-average base fee during an timestep through
     a Gaussian process.
@@ -197,7 +199,7 @@ def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableU
 
 
 def s_average_priority_fee(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average priority fee during an timestep through
@@ -214,7 +216,7 @@ def s_average_priority_fee(
 
 
 def s_average_compute_weight_per_tx(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
@@ -232,7 +234,7 @@ def s_average_compute_weight_per_tx(
 
 
 def s_average_transaction_size(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Gaussian process.
@@ -249,7 +251,9 @@ def s_average_transaction_size(
     )
 
 
-def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+def s_transaction_count(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
