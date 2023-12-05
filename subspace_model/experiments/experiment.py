@@ -6,7 +6,11 @@ from cadCAD_tools import easy_run  # type: ignore
 from pandas import DataFrame
 
 from subspace_model.const import *
-from subspace_model.params import INITIAL_STATE, ISSUANCE_FOR_FARMERS, SINGLE_RUN_PARAMS
+from subspace_model.experiments.logic import (
+    DEFAULT_ISSUANCE_FUNCTION,
+    ISSUANCE_FUNCTION,
+)
+from subspace_model.params import BASE_PARAMS, INITIAL_STATE, ISSUANCE_FOR_FARMERS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 from subspace_model.types import SubspaceModelParams
 
@@ -25,7 +29,7 @@ def standard_run() -> DataFrame:
     N_samples = 1
     # %%
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+    sweep_params = {k: [v] for k, v in BASE_PARAMS.items()}
 
     # Load simulation arguments
     sim_args = (
@@ -53,11 +57,11 @@ def sanity_check_run() -> DataFrame:
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
     SAMPLES = 1
 
-    # print("SINGLE_RUN_PARAMS['deterministic']=", SINGLE_RUN_PARAMS["deterministic"])
+    # print("BASE_PARAMS['deterministic']=", BASE_PARAMS["deterministic"])
 
     # %%
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+    sweep_params = {k: [v] for k, v in BASE_PARAMS.items()}
 
     print(sweep_params)
     # Load simulation arguments
@@ -80,12 +84,12 @@ def sanity_check_deterministic_run() -> DataFrame:
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
     SAMPLES = 1
 
-    SINGLE_RUN_PARAMS["deterministic"] = True
-    # print("SINGLE_RUN_PARAMS['deterministic']=", SINGLE_RUN_PARAMS["deterministic"])
+    BASE_PARAMS['deterministic'] = True
+    # print("BASE_PARAMS['deterministic']=", BASE_PARAMS["deterministic"])
 
     # %%
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+    sweep_params = {k: [v] for k, v in BASE_PARAMS.items()}
 
     print(sweep_params)
     # Load simulation arguments
@@ -110,7 +114,7 @@ def standard_stochastic_run() -> DataFrame:
 
     # %%
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+    sweep_params = {k: [v] for k, v in BASE_PARAMS.items()}
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
@@ -136,16 +140,16 @@ def escrow_inclusion_sweep_run(
     # %%
     # Get the sweep params in the form of single length arrays
 
-    param_set_1 = SINGLE_RUN_PARAMS
-    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2["label"] = "no-fund"
-    param_set_2["fund_tax_on_proposer_reward"] = fund_tax_on_proposer_reward
-    param_set_2["fund_tax_on_storage_fees"] = fund_tax_on_storage_fees
-    param_set_2["slash_to_fund"] = slash_to_fundvf
+    param_set_1 = BASE_PARAMS
+    param_set_2 = deepcopy(BASE_PARAMS)
+    param_set_2['label'] = 'no-fund'
+    param_set_2['fund_tax_on_proposer_reward'] = fund_tax_on_proposer_reward
+    param_set_2['fund_tax_on_storage_fees'] = fund_tax_on_storage_fees
+    param_set_2['slash_to_fund'] = slash_to_fundvf
 
     param_sets = [param_set_1, param_set_2]
 
-    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    sweep_params: dict[str, list] = {k: [] for k in BASE_PARAMS.keys()}
     for param_set in param_sets:
         for k, v in param_set.items():
             sweep_params[k].append(v)
@@ -168,14 +172,14 @@ def issuance_sweep() -> DataFrame:
     # %%
     # Get the sweep params in the form of single length arrays
 
-    param_set_1 = SINGLE_RUN_PARAMS
-    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2["label"] = "alternate-issuance-function"
-    param_set_2["issuance_function"] = lambda _: ISSUANCE_FOR_FARMERS / 5 * 365
+    param_set_1 = BASE_PARAMS
+    param_set_2 = deepcopy(BASE_PARAMS)
+    param_set_2['label'] = 'alternate-issuance-function'
+    param_set_2['issuance_function'] = lambda _: ISSUANCE_FOR_FARMERS / 5 * 365
 
     param_sets = [param_set_1, param_set_2]
 
-    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    sweep_params: dict[str, list] = {k: [] for k in BASE_PARAMS.keys()}
     for param_set in param_sets:
         for k, v in param_set.items():
             sweep_params[k].append(v)
@@ -198,14 +202,14 @@ def reward_split_sweep() -> DataFrame:
     # %%
     # Get the sweep params in the form of single length arrays
 
-    param_set_1 = SINGLE_RUN_PARAMS
-    param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2["label"] = "alternate-split"
-    param_set_2["reward_proposer_share"] = 0.5
+    param_set_1 = BASE_PARAMS
+    param_set_2 = deepcopy(BASE_PARAMS)
+    param_set_2['label'] = 'alternate-split'
+    param_set_2['reward_proposer_share'] = 0.5
 
     param_sets = [param_set_1, param_set_2]
 
-    sweep_params: dict[str, list] = {k: [] for k in SINGLE_RUN_PARAMS.keys()}
+    sweep_params: dict[str, list] = {k: [] for k in BASE_PARAMS.keys()}
     for param_set in param_sets:
         for k, v in param_set.items():
             sweep_params[k].append(v)
