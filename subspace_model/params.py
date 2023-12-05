@@ -48,6 +48,9 @@ INITIAL_STATE = SubspaceModelState(
     average_compute_weight_per_tx=None,
     average_transaction_size=None,
     transaction_count=None,
+    average_compute_weight_per_bundle=None,
+    average_bundle_size=None,
+    bundle_count=None,
     compute_fee_volume=0.0,
     storage_fee_volume=0.0,
     rewards_to_nominators=0.0,
@@ -78,7 +81,6 @@ def POISSON(mu: float, deterministic: bool):
 
 SINGLE_RUN_PARAMS = SubspaceModelParams(
     label='standard',
-    deterministic=False,
     timestep_in_days=TIMESTEP_IN_DAYS,
     # Mechanisms TBD
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
