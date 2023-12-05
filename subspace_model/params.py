@@ -1,7 +1,12 @@
 from numpy import nan
-from scipy.stats import norm, poisson  # type: ignore
 
 from subspace_model.const import *
+from subspace_model.experiments.logic import (
+    DEFAULT_ISSUANCE_FUNCTION,
+    DEFAULT_SLASH_FUNCTION,
+    NORMAL,
+    POISSON,
+)
 from subspace_model.types import *
 
 SIMULATION_DAYS = 700
@@ -54,31 +59,72 @@ INITIAL_STATE = SubspaceModelState(
 )
 
 
-def DEFAULT_ISSUANCE_FUNCTION(state: SubspaceModelState):
-    return state['reward_issuance_balance'] * 0.01   # HACK
-
-
-def DEFAULT_SLASH_FUNCTION(state: SubspaceModelState):
-    return state['staking_pool_balance'] * 0.001   # HACK
-
-
-def NORMAL(mu: float, sigma: float, deterministic: bool):
-    if deterministic:
-        return mu
-    else:
-        return norm.rvs(mu, sigma)
-
-
-def POISSON(mu: float, deterministic: bool):
-    if deterministic:
-        return mu
-    else:
-        return poisson.rvs(mu)
-
-
-SINGLE_RUN_PARAMS = SubspaceModelParams(
+BASE_PARAMS = SubspaceModelParams(
     label='standard',
+    # Set system wide deterministic
     deterministic=False,
+    stochastic_params=dict(
+        operator_stake_per_ts_function=dict(
+            mu=0.01,
+            sigma=0.01,
+            deterministic=False,
+        ),
+        nominator_stake_per_ts_function=dict(
+            mu=0.01,
+            sigma=0.01,
+            deterministic=False,
+        ),
+        base_fee_function=dict(
+            mu=1,
+            sigma=1,
+            deterministic=False,
+        ),
+        priority_fee_function=dict(
+            mu=3,
+            sigma=5,
+            deterministic=False,
+        ),
+        compute_weight_per_tx_function=dict(
+            mu=60_000_000,
+            sigma=15_000_000,
+            deterministic=False,
+        ),
+        # bundles are usually compute heavy
+        compute_weight_per_bundle_function=dict(
+            mu=10_000_000_000,
+            sigma=5_000_000_000,
+            deterministic=False,
+        ),
+        transaction_size_function=dict(
+            mu=256,
+            sigma=100,
+            deterministic=False,
+        ),
+        bundle_size_function=dict(
+            mu=1500,
+            sigma=1000,
+            deterministic=False,
+        ),
+        # Transactions per block
+        transaction_count_per_day_function=dict(
+            mu=1 * (24 * 60 * 60 / BLOCK_TIME),
+            deterministic=False,
+        ),
+        # Bundles per block
+        bundle_count_per_day_function=dict(
+            mu=6 * (24 * 60 * 60 / BLOCK_TIME),
+            deterministic=False,
+        ),
+        slash_per_day_function=dict(
+            mu=0.1,
+            deterministic=False,
+        ),
+        new_sectors_per_day_function=dict(
+            mu=1000,
+            sigma=500,
+            deterministic=False,
+        ),
+    ),
     timestep_in_days=TIMESTEP_IN_DAYS,
     # Mechanisms TBD
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
@@ -102,67 +148,26 @@ SINGLE_RUN_PARAMS = SubspaceModelParams(
     slash_to_fund=0.0,
     slash_to_holders=0.05,
     # Behavioral Parameters
-    operator_stake_per_ts_function=lambda deterministic: NORMAL(
-        0.01, 0.02, deterministic=deterministic
-    ),
-    nominator_stake_per_ts_function=lambda deterministic: NORMAL(
-        0.01, 0.02, deterministic=deterministic
-    ),
-    # operator_avg_stake_per_ts=0.01,  # TODO
-    # nominator_avg_stake_per_ts=0.01,  # TODO
-    # operator_std_stake_per_ts=0.02,  # TODO
-    # nominator_std_stake_per_ts=0.02,  # TODO
+    operator_stake_per_ts_function=NORMAL,
+    nominator_stake_per_ts_function=NORMAL,
     transfer_farmer_to_holder_per_day=0.05,  # TODO
     transfer_operator_to_holder_per_day=0.05,  # TODO
     transfer_holder_to_nominator_per_day=0.01,  # TODO
     transfer_holder_to_operator_per_day=0.01,  # TODO
     # Environmental Parameters
-    base_fee_function=lambda deterministic: NORMAL(1, 1, deterministic=deterministic),
-    # avg_base_fee=1,
-    # std_base_fee=1,
+    base_fee_function=NORMAL,
     min_base_fee=1,
-    priority_fee_function=lambda deterministic: NORMAL(
-        3, 5, deterministic=deterministic
-    ),
-    # avg_priority_fee=3,
-    # std_priority_fee=5,
-    compute_weight_per_tx_function=lambda deterministic: NORMAL(
-        60_000_000, 15_000_000, deterministic=deterministic
-    ),
-    # avg_compute_weights_per_tx=60_000_000,  # TODO
-    # std_compute_weights_per_tx=15_000_000,  # TODO
+    priority_fee_function=NORMAL,
+    compute_weight_per_tx_function=NORMAL,
     min_compute_weights_per_tx=6_000_000,  # TODO
-    # bundles are usually compute heavy
-    compute_weight_per_bundle_function=lambda deterministic: NORMAL(
-        10_000_000_000, 5_000_000_000, deterministic=deterministic
-    ),
-    # avg_compute_weights_per_bundle=10_000_000_000,  # TODO
-    # std_compute_weights_per_bundle=5_000_000_000,  # TODO
+    compute_weight_per_bundle_function=NORMAL,
     min_compute_weights_per_bundle=2_000_000_000,  # TODO
-    transaction_size_function=lambda deterministic: NORMAL(
-        256, 100, deterministic=deterministic
-    ),
-    # avg_transaction_size=256,  # TODO
-    # std_transaction_size=100,  # TODO
+    transaction_size_function=NORMAL,
     min_transaction_size=100,  # TODO
-    bundle_size_function=lambda deterministic: NORMAL(
-        1500, 1000, deterministic=deterministic
-    ),
-    # avg_bundle_size=1500,  # TODO
-    # std_bundle_size=1000,  # TODO
+    bundle_size_function=NORMAL,
     min_bundle_size=250,  # TODO
-    transaction_count_per_day_function=lambda deterministic: POISSON(
-        1 * (24 * 60 * 60 / BLOCK_TIME), deterministic=deterministic
-    ),  # XXX: X tx per block
-    bundle_count_per_day_function=lambda deterministic: POISSON(
-        6 * (24 * 60 * 60 / BLOCK_TIME), deterministic=deterministic
-    ),  # 6 bundles per block, 1 every second
-    slash_per_day_function=lambda deterministic: POISSON(
-        0.1, deterministic=deterministic
-    ),  # TODO
-    new_sectors_per_day_function=lambda deterministic: NORMAL(
-        1000, 500, deterministic=deterministic
-    ),
-    # avg_new_sectors_per_day=1_000,  # TODO
-    # std_new_sectors_per_day=500,  # TODO
+    transaction_count_per_day_function=POISSON,  # XXX: X tx per block
+    bundle_count_per_day_function=POISSON,
+    slash_per_day_function=POISSON,
+    new_sectors_per_day_function=NORMAL,
 )
