@@ -61,6 +61,8 @@ INITIAL_STATE = SubspaceModelState(
 
 BASE_PARAMS = SubspaceModelParams(
     label='standard',
+    # Set system wide deterministic
+    deterministic=False,
     stochastic_params=dict(
         operator_stake_per_ts_function=dict(
             mu=0.01,
