@@ -53,10 +53,41 @@ def sanity_check_run() -> DataFrame:
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
     SAMPLES = 1
 
+    # print("SINGLE_RUN_PARAMS['deterministic']=", SINGLE_RUN_PARAMS["deterministic"])
+
     # %%
     # Get the sweep params in the form of single length arrays
     sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
 
+    print(sweep_params)
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(*sim_args)
+    return sim_df
+
+
+@pn.cache(to_disk=True)
+def sanity_check_deterministic_run() -> DataFrame:
+    """Function which runs the cadCAD simulations
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+    SIMULATION_DAYS = 700
+    TIMESTEP_IN_DAYS = 1
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+    SAMPLES = 1
+
+    SINGLE_RUN_PARAMS["deterministic"] = True
+    # print("SINGLE_RUN_PARAMS['deterministic']=", SINGLE_RUN_PARAMS["deterministic"])
+
+    # %%
+    # Get the sweep params in the form of single length arrays
+    sweep_params = {k: [v] for k, v in SINGLE_RUN_PARAMS.items()}
+
+    print(sweep_params)
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
@@ -107,10 +138,10 @@ def escrow_inclusion_sweep_run(
 
     param_set_1 = SINGLE_RUN_PARAMS
     param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2['label'] = 'no-fund'
-    param_set_2['fund_tax_on_proposer_reward'] = fund_tax_on_proposer_reward
-    param_set_2['fund_tax_on_storage_fees'] = fund_tax_on_storage_fees
-    param_set_2['slash_to_fund'] = slash_to_fund
+    param_set_2["label"] = "no-fund"
+    param_set_2["fund_tax_on_proposer_reward"] = fund_tax_on_proposer_reward
+    param_set_2["fund_tax_on_storage_fees"] = fund_tax_on_storage_fees
+    param_set_2["slash_to_fund"] = slash_to_fundvf
 
     param_sets = [param_set_1, param_set_2]
 
@@ -139,8 +170,8 @@ def issuance_sweep() -> DataFrame:
 
     param_set_1 = SINGLE_RUN_PARAMS
     param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2['label'] = 'alternate-issuance-function'
-    param_set_2['issuance_function'] = lambda _: ISSUANCE_FOR_FARMERS / 5 * 365
+    param_set_2["label"] = "alternate-issuance-function"
+    param_set_2["issuance_function"] = lambda _: ISSUANCE_FOR_FARMERS / 5 * 365
 
     param_sets = [param_set_1, param_set_2]
 
@@ -169,8 +200,8 @@ def reward_split_sweep() -> DataFrame:
 
     param_set_1 = SINGLE_RUN_PARAMS
     param_set_2 = deepcopy(SINGLE_RUN_PARAMS)
-    param_set_2['label'] = 'alternate-split'
-    param_set_2['reward_proposer_share'] = 0.5
+    param_set_2["label"] = "alternate-split"
+    param_set_2["reward_proposer_share"] = 0.5
 
     param_sets = [param_set_1, param_set_2]
 
