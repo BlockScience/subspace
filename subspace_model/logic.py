@@ -231,7 +231,7 @@ def p_storage_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelStat
             'storage_fee_volume': eff_total_storage_fees}
 
 
-def p_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_bundle_compute_fees(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
     """
     HACK: If holders balance is insufficient, then the amount of paid fees 
     will be lower even though the transactions still go through.

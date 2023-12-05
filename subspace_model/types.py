@@ -76,11 +76,17 @@ class SubspaceModelState(TypedDict):
     buffer_size: Bytes
 
     # Stochastic Variables
-    average_base_fee: Optional[ShannonPerComputeWeights]
-    average_priority_fee: Optional[ShannonPerComputeWeights]
-    average_compute_weight_per_tx: Optional[ComputeWeights]
-    average_transaction_size: Optional[Bytes]
-    transaction_count: Optional[int]
+    base_fee_tx: Optional[ShannonPerComputeWeights]
+    priority_fee_tx: Optional[ShannonPerComputeWeights]
+    compute_weight_per_tx: Optional[ComputeWeights]
+    size_tx: Optional[Bytes]
+    count_tx: Optional[int]
+
+    base_fee_bundle: Optional[ShannonPerComputeWeights]
+    priority_fee_bundle: Optional[ShannonPerComputeWeights]
+    compute_weight_per_bundle: Optional[ComputeWeights]
+    size_bundle: Optional[Bytes]
+    count_bundle: Optional[int]
 
     # Metrics
     compute_fee_volume: Credits

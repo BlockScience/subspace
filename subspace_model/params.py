@@ -47,11 +47,9 @@ INITIAL_STATE = SubspaceModelState(
     buffer_size=0,
 
     # Environmental Variables
-    average_base_fee=None,
-    average_priority_fee=None,
-    average_compute_weight_per_tx=None,
-    average_transaction_size=None,
-    transaction_count=None,
+    base_fee_tx=None,
+    priority_fee_tx=None,
+    c
 
     compute_fee_volume=0.0,
     storage_fee_volume=0.0,

@@ -95,7 +95,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Compute Fees',
         'ignore': False,
         'policies': {
-            'compute_fees': p_compute_fees
+            'tx_compute_fees': p_tx_compute_fees,
+            'bundle_compute_fees': p_bundle_compute_fees,
         },
         'variables': {
             'farmers_balance': add_suf,
