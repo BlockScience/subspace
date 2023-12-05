@@ -313,8 +313,11 @@ def p_compute_fees(
     HACK: If holders balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
     """
+    
+    
     compute_weights: ComputeWeights = (
         state['average_compute_weight_per_tx'] * state['transaction_count']
+        + state['average_compute_weight_per_bundle'] * state['bundle_count']
     )
     base_fees: Credits = (
         state['average_base_fee'] * compute_weights * SHANNON_IN_CREDITS
