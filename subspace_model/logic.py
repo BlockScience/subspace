@@ -227,6 +227,23 @@ def s_average_compute_weight_per_tx(
         ),
     )
 
+def s_average_compute_weight_per_bundle(
+    params: SubspaceModelParams, _2, _3, _4, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average compute weights per transaction through a Gaussian process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: verify that is implemented correctly
+    return (
+        'average_compute_weight_per_budle',
+        max(
+            params['compute_weight_per_bundle_function'](
+                deterministic=params['deterministic']
+            ),
+            params['min_compute_weights_per_bundle'],
+        ),
+    )
 
 def s_average_transaction_size(
     params: SubspaceModelParams, _2, _3, _4, _5
@@ -253,6 +270,22 @@ def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> Variable
         'transaction_count',
         max(
             params['transaction_count_per_day_function'](
+                deterministic=params['deterministic']
+            ),
+            0,
+        ),
+    )
+
+def s_bundle_count(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+    """
+    Simulate the ts-average transaction size through a Poisson process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: refactor
+    return (
+        'transaction_count',
+        max(
+            params['bundle_count_per_day_function'](
                 deterministic=params['deterministic']
             ),
             0,

@@ -31,6 +31,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'transaction_count': s_transaction_count,
             'average_transaction_size': s_average_transaction_size,
             'space_pledged': add_suf,
+            'average_compute_weight_per_bundle': s_average_compute_weight_per_bundle,
+            'bundle_count': s_bundle_count
         },
     },
     {
