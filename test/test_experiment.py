@@ -1,4 +1,4 @@
-from subspace_model.experiment import sanity_check_run
+from subspace_model.experiments.experiment import sanity_check_run
 
 
 def test_sanity_check_run():
