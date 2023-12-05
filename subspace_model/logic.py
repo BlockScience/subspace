@@ -97,7 +97,7 @@ def p_issuance_reward(
     Farmer rewards that originates from protocol issuance.
     XXX: there's a hard cap on how much can be issued.
     """
-    issuance_per_day = params['issuance_function'](state)
+    issuance_per_day = params['issuance_function'](params, state)
     reward = issuance_per_day * state['delta_days']
 
     # Make sure that the protocol has tokens to issue
@@ -148,7 +148,7 @@ def p_pledge_sectors(
     new_sectors = int(
         max(
             params['new_sectors_per_day_function'](
-                deterministic=params['deterministic']
+                params, state, key='new_sectors_per_day_function'
             ),
             0,
         )
@@ -181,7 +181,9 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
     return {'history_size': new_history_bytes, 'buffer_size': new_buffer_bytes}
 
 
-def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+def s_average_base_fee(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
     """
     Simulate the ts-average base fee during an timestep through
     a Gaussian process.
@@ -190,14 +192,14 @@ def s_average_base_fee(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableU
     return (
         'average_base_fee',
         max(
-            params['base_fee_function'](deterministic=params['deterministic']),
+            params['base_fee_function'](params, state, key='base_fee_function'),
             params['min_base_fee'],
         ),
     )
 
 
 def s_average_priority_fee(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average priority fee during an timestep through
@@ -206,12 +208,15 @@ def s_average_priority_fee(
     """
     return (
         'average_priority_fee',
-        max(params['priority_fee_function'](deterministic=params['deterministic']), 0),
+        max(
+            params['priority_fee_function'](params, state, key='priority_fee_function'),
+            0,
+        ),
     )
 
 
 def s_average_compute_weight_per_tx(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
@@ -221,7 +226,7 @@ def s_average_compute_weight_per_tx(
         'average_compute_weight_per_tx',
         max(
             params['compute_weight_per_tx_function'](
-                deterministic=params['deterministic']
+                params, state, key='compute_weight_per_tx_function'
             ),
             params['min_compute_weights_per_tx'],
         ),
@@ -245,8 +250,27 @@ def s_average_compute_weight_per_bundle(
         ),
     )
 
+def s_average_compute_weight_per_bundle(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average compute weights per transaction through a Gaussian process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: verify that is implemented correctly
+    return (
+        'average_compute_weight_per_budle',
+        max(
+            params['compute_weight_per_bundle_function'](
+                params, state, key='compute_weight_per_bundle_function'
+            ),
+            params['min_compute_weights_per_bundle'],
+        ),
+    )
+
+
 def s_average_transaction_size(
-    params: SubspaceModelParams, _2, _3, _4, _5
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Gaussian process.
@@ -255,13 +279,17 @@ def s_average_transaction_size(
     return (
         'average_transaction_size',
         max(
-            params['transaction_size_function'](deterministic=params['deterministic']),
+            params['transaction_size_function'](
+                params, state, key='transaction_size_function'
+            ),
             params['min_transaction_size'],
         ),
     )
 
 
-def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> VariableUpdate:
+def s_transaction_count(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
     """
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
@@ -270,7 +298,26 @@ def s_transaction_count(params: SubspaceModelParams, _2, _3, _4, _5) -> Variable
         'transaction_count',
         max(
             params['transaction_count_per_day_function'](
-                deterministic=params['deterministic']
+                params, state, key='transaction_count_per_day_function'
+            ),
+            0,
+        ),
+    )
+
+
+def s_bundle_count(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average transaction size through a Poisson process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: refactor
+    return (
+        'transaction_count',
+        max(
+            params['bundle_count_per_day_function'](
+                params, state, key='bundle_count_per_day_function'
             ),
             0,
         ),
@@ -412,9 +459,11 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     pool_balance = state['staking_pool_balance']
     if pool_balance > 0:
         slash_count = params['slash_per_day_function'](
-            deterministic=params['deterministic']
+            params, state, key='slash_per_day_function'
         )
-        slash_value = min(slash_count * params['slash_function'](state), pool_balance)
+        slash_value = min(
+            slash_count * params['slash_function'](params, state), pool_balance
+        )
         if slash_value > 0:
             slash_to_fund = slash_value * params['slash_to_fund']
             slash_to_holders = slash_value * params['slash_to_holders']
@@ -497,7 +546,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
     # Stake operation
     operator_stake_fraction = params['operator_stake_per_ts_function'](
-        deterministic=params['deterministic']
+        params, state, key='operator_stake_per_ts_function'
     )
 
     if operator_stake_fraction > 0:
@@ -510,7 +559,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
         operator_stake = 0.0
 
     nominator_stake_fraction = params['nominator_stake_per_ts_function'](
-        deterministic=params['deterministic']
+        params, state, key='nominator_stake_per_ts_function'
     )
 
     if nominator_stake_fraction > 0:

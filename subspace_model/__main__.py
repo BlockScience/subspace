@@ -8,15 +8,13 @@ from datetime import datetime
 import click
 import IPython
 import panel as pn
-from cadCAD_tools.execution import easy_run
 
 from subspace_model import default_run_args
-from subspace_model.experiment import (
-    escrow_inclusion_sweep_run,
+from subspace_model.experiments.experiment import (
+    fund_inclusion,
     issuance_sweep,
     reward_split_sweep,
     sanity_check_run,
-    standard_run,
     standard_stochastic_run,
 )
 
@@ -30,14 +28,24 @@ log_levels = {
 }
 
 experiments = {
-    'escrow_inclusion_sweep_run': escrow_inclusion_sweep_run,
-    'issuance_sweep': issuance_sweep,
-    'reward_split_sweep': reward_split_sweep,
     'sanity_check_run': sanity_check_run,
-    'standard_run': standard_run,
     'standard_stochastic_run': standard_stochastic_run,
-    'easy_run': easy_run,
+    'fund_inclusion': fund_inclusion,
+    'reward_split_sweep': reward_split_sweep,
+    'issuance_sweep': issuance_sweep,
 }
+
+
+def pickle_results(df, directory: str, filename: str):
+    filepath = os.path.join(directory, filename)
+
+    # Check if the directory exists, create it if it doesn't
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Save the DataFrame
+    df.to_pickle(filepath, compression='gzip')
+    logger.info(f'Results saved to {filepath}.')
 
 
 @click.command()
@@ -46,7 +54,7 @@ experiments = {
     '--experiment',
     'experiment',
     type=click.Choice(experiments.keys(), case_sensitive=False),
-    default='standard_run',
+    default='standard_stochastic_run',
     help='Select an experiment to run.',
 )
 @click.option(
@@ -81,34 +89,65 @@ experiments = {
     is_flag=True,
     help='Clear cache for all experiments.',
 )
+@click.option(
+    '-a',
+    '--run-all',
+    'run_all',
+    default=False,
+    is_flag=True,
+    help='Run all experiments.',
+)
 def main(
     experiment: str,
     pickle: bool,
     interactive: bool,
     log_level: str,
     clear_cache: bool,
+    run_all: bool,
 ) -> None:
+    # Initialize logging
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    logger.info(f'Initializing main at {timestamp}...')
+    logger.info(f'Setting log level to {log_level}...')
+    logger.setLevel(log_levels[log_level])
+
+    # Conditionally clear the cache
     if clear_cache:
         logger.info(f'Clearing caches for all experiments.')
         pn.state.clear_caches()
-    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    logger.info(f'Initializing main at {timestamp}')
-    logger.info(f'Setting log level to {log_level}')
-    logger.setLevel(log_levels[log_level])
-    if experiment == 'easy_run':
-        df = easy_run(*default_run_args)
-        logger.info('Easy run executed.')
+
+    # Run all experiments
+    if run_all:
+        for experiment, experiment_run in experiments.items():
+            logger.info(f'Executing experiment: {experiment}...')
+            df = experiment_run()
+            logger.info(f'{experiment} executed.')
+
+            # Conditionally pickle the results
+            if pickle:
+                pickle_results(
+                    df,
+                    directory='data/simulations/',
+                    filename=f'{experiment}-{timestamp}.pkl.gz',
+                )
+
+    # Run the selected experiment
     else:
+        logger.info(f'Executing experiment: {experiment}...')
         experiment_run = experiments[experiment]
         df = experiment_run()
         logger.info(f'{experiment} executed.')
-    if pickle:
-        filename = f'data/simulations/multi-run-{experiment}-{timestamp}.pkl.gz'
-        df.to_pickle(filename, compression='gzip')
-        logger.info(f'Results saved to {filename}.')
+        logger.info(df)
 
-    logger.info(df)
+        # Conditionally pickle the results
+        if pickle:
+            pickle_results(
+                df,
+                directory='data/simulations/',
+                filename=f'{experiment}-{timestamp}.pkl.gz',
+            )
 
+    # Conditionally drop into an IPython shell
     if interactive:
         IPython.embed()
 
