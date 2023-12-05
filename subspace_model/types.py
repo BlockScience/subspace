@@ -42,15 +42,15 @@ Percentage = Annotated[float, '%']
 class SubspaceModelState(TypedDict):
     # Time Variables
     days_passed: Days
-    delta_days: Optional[Days]
-    delta_blocks: Optional[Blocks]
+    delta_days:Days
+    delta_blocks: Blocks
 
     # Metrics
-    circulating_supply: Optional[Credits]
-    user_supply: Optional[Credits]
-    issued_supply: Optional[Credits]
-    sum_of_stocks: Optional[Credits]
-    block_utilization: Optional[Percentage]
+    circulating_supply: Credits
+    user_supply: Credits
+    issued_supply: Credits
+    sum_of_stocks: Credits
+    block_utilization: Percentage
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
@@ -71,7 +71,7 @@ class SubspaceModelState(TypedDict):
     operator_pool_shares: float
 
     # Deterministic Variables
-    block_reward: Optional[Credits]
+    block_reward: Credits
     history_size: Bytes
     space_pledged: Bytes
     allocated_tokens: Credits
@@ -80,9 +80,14 @@ class SubspaceModelState(TypedDict):
     # Stochastic Variables
     average_base_fee: Optional[ShannonPerComputeWeights]
     average_priority_fee: Optional[ShannonPerComputeWeights]
-    average_compute_weight_per_tx: Optional[ComputeWeights]
-    average_transaction_size: Optional[Bytes]
-    transaction_count: Optional[int]
+
+    average_compute_weight_per_tx: ComputeWeights
+    average_transaction_size: Bytes
+    transaction_count: int
+
+    average_compute_weight_per_bundle: ComputeWeights
+    average_bundle_size: Bytes
+    bundle_count: int
 
     # Metrics
     compute_fee_volume: Credits
