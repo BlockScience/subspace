@@ -364,6 +364,7 @@ def p_compute_fees(
     tx_compute_weight = (
         state['average_compute_weight_per_tx'] * state['transaction_count']
     )
+
     bundles_compute_weight = (
         state['average_compute_weight_per_bundle'] * state['bundle_count']
     )
