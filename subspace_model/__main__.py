@@ -36,6 +36,18 @@ experiments = {
 }
 
 
+def pickle_results(df, directory: str, filename: str):
+    filepath = os.path.join(directory, filename)
+
+    # Check if the directory exists, create it if it doesn't
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Save the DataFrame
+    df.to_pickle(filepath, compression='gzip')
+    logger.info(f'Results saved to {filepath}.')
+
+
 @click.command()
 @click.option(
     '-e',
@@ -77,12 +89,21 @@ experiments = {
     is_flag=True,
     help='Clear cache for all experiments.',
 )
+@click.option(
+    '-a',
+    '--run-all',
+    'run_all',
+    default=False,
+    is_flag=True,
+    help='Run all experiments.',
+)
 def main(
     experiment: str,
     pickle: bool,
     interactive: bool,
     log_level: str,
     clear_cache: bool,
+    run_all: bool,
 ) -> None:
     # Initialize logging
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -95,27 +116,36 @@ def main(
         logger.info(f'Clearing caches for all experiments.')
         pn.state.clear_caches()
 
+    # Run all experiments
+    if run_all:
+        for experiment, experiment_run in experiments.items():
+            logger.info(f'Executing experiment: {experiment}...')
+            df = experiment_run()
+            logger.info(f'{experiment} executed.')
+
+            # Conditionally pickle the results
+            if pickle:
+                pickle_results(
+                    df,
+                    directory='data/simulations/',
+                    filename=f'{experiment}-{timestamp}.pkl.gz',
+                )
+
     # Run the selected experiment
-    logger.info(f'Executing experiment: {experiment}...')
-    experiment_run = experiments[experiment]
-    df = experiment_run()
-    logger.info(f'{experiment} executed.')
-    logger.info(df)
+    else:
+        logger.info(f'Executing experiment: {experiment}...')
+        experiment_run = experiments[experiment]
+        df = experiment_run()
+        logger.info(f'{experiment} executed.')
+        logger.info(df)
 
-    # Conditionally pickle the results
-    if pickle:
-        # Define the directory and filename
-        directory = 'data/simulations/'
-        filename = f'{experiment}-{timestamp}.pkl.gz'
-        filepath = os.path.join(directory, filename)
-
-        # Check if the directory exists, create it if it doesn't
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        # Save the DataFrame
-        df.to_pickle(filepath, compression='gzip')
-        logger.info(f'Results saved to {filepath}.')
+        # Conditionally pickle the results
+        if pickle:
+            pickle_results(
+                df,
+                directory='data/simulations/',
+                filename=f'{experiment}-{timestamp}.pkl.gz',
+            )
 
     # Conditionally drop into an IPython shell
     if interactive:
