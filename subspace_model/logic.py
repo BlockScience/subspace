@@ -233,6 +233,25 @@ def s_average_compute_weight_per_tx(
     )
 
 
+def s_average_compute_weight_per_bundle(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average compute weights per transaction through a Gaussian process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: verify that is implemented correctly
+    return (
+        'average_compute_weight_per_budle',
+        max(
+            params['compute_weight_per_bundle_function'](
+                params, state, key='compute_weight_per_bundle_function'
+            ),
+            params['min_compute_weights_per_bundle'],
+        ),
+    )
+
+
 def s_average_transaction_size(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
@@ -263,6 +282,25 @@ def s_transaction_count(
         max(
             params['transaction_count_per_day_function'](
                 params, state, key='transaction_count_per_day_function'
+            ),
+            0,
+        ),
+    )
+
+
+def s_bundle_count(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average transaction size through a Poisson process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: refactor
+    return (
+        'transaction_count',
+        max(
+            params['bundle_count_per_day_function'](
+                params, state, key='bundle_count_per_day_function'
             ),
             0,
         ),
@@ -322,9 +360,13 @@ def p_compute_fees(
     HACK: If holders balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
     """
-    
-    tx_compute_weight = state['average_compute_weight_per_tx'] * state['transaction_count']
-    bundles_compute_weight = state['average_compute_weight_per_bundle'] * state['bundle_count']
+
+    tx_compute_weight = (
+        state['average_compute_weight_per_tx'] * state['transaction_count']
+    )
+    bundles_compute_weight = (
+        state['average_compute_weight_per_bundle'] * state['bundle_count']
+    )
 
     total_compute_weights: ComputeWeights = tx_compute_weight + bundles_compute_weight
     base_fees: Credits = (
