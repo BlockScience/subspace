@@ -1,6 +1,7 @@
 from subspace_model.experiments.experiment import (
     fund_inclusion,
     issuance_sweep,
+    reward_split_sweep,
     sanity_check_run,
     standard_stochastic_run,
 )
@@ -20,3 +21,7 @@ def test_issuance_sweep():
 
 def test_fund_inclusion():
     sim_df = fund_inclusion(SIMULATION_DAYS=700, TIMESTEP_IN_DAYS=1, SAMPLES=2)
+
+
+def test_reward_split_sweep():
+    sim_df = reward_split_sweep(SIMULATION_DAYS=700, TIMESTEP_IN_DAYS=1, SAMPLES=2)
