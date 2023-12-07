@@ -4,8 +4,10 @@ from subspace_model.const import *
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_SLASH_FUNCTION,
-    NORMAL,
-    POISSON,
+    MAGNITUDE,
+    NORMAL_GENERATOR,
+    POISSON_GENERATOR,
+    POSITIVE_INTEGER,
 )
 from subspace_model.types import *
 
@@ -62,72 +64,9 @@ INITIAL_STATE = SubspaceModelState(
 )
 
 
-BASE_PARAMS = SubspaceModelParams(
+DEFAULT_PARAMS = SubspaceModelParams(
     label='standard',
     # Set system wide deterministic
-    deterministic=False,
-    stochastic_params=dict(
-        operator_stake_per_ts_function=dict(
-            mu=0.01,
-            sigma=0.01,
-            deterministic=False,
-        ),
-        nominator_stake_per_ts_function=dict(
-            mu=0.01,
-            sigma=0.01,
-            deterministic=False,
-        ),
-        base_fee_function=dict(
-            mu=1,
-            sigma=1,
-            deterministic=False,
-        ),
-        priority_fee_function=dict(
-            mu=3,
-            sigma=5,
-            deterministic=False,
-        ),
-        compute_weight_per_tx_function=dict(
-            mu=60_000_000,
-            sigma=15_000_000,
-            deterministic=False,
-        ),
-        # bundles are usually compute heavy
-        compute_weight_per_bundle_function=dict(
-            mu=10_000_000_000,
-            sigma=5_000_000_000,
-            deterministic=False,
-        ),
-        transaction_size_function=dict(
-            mu=256,
-            sigma=100,
-            deterministic=False,
-        ),
-        bundle_size_function=dict(
-            mu=1500,
-            sigma=1000,
-            deterministic=False,
-        ),
-        # Transactions per block
-        transaction_count_per_day_function=dict(
-            mu=1 * (24 * 60 * 60 / BLOCK_TIME),
-            deterministic=False,
-        ),
-        # Bundles per block
-        bundle_count_per_day_function=dict(
-            mu=6 * (24 * 60 * 60 / BLOCK_TIME),
-            deterministic=False,
-        ),
-        slash_per_day_function=dict(
-            mu=0.1,
-            deterministic=False,
-        ),
-        new_sectors_per_day_function=dict(
-            mu=1000,
-            sigma=500,
-            deterministic=False,
-        ),
-    ),
     timestep_in_days=TIMESTEP_IN_DAYS,
     # Mechanisms TBD
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
@@ -139,6 +78,11 @@ BASE_PARAMS = SubspaceModelParams(
     header_size=6_500,  # how much data does every block contain on top of txs: signature, solution, consensus logs, etc. + votes + PoT
     replication_factor=10,
     max_block_size=int(3.75 * MIB_IN_BYTES),  # 3.75 MiB
+    min_base_fee=1,
+    min_compute_weights_per_tx=6_000_000,  # TODO
+    min_compute_weights_per_bundle=2_000_000_000,  # TODO
+    min_transaction_size=100,  # TODO
+    min_bundle_size=250,  # TODO
     # Economic Parameters
     reward_proposer_share=0.0,  # TODO
     max_credit_supply=3_000_000_000,  # TODO,
@@ -150,27 +94,30 @@ BASE_PARAMS = SubspaceModelParams(
     # Slash Parameters
     slash_to_fund=0.0,
     slash_to_holders=0.05,
-    # Behavioral Parameters
-    operator_stake_per_ts_function=NORMAL,
-    nominator_stake_per_ts_function=NORMAL,
-    transfer_farmer_to_holder_per_day=0.05,  # TODO
-    transfer_operator_to_holder_per_day=0.05,  # TODO
-    transfer_holder_to_nominator_per_day=0.01,  # TODO
-    transfer_holder_to_operator_per_day=0.01,  # TODO
-    # Environmental Parameters
-    base_fee_function=NORMAL,
-    min_base_fee=1,
-    priority_fee_function=NORMAL,
-    compute_weight_per_tx_function=NORMAL,
-    min_compute_weights_per_tx=6_000_000,  # TODO
-    compute_weight_per_bundle_function=NORMAL,
-    min_compute_weights_per_bundle=2_000_000_000,  # TODO
-    transaction_size_function=NORMAL,
-    min_transaction_size=100,  # TODO
-    bundle_size_function=NORMAL,
-    min_bundle_size=250,  # TODO
-    transaction_count_per_day_function=POISSON,  # XXX: X tx per block
-    bundle_count_per_day_function=POISSON,
-    slash_per_day_function=POISSON,
-    new_sectors_per_day_function=NORMAL,
+    # Behavioral Parameters Between 0 and 1
+    operator_stake_per_ts_function=lambda p, s: 0.01,
+    nominator_stake_per_ts_function=lambda p, s: 0.01,
+    transfer_farmer_to_holder_per_day=lambda p, s: 0.05,
+    transfer_operator_to_holder_per_day=lambda p, s: 0.05,
+    transfer_holder_to_nominator_per_day=lambda p, s: 0.01,
+    transfer_holder_to_operator_per_day=lambda p, s: 0.01,
+    # Environmental Parameters (Integer positive in [0,inf])
+    base_fee_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
+    priority_fee_function=POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),
+    compute_weights_per_tx_function=POSITIVE_INTEGER(
+        NORMAL_GENERATOR(60_000_000, 15_000_000)
+    ),
+    compute_weight_per_bundle_function=POSITIVE_INTEGER(
+        NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
+    ),
+    transaction_size_function=POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
+    bundle_size_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
+    transaction_count_per_day_function=POSITIVE_INTEGER(
+        POISSON_GENERATOR(1 * BLOCKS_PER_DAY)
+    ),
+    bundle_count_per_day_function=POSITIVE_INTEGER(
+        POISSON_GENERATOR(6 * BLOCKS_PER_DAY)
+    ),
+    slash_per_day_function=POISSON_GENERATOR(0.1),
+    new_sectors_per_day_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
 )

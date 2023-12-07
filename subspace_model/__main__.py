@@ -30,9 +30,9 @@ log_levels = {
 experiments = {
     'sanity_check_run': sanity_check_run,
     'standard_stochastic_run': standard_stochastic_run,
+    'issuance_sweep': issuance_sweep,
     'fund_inclusion': fund_inclusion,
     'reward_split_sweep': reward_split_sweep,
-    'issuance_sweep': issuance_sweep,
 }
 
 

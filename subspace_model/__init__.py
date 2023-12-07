@@ -33,12 +33,12 @@ def setup_logging(
 setup_logging()
 
 
-from subspace_model.params import BASE_PARAMS, INITIAL_STATE, SAMPLES, TIMESTEPS
+from subspace_model.params import DEFAULT_PARAMS, INITIAL_STATE, SAMPLES, TIMESTEPS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 
 default_run_args = (
     INITIAL_STATE,
-    {k: [v] for k, v in BASE_PARAMS.items()},
+    {k: [v] for k, v in DEFAULT_PARAMS.items()},
     SUBSPACE_MODEL_BLOCKS,
     TIMESTEPS,
     SAMPLES,

@@ -147,9 +147,7 @@ def p_pledge_sectors(
     """
     new_sectors = int(
         max(
-            params['new_sectors_per_day_function'](
-                params, state, key='new_sectors_per_day_function'
-            ),
+            params['new_sectors_per_day_function'](params, state),
             0,
         )
     )
@@ -192,7 +190,7 @@ def s_average_base_fee(
     return (
         'average_base_fee',
         max(
-            params['base_fee_function'](params, state, key='base_fee_function'),
+            params['base_fee_function'](params, state),
             params['min_base_fee'],
         ),
     )
@@ -209,7 +207,7 @@ def s_average_priority_fee(
     return (
         'average_priority_fee',
         max(
-            params['priority_fee_function'](params, state, key='priority_fee_function'),
+            params['priority_fee_function'](params, state),
             0,
         ),
     )
@@ -225,9 +223,7 @@ def s_average_compute_weight_per_tx(
     return (
         'average_compute_weight_per_tx',
         max(
-            params['compute_weight_per_tx_function'](
-                params, state, key='compute_weight_per_tx_function'
-            ),
+            params['compute_weights_per_tx_function'](params, state),
             params['min_compute_weights_per_tx'],
         ),
     )
@@ -247,7 +243,6 @@ def s_average_compute_weight_per_bundle(
             params['compute_weight_per_bundle_function'](
                 params,
                 state,
-                key='compute_weight_per_bundle_function',
             ),
             params['min_compute_weights_per_bundle'],
         ),
@@ -266,7 +261,8 @@ def s_average_compute_weight_per_bundle(
         'average_compute_weight_per_budle',
         max(
             params['compute_weight_per_bundle_function'](
-                params, state, key='compute_weight_per_bundle_function'
+                params,
+                state,
             ),
             params['min_compute_weights_per_bundle'],
         ),
@@ -284,7 +280,8 @@ def s_average_transaction_size(
         'average_transaction_size',
         max(
             params['transaction_size_function'](
-                params, state, key='transaction_size_function'
+                params,
+                state,
             ),
             params['min_transaction_size'],
         ),
@@ -302,26 +299,8 @@ def s_transaction_count(
         'transaction_count',
         max(
             params['transaction_count_per_day_function'](
-                params, state, key='transaction_count_per_day_function'
-            ),
-            0,
-        ),
-    )
-
-
-def s_bundle_count(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
-    """
-    Simulate the ts-average transaction size through a Poisson process.
-    XXX: depends on an stochastic process assumption.
-    """
-    # TODO: refactor
-    return (
-        'transaction_count',
-        max(
-            params['bundle_count_per_day_function'](
-                params, state, key='bundle_count_per_day_function'
+                params,
+                state,
             ),
             0,
         ),
@@ -342,7 +321,26 @@ def s_bundle_count(
             params['bundle_count_per_day_function'](
                 params,
                 state,
-                key='bundle_count_per_day_function',
+            ),
+            0,
+        ),
+    )
+
+
+def s_bundle_count(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> VariableUpdate:
+    """
+    Simulate the ts-average transaction size through a Poisson process.
+    XXX: depends on an stochastic process assumption.
+    """
+    # TODO: refactor
+    return (
+        'transaction_count',
+        max(
+            params['bundle_count_per_day_function'](
+                params,
+                state,
             ),
             0,
         ),
@@ -472,7 +470,8 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     pool_balance = state['staking_pool_balance']
     if pool_balance > 0:
         slash_count = params['slash_per_day_function'](
-            params, state, key='slash_per_day_function'
+            params,
+            state,
         )
         slash_value = min(
             slash_count * params['slash_function'](params, state), pool_balance
@@ -559,7 +558,8 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
     # Stake operation
     operator_stake_fraction = params['operator_stake_per_ts_function'](
-        params, state, key='operator_stake_per_ts_function'
+        params,
+        state,
     )
 
     if operator_stake_fraction > 0:
@@ -572,7 +572,8 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
         operator_stake = 0.0
 
     nominator_stake_fraction = params['nominator_stake_per_ts_function'](
-        params, state, key='nominator_stake_per_ts_function'
+        params,
+        state,
     )
 
     if nominator_stake_fraction > 0:
@@ -616,28 +617,32 @@ def p_transfers(
 
     # Farmers to Holders
     if state['farmers_balance'] > 0:
-        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day']
+        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day'](
+            params, state
+        )
         delta_farmers -= delta
         delta_holders += delta
 
     # Operators to Holders
     if state['operators_balance'] > 0:
-        delta = (
-            state['operators_balance'] * params['transfer_operator_to_holder_per_day']
-        )
+        delta = state['operators_balance'] * params[
+            'transfer_operator_to_holder_per_day'
+        ](params, state)
         delta_operators -= delta
         delta_holders += delta
 
     # Holder to Nominators
     if state['holders_balance'] > 0:
-        delta = (
-            state['holders_balance'] * params['transfer_holder_to_nominator_per_day']
-        )
+        delta = state['holders_balance'] * params[
+            'transfer_holder_to_nominator_per_day'
+        ](params, state)
         delta_holders -= delta
         delta_nominators += delta
 
         # Holder to Operators
-        delta = state['holders_balance'] * params['transfer_holder_to_operator_per_day']
+        delta = state['holders_balance'] * params[
+            'transfer_holder_to_operator_per_day'
+        ](params, state)
         delta_holders -= delta
         delta_operators += delta
 
