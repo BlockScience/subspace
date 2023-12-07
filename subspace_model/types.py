@@ -42,7 +42,7 @@ Percentage = Annotated[float, '%']
 class SubspaceModelState(TypedDict):
     # Time Variables
     days_passed: Days
-    delta_days:Days
+    delta_days: Days
     delta_blocks: Blocks
 
     # Metrics
@@ -177,3 +177,6 @@ class SubspaceModelParams(TypedDict):
     new_sectors_per_day_function: Callable[[bool], float]
     # avg_new_sectors_per_day: float
     # std_new_sectors_per_day: float
+
+
+StochasticFunction = Callable[[SubspaceModelParams, SubspaceModelState], float]
