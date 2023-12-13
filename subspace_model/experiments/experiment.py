@@ -9,7 +9,8 @@ from pandas import DataFrame
 from subspace_model.const import *
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
-    ISSUANCE_FUNCTION,
+    MOCK_ISSUANCE_FUNCTION,
+    MOCK_ISSUANCE_FUNCTION_2,
     NORMAL_GENERATOR,
     POISSON_GENERATOR,
 )
@@ -33,17 +34,17 @@ def sanity_check_run(
     # Get the sweep parameters in the form of single length arrays
     param_set_1 = DEFAULT_PARAMS
     param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2['label'] = 'deterministic'
-    param_set_2['base_fee_function'] = lambda p, s: 1
-    param_set_2['priority_fee_function'] = lambda p, s: 3
-    param_set_2['compute_weights_per_tx_function'] = lambda p, s: 60_000_000
-    param_set_2['compute_weight_per_bundle_function'] = lambda p, s: 10_000_000_000
-    param_set_2['transaction_size_function'] = lambda p, s: 256
-    param_set_2['bundle_size_function'] = lambda p, s: 1500
-    param_set_2['transaction_count_per_day_function'] = lambda p, s: 1 * BLOCKS_PER_DAY
-    param_set_2['bundle_count_per_day_function'] = lambda p, s: 6 * BLOCKS_PER_DAY
-    param_set_2['slash_per_day_function'] = lambda p, s: 0.1
-    param_set_2['new_sectors_per_day_function'] = lambda p, s: 1000
+    param_set_2["label"] = "deterministic"
+    param_set_2["base_fee_function"] = lambda p, s: 1
+    param_set_2["priority_fee_function"] = lambda p, s: 3
+    param_set_2["compute_weights_per_tx_function"] = lambda p, s: 60_000_000
+    param_set_2["compute_weight_per_bundle_function"] = lambda p, s: 10_000_000_000
+    param_set_2["transaction_size_function"] = lambda p, s: 256
+    param_set_2["bundle_size_function"] = lambda p, s: 1500
+    param_set_2["transaction_count_per_day_function"] = lambda p, s: 1 * BLOCKS_PER_DAY
+    param_set_2["bundle_count_per_day_function"] = lambda p, s: 6 * BLOCKS_PER_DAY
+    param_set_2["slash_per_day_function"] = lambda p, s: 0.1
+    param_set_2["new_sectors_per_day_function"] = lambda p, s: 1000
     param_sets = [param_set_1, param_set_2]
 
     # Create the sweep parameters dictionary
@@ -84,7 +85,7 @@ def standard_stochastic_run(
 
 # @pn.cache(to_disk=True)
 def issuance_sweep(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
+    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 2
 ) -> DataFrame:
     """Sweeps issuance functions.
 
@@ -98,13 +99,14 @@ def issuance_sweep(
     # Get the sweep params in the form of single length arrays
 
     param_set_1 = DEFAULT_PARAMS
+    param_set_1["label"] = "default-issuance-function"
     param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2['label'] = 'alternate-issuance-function'
-    param_set_2['issuance_function'] = (
-        lambda *args, **kwargs: ISSUANCE_FOR_FARMERS / 5 * 365
-    )
-
-    param_sets = [param_set_1, param_set_2]
+    param_set_2["label"] = "mock-issuance-function"
+    param_set_2["issuance_function"] = MOCK_ISSUANCE_FUNCTION
+    param_set_3 = deepcopy(DEFAULT_PARAMS)
+    param_set_3["label"] = "mock-issuance-function-2"
+    param_set_3["issuance_function"] = MOCK_ISSUANCE_FUNCTION_2
+    param_sets = [param_set_1, param_set_2, param_set_3]
 
     sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
     for param_set in param_sets:
@@ -133,10 +135,10 @@ def fund_inclusion(
     # Get the sweep parameters in the form of single length arrays
     param_set_1 = DEFAULT_PARAMS
     param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2['label'] = 'no-fund'
-    param_set_2['fund_tax_on_proposer_reward'] = 0
-    param_set_2['fund_tax_on_storage_fees'] = 0
-    param_set_2['slash_to_fund'] = 0
+    param_set_2["label"] = "no-fund"
+    param_set_2["fund_tax_on_proposer_reward"] = 0
+    param_set_2["fund_tax_on_storage_fees"] = 0
+    param_set_2["slash_to_fund"] = 0
     param_sets = [param_set_1, param_set_2]
 
     # Create the sweep parameters dictionary
@@ -173,8 +175,8 @@ def reward_split_sweep(
 
     param_set_1 = DEFAULT_PARAMS
     param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2['label'] = 'alternate-split'
-    param_set_2['reward_proposer_share'] = 0.5
+    param_set_2["label"] = "alternate-split"
+    param_set_2["reward_proposer_share"] = 0.5
 
     param_sets = [param_set_1, param_set_2]
 
