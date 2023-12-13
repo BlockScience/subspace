@@ -32,13 +32,17 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             'average_transaction_size': s_average_transaction_size,
             'space_pledged': add_suf,
             'average_compute_weight_per_bundle': s_average_compute_weight_per_bundle,
-            'bundle_count': s_bundle_count
+            'bundle_count': s_bundle_count,
         },
     },
     {
-        'label': 'Archival Process',
+        'label': 'Archival Process and Compute Block Utilization',
         'policies': {'archival': p_archive},
-        'variables': {'history_size': add_suf, 'buffer_size': add_suf},
+        'variables': {
+            'history_size': add_suf,
+            'buffer_size': add_suf,
+            'block_utilization': s_block_utilization,
+        },
     },
     {
         'label': 'Farmer Rewards (Inflow)',
@@ -153,7 +157,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 'sum_of_stocks',
                 sum_of_stocks(s),
             ),
-            'block_utilization': s_block_utilization,
         },
     },
 ]
