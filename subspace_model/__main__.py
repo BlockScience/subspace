@@ -65,11 +65,11 @@ experiment_charts = {
     'fund_inclusion': [],
     'reward_split_sweep': [],
     'sweep_credit_supply': [
-        # ab_circulating_supply,
-        # ab_operator_pool_shares,
-        # ab_nominator_pool_shares,
-        # ab_block_utilization,
-        # ab_circulating_supply_volatility,
+        ab_circulating_supply,
+        ab_operator_pool_shares,
+        ab_nominator_pool_shares,
+        ab_block_utilization,
+        ab_circulating_supply_volatility,
     ],
 }
 

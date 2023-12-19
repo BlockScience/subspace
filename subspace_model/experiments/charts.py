@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly
 import plotly.express as px
 import seaborn as sns
 
