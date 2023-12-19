@@ -52,6 +52,8 @@ experiment_charts = {
     'standard_stochastic_run': [
         ab_circulating_supply,
         ab_operator_pool_shares,
+        ab_nominator_pool_shares,
+        ab_block_utilization,
     ],
     'issuance_sweep': [
         ab_circulating_supply,
@@ -132,23 +134,30 @@ def save_charts(experiment: str):
             os.makedirs(directory)
 
         charts = get_charts(df, experiment)
-        for (chart_name, chart) in charts:
+        for chart_name, chart in charts:
             logger.info(f'Generating chart {chart_name} for experiment {experiment}...')
-            figure = chart.get_figure()
-            figure.savefig(
+            chart.write_image(
                 f'{directory}{experiment}-{latest_simulation_timestamp}-{chart_name}.png'
             )
 
 
-def run(experiment: str, pickle: bool):
+def run_experiment(experiment: str, pickle: bool, samples: int | None = None):
+    """
+    Run an experiment and optionally pickle the results.
+    """
     logger.info(f'Executing experiment: {experiment}...')
     experiment_run = experiments[experiment]
-    df = experiment_run()
+    if samples is not None:
+        df = experiment_run(SAMPLES=samples)
+    else:
+        df = experiment_run()
+
     logger.info(f'{experiment} executed.')
     logger.info(df)
 
     # Conditionally pickle the results
     if pickle:
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         write_pickle_results(
             df,
             directory='data/simulations/',
@@ -213,6 +222,14 @@ def run(experiment: str, pickle: bool):
     is_flag=True,
     help='Visualize the most recent results of the selected experiment. Combine with -e or -a to select which experiment results to visualize.',
 )
+@click.option(
+    '-s',
+    '--samples',
+    'samples',
+    default=None,
+    type=int,
+    help='Set Sample size; if not set runs default sample size.',
+)
 def main(
     experiment: str,
     pickle: bool,
@@ -221,10 +238,11 @@ def main(
     clear_cache: bool,
     run_all: bool,
     visualize: bool,
+    samples: int | None,
 ) -> None:
     # Initialize logging
-    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    logger.info(f'Initializing main at {timestamp}...')
+
+    logger.info(f'Initializing main...')
     logger.info(f'Setting log level to {log_level}...')
     logger.setLevel(log_levels[log_level])
 
@@ -239,14 +257,14 @@ def main(
             if visualize:
                 save_charts(experiment)
             else:
-                run(experiment, pickle)
+                run_experiment(experiment, pickle, samples)
 
     # Single experiment selected
     else:
         if visualize:
             save_charts(experiment)
         else:
-            run(experiment, pickle)
+            run_experiment(experiment, pickle, samples)
 
     # Conditionally drop into an IPython shell
     if interactive:
