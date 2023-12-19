@@ -8,6 +8,9 @@ from subspace_model.experiments.logic import (
     NORMAL_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
+    SUPPLY_EARNED,
+    SUPPLY_EARNED_MINUS_BURNED,
+    SUPPLY_ISSUED,
 )
 from subspace_model.types import *
 
@@ -66,6 +69,7 @@ INITIAL_STATE = SubspaceModelState(
 
 DEFAULT_PARAMS = SubspaceModelParams(
     label='standard',
+    environmental_label='standard',
     # Set system wide deterministic
     timestep_in_days=TIMESTEP_IN_DAYS,
     # Mechanisms TBD
@@ -86,6 +90,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     # Economic Parameters
     reward_proposer_share=0.0,  # TODO
     max_credit_supply=3_000_000_000,  # TODO,
+    credit_supply_definition=SUPPLY_ISSUED,
     # Fees & Taxes
     fund_tax_on_proposer_reward=0.0,  # TODO
     fund_tax_on_storage_fees=1 / 10,

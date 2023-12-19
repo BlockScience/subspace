@@ -26,6 +26,7 @@ from subspace_model.experiments.experiment import (
     reward_split_sweep,
     sanity_check_run,
     standard_stochastic_run,
+    sweep_credit_supply,
 )
 
 # Define a dictionary to map string log levels to their corresponding constants in logging module
@@ -43,6 +44,7 @@ experiments = {
     'issuance_sweep': issuance_sweep,
     'fund_inclusion': fund_inclusion,
     'reward_split_sweep': reward_split_sweep,
+    'sweep_credit_supply': sweep_credit_supply,
 }
 
 experiment_charts = {
@@ -60,6 +62,13 @@ experiment_charts = {
     ],
     'fund_inclusion': [],
     'reward_split_sweep': [],
+    'sweep_credit_supply': [
+        ab_circulating_supply,
+        ab_operator_pool_shares,
+        ab_nominator_pool_shares,
+        ab_block_utilization,
+        ab_circulating_supply_volatility,
+    ],
 }
 
 
