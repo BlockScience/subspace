@@ -107,22 +107,14 @@ DEFAULT_PARAMS = SubspaceModelParams(
     transfer_holder_to_nominator_per_day=lambda p, s: 0.01,
     transfer_holder_to_operator_per_day=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
-    base_fee_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
-    priority_fee_function=POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),
-    compute_weights_per_tx_function=POSITIVE_INTEGER(
-        NORMAL_GENERATOR(60_000_000, 15_000_000)
-    ),
-    compute_weight_per_bundle_function=POSITIVE_INTEGER(
-        NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
-    ),
-    transaction_size_function=POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
-    bundle_size_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
-    transaction_count_per_day_function=POSITIVE_INTEGER(
-        POISSON_GENERATOR(1 * BLOCKS_PER_DAY)
-    ),
-    bundle_count_per_day_function=POSITIVE_INTEGER(
-        POISSON_GENERATOR(6 * BLOCKS_PER_DAY)
-    ),
-    slash_per_day_function=POISSON_GENERATOR(0.1),
-    new_sectors_per_day_function=POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
+    base_fee_function=lambda p, s: 1,
+    priority_fee_function=lambda p, s: 3,
+    compute_weights_per_tx_function=lambda p, s: 60_000_000,
+    compute_weight_per_bundle_function=lambda p, s: 10_000_000_000,
+    transaction_size_function=lambda p, s: 256,
+    bundle_size_function=lambda p, s: 1500,
+    transaction_count_per_day_function=lambda p, s: 1 * BLOCKS_PER_DAY,
+    bundle_count_per_day_function=lambda p, s: 6 * BLOCKS_PER_DAY,
+    slash_per_day_function=lambda p, s: 0.1,
+    new_sectors_per_day_function=lambda p, s: 1000,
 )
