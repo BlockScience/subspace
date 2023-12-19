@@ -13,6 +13,7 @@ from subspace_model.experiments.logic import (
     MOCK_ISSUANCE_FUNCTION_2,
     NORMAL_GENERATOR,
     POISSON_GENERATOR,
+    POSITIVE_INTEGER,
     SUPPLY_EARNED,
     SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
@@ -34,27 +35,8 @@ def sanity_check_run(
     """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    # Get the sweep parameters in the form of single length arrays
-    param_set_1 = DEFAULT_PARAMS
-    param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2['label'] = 'deterministic'
-    param_set_2['base_fee_function'] = lambda p, s: 1
-    param_set_2['priority_fee_function'] = lambda p, s: 3
-    param_set_2['compute_weights_per_tx_function'] = lambda p, s: 60_000_000
-    param_set_2['compute_weight_per_bundle_function'] = lambda p, s: 10_000_000_000
-    param_set_2['transaction_size_function'] = lambda p, s: 256
-    param_set_2['bundle_size_function'] = lambda p, s: 1500
-    param_set_2['transaction_count_per_day_function'] = lambda p, s: 1 * BLOCKS_PER_DAY
-    param_set_2['bundle_count_per_day_function'] = lambda p, s: 6 * BLOCKS_PER_DAY
-    param_set_2['slash_per_day_function'] = lambda p, s: 0.1
-    param_set_2['new_sectors_per_day_function'] = lambda p, s: 1000
-    param_sets = [param_set_1, param_set_2]
-
-    # Create the sweep parameters dictionary
-    sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
-    for param_set in param_sets:
-        for k, v in param_set.items():
-            sweep_params[k].append(v)
+    # Get the sweep params in the form of single length arrays
+    sweep_params = {k: [v] for k, v in DEFAULT_PARAMS.items()}
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
@@ -75,8 +57,33 @@ def standard_stochastic_run(
     """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
+    # Get the sweep parameters in the form of single length arrays
+    param_set = deepcopy(DEFAULT_PARAMS)
+    param_set['label'] = 'deterministic'
+    param_set['base_fee_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1))
+    param_set['priority_fee_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5))
+    param_set['compute_weights_per_tx_function'] = POSITIVE_INTEGER(
+        NORMAL_GENERATOR(60_000_000, 15_000_000)
+    )
+    param_set['compute_weight_per_bundle_function'] = POSITIVE_INTEGER(
+        NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
+    )
+    param_set['transaction_size_function'] = POSITIVE_INTEGER(
+        NORMAL_GENERATOR(256, 100)
+    )
+    param_set['bundle_size_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000))
+    param_set['transaction_count_per_day_function'] = POISSON_GENERATOR(
+        1 * BLOCKS_PER_DAY
+    )
+
+    param_set['bundle_count_per_day_function'] = POISSON_GENERATOR(6 * BLOCKS_PER_DAY)
+    param_set['slash_per_day_function'] = POISSON_GENERATOR(0.1)
+    param_set['new_sectors_per_day_function'] = POSITIVE_INTEGER(
+        NORMAL_GENERATOR(1000, 500)
+    )
+
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in DEFAULT_PARAMS.items()}
+    sweep_params = {k: [v] for k, v in param_set.items()}
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
@@ -88,7 +95,7 @@ def standard_stochastic_run(
 
 # @pn.cache(to_disk=True)
 def issuance_sweep(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 2
+    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Sweeps issuance functions.
 
@@ -98,9 +105,7 @@ def issuance_sweep(
 
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    # %%
     # Get the sweep params in the form of single length arrays
-
     param_set_1 = DEFAULT_PARAMS
     param_set_1['label'] = 'default-issuance-function'
     param_set_2 = deepcopy(DEFAULT_PARAMS)
@@ -126,7 +131,7 @@ def issuance_sweep(
 
 # @pn.cache(to_disk=True)
 def fund_inclusion(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
+    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -164,7 +169,7 @@ def fund_inclusion(
 def reward_split_sweep(
     SIMULATION_DAYS: int = 700,
     TIMESTEP_IN_DAYS: int = 1,
-    SAMPLES: int = 15,
+    SAMPLES: int = 1,
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -173,9 +178,7 @@ def reward_split_sweep(
     """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    # %%
     # Get the sweep params in the form of single length arrays
-
     param_set_1 = DEFAULT_PARAMS
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'alternate-split'
