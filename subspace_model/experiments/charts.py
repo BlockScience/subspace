@@ -6,7 +6,9 @@ import seaborn as sns
 from subspace_model.trajectory_metrics import window_volatility
 
 
-def ab_circulating_supply(sim_df: pd.DataFrame, experiment: str) -> None:
+def ab_circulating_supply(
+    sim_df: pd.DataFrame, experiment: str
+) -> plotly.graph_objects.Figure:
     fig = px.line(
         sim_df,
         x='days_passed',
@@ -16,7 +18,9 @@ def ab_circulating_supply(sim_df: pd.DataFrame, experiment: str) -> None:
     return fig
 
 
-def ab_operator_pool_shares(sim_df: pd.DataFrame, experiment: str) -> None:
+def ab_operator_pool_shares(
+    sim_df: pd.DataFrame, experiment: str
+) -> plotly.graph_objects.Figure:
     fig = px.line(
         sim_df,
         x='days_passed',
@@ -26,7 +30,9 @@ def ab_operator_pool_shares(sim_df: pd.DataFrame, experiment: str) -> None:
     return fig
 
 
-def ab_nominator_pool_shares(sim_df: pd.DataFrame, experiment: str) -> None:
+def ab_nominator_pool_shares(
+    sim_df: pd.DataFrame, experiment: str
+) -> plotly.graph_objects.Figure:
     fig = px.line(
         sim_df,
         x='days_passed',
@@ -36,7 +42,9 @@ def ab_nominator_pool_shares(sim_df: pd.DataFrame, experiment: str) -> None:
     return fig
 
 
-def ab_block_utilization(sim_df: pd.DataFrame, experiment: str) -> None:
+def ab_block_utilization(
+    sim_df: pd.DataFrame, experiment: str
+) -> plotly.graph_objects.Figure:
     fig = px.line(
         sim_df,
         x='days_passed',
@@ -46,7 +54,9 @@ def ab_block_utilization(sim_df: pd.DataFrame, experiment: str) -> None:
     return fig
 
 
-def ab_circulating_supply_volatility(sim_df: pd.DataFrame, experiment: str) -> None:
+def ab_circulating_supply_volatility(
+    sim_df: pd.DataFrame, experiment: str
+) -> plotly.graph_objects.Figure:
     lst = []
     for i, g_df in sim_df.set_index(['label', 'run', 'days_passed']).groupby('run'):
         s = window_volatility(g_df.circulating_supply.diff()).reset_index()
