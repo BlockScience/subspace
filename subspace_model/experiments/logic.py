@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 
+from subspace_model.metrics import earned_supply, issued_supply
 from subspace_model.types import (
     StochasticFunction,
     SubspaceModelParams,
@@ -53,3 +54,10 @@ def POSITIVE_INTEGER(generator: StochasticFunction) -> StochasticFunction:
 
 def MAGNITUDE(generator: StochasticFunction) -> StochasticFunction:
     return lambda p, s: min(1, max(0, generator(p, s)))
+
+
+SUPPLY_ISSUED = issued_supply
+
+SUPPLY_EARNED = earned_supply
+
+SUPPLY_EARNED_MINUS_BURNED = lambda state: earned_supply(state) - state['burnt_balance']
