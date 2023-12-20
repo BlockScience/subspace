@@ -359,7 +359,7 @@ def p_storage_fees(
     - https://github.com/subspace/subspace/blob/53dca169379e65b4fb97b5c7753f5d00bded2ef2/crates/pallet-transaction-fees/src/lib.rs#L271
     """
     # Input
-    credit_supply = issued_supply(state)
+    credit_supply = params['credit_supply_definition'](state)
     total_space_pledged = state['space_pledged']
     blockchain_size = state['history_size']
     replication_factor = params['replication_factor']
