@@ -1,7 +1,15 @@
+import logging
+
 from subspace_model.types import SubspaceModelState
 
 
 def circulating_supply(state: SubspaceModelState):
+    # print(f'Days passed: {state["days_passed"]}...')
+    # print('Calculating circulating supply...')
+    # print('Operating Balance: ', round(state['operators_balance']))
+    # print('Nominator Balance: ', round(state['nominators_balance']))
+    # print('Holder Balance: ', round(state['holders_balance']))
+    # print('Farmer Balance: ', round(state['farmers_balance']))
     return (
         state['operators_balance']
         + state['nominators_balance']
