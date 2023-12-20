@@ -14,11 +14,6 @@ from subspace_model.experiments.logic import (
 )
 from subspace_model.types import *
 
-SIMULATION_DAYS = 700
-TIMESTEP_IN_DAYS = 1
-TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
-SAMPLES = 1
-
 ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
 
 INITIAL_STATE = SubspaceModelState(
@@ -71,7 +66,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     label='standard',
     environmental_label='standard',
     # Set system wide deterministic
-    timestep_in_days=TIMESTEP_IN_DAYS,
+    timestep_in_days=1,
     # Mechanisms TBD
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
     slash_function=DEFAULT_SLASH_FUNCTION,  # TODO

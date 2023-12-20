@@ -1,8 +1,6 @@
 from copy import deepcopy
 
 import pandas as pd
-
-# import panel as pn
 from cadCAD_tools import easy_run  # type: ignore
 from pandas import DataFrame
 
@@ -23,7 +21,6 @@ from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 from subspace_model.types import SubspaceModelParams
 
 
-# @pn.cache(to_disk=True)
 def sanity_check_run(
     SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
@@ -46,7 +43,6 @@ def sanity_check_run(
     return sim_df
 
 
-# @pn.cache(to_disk=True)
 def standard_stochastic_run(
     SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
 ) -> DataFrame:
@@ -93,7 +89,6 @@ def standard_stochastic_run(
     return sim_df
 
 
-# @pn.cache(to_disk=True)
 def issuance_sweep(
     SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
@@ -129,7 +124,6 @@ def issuance_sweep(
     return sim_df
 
 
-# @pn.cache(to_disk=True)
 def fund_inclusion(
     SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
@@ -165,7 +159,6 @@ def fund_inclusion(
     return sim_df
 
 
-# @pn.cache(to_disk=True)
 def reward_split_sweep(
     SIMULATION_DAYS: int = 700,
     TIMESTEP_IN_DAYS: int = 1,
