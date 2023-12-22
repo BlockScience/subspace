@@ -39,7 +39,7 @@ def sanity_check_run(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
     return sim_df
 
 
@@ -85,7 +85,7 @@ def standard_stochastic_run(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
     return sim_df
 
 
@@ -120,7 +120,7 @@ def issuance_sweep(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
     return sim_df
 
 
@@ -153,7 +153,7 @@ def fund_inclusion(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
 
     # Return the simulation results dataframe
     return sim_df
@@ -188,7 +188,7 @@ def reward_split_sweep(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
     return sim_df
 
 
@@ -226,5 +226,5 @@ def sweep_credit_supply(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args)
+    sim_df = easy_run(*sim_args, assign_params=False)
     return sim_df

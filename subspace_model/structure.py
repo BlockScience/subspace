@@ -15,9 +15,18 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'desc': 'Updates the time in the system',
         'policies': {'evolve_time': p_evolve_time},
         'variables': {
-            'days_passed': s_days_passed,
             'delta_days': replace_suf,
-            'delta_blocks': s_delta_blocks,
+            'days_passed': add_suf,
+            'delta_blocks': replace_suf,
+            'blocks_passed': add_suf,
+        },
+    },
+    {
+        'label': 'Reference Subsidy',
+        'ignore': False,
+        'policies': {'reference_subsidy': p_reference_subsidy},
+        'variables': {
+            'reference_subsidy': replace_suf,
         },
     },
     {
