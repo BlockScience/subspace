@@ -3,6 +3,7 @@ from numpy import nan
 from subspace_model.const import *
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
+    DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     DEFAULT_SLASH_FUNCTION,
     MAGNITUDE,
     NORMAL_GENERATOR,
@@ -14,23 +15,17 @@ from subspace_model.experiments.logic import (
 )
 from subspace_model.types import *
 
-SIMULATION_DAYS = 700
-TIMESTEP_IN_DAYS = 1
-TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
-SAMPLES = 1
-
 ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
-    delta_days=None,
-    delta_blocks=None,
+    blocks_passed=0,
     # Metrics
-    circulating_supply=None,
-    user_supply=None,
-    issued_supply=None,
-    sum_of_stocks=None,
-    block_utilization=None,
+    circulating_supply=0.0,
+    user_supply=0.0,
+    issued_supply=0.0,
+    sum_of_stocks=0.0,
+    block_utilization=0.0,
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0,  # How much %/day of DSF's goes to farmers
     # Stock Balances
@@ -52,11 +47,12 @@ INITIAL_STATE = SubspaceModelState(
     space_pledged=0,
     allocated_tokens=0.0,
     buffer_size=0,
+    reference_subsidy=0.0,
     # Environmental Variables
     average_base_fee=0.0,
     average_priority_fee=0.0,
     average_compute_weight_per_tx=0.0,
-    average_transaction_size=0.0,
+    average_transaction_size=256,
     transaction_count=0.0,
     average_compute_weight_per_bundle=0.0,
     average_bundle_size=0.0,
@@ -71,8 +67,9 @@ DEFAULT_PARAMS = SubspaceModelParams(
     label='standard',
     environmental_label='standard',
     # Set system wide deterministic
-    timestep_in_days=TIMESTEP_IN_DAYS,
+    timestep_in_days=1,
     # Mechanisms TBD
+    reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
     slash_function=DEFAULT_SLASH_FUNCTION,  # TODO
     # Implementation params

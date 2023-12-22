@@ -15,9 +15,18 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'desc': 'Updates the time in the system',
         'policies': {'evolve_time': p_evolve_time},
         'variables': {
-            'days_passed': s_days_passed,
             'delta_days': replace_suf,
-            'delta_blocks': s_delta_blocks,
+            'days_passed': add_suf,
+            'delta_blocks': replace_suf,
+            'blocks_passed': add_suf,
+        },
+    },
+    {
+        'label': 'Reference Subsidy',
+        'ignore': False,
+        'policies': {'reference_subsidy': p_reference_subsidy},
+        'variables': {
+            'reference_subsidy': replace_suf,
         },
     },
     {
@@ -144,18 +153,21 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         'label': 'Metrics',
         'policies': {},
         'variables': {
-            'circulating_supply': lambda _1, _2, _3, s, _5: (
+            'circulating_supply': lambda _1, _2, _3, state, _5: (
                 'circulating_supply',
-                circulating_supply(s),
+                circulating_supply(state),
             ),
-            'user_supply': lambda _1, _2, _3, s, _5: ('user_supply', user_supply(s)),
-            'issued_supply': lambda _1, _2, _3, s, _5: (
+            'user_supply': lambda _1, _2, _3, state, _5: (
+                'user_supply',
+                user_supply(state),
+            ),
+            'issued_supply': lambda _1, _2, _3, state, _5: (
                 'issued_supply',
-                issued_supply(s),
+                issued_supply(state),
             ),
-            'sum_of_stocks': lambda _1, _2, _3, s, _5: (
+            'sum_of_stocks': lambda _1, _2, _3, state, _5: (
                 'sum_of_stocks',
-                sum_of_stocks(s),
+                sum_of_stocks(state),
             ),
         },
     },

@@ -10,9 +10,7 @@ from datetime import datetime
 import click
 import IPython
 import pandas as pd
-import panel as pn
 
-from subspace_model import default_run_args
 from subspace_model.experiments.charts import (
     ab_block_utilization,
     ab_circulating_supply,
@@ -141,16 +139,24 @@ def save_charts(experiment: str):
             )
 
 
-def run_experiment(experiment: str, pickle: bool, samples: int | None = None):
+def run_experiment(
+    experiment: str, pickle: bool, samples: int | None = None, days: int | None = None
+):
     """
     Run an experiment and optionally pickle the results.
     """
     logger.info(f'Executing experiment: {experiment}...')
     experiment_run = experiments[experiment]
-    if samples is not None:
-        df = experiment_run(SAMPLES=samples)
+    if days is not None:
+        if samples is not None:
+            df = experiment_run(SAMPLES=samples, SIMULATION_DAYS=days)
+        else:
+            df = experiment_run(SIMULATION_DAYS=days)
     else:
-        df = experiment_run()
+        if samples is not None:
+            df = experiment_run(SAMPLES=samples)
+        else:
+            df = experiment_run()
 
     logger.info(f'{experiment} executed.')
     logger.info(df)
@@ -163,6 +169,8 @@ def run_experiment(experiment: str, pickle: bool, samples: int | None = None):
             directory='data/simulations/',
             filename=f'{experiment}-{timestamp}.pkl.gz',
         )
+
+    return df
 
 
 @click.command()
@@ -199,14 +207,6 @@ def run_experiment(experiment: str, pickle: bool, samples: int | None = None):
     help='Set the logging level.',
 )
 @click.option(
-    '-c',
-    '--clear-cache',
-    'clear_cache',
-    default=False,
-    is_flag=True,
-    help='Clear cache for all experiments.',
-)
-@click.option(
     '-a',
     '--run-all',
     'run_all',
@@ -230,15 +230,23 @@ def run_experiment(experiment: str, pickle: bool, samples: int | None = None):
     type=int,
     help='Set Sample size; if not set runs default sample size.',
 )
+@click.option(
+    '-d',
+    '--days',
+    'days',
+    default=None,
+    type=int,
+    help='Number of simulation days.',
+)
 def main(
     experiment: str,
     pickle: bool,
     interactive: bool,
     log_level: str,
-    clear_cache: bool,
     run_all: bool,
     visualize: bool,
     samples: int | None,
+    days: int | None,
 ) -> None:
     # Initialize logging
 
@@ -246,25 +254,20 @@ def main(
     logger.info(f'Setting log level to {log_level}...')
     logger.setLevel(log_levels[log_level])
 
-    # Conditionally clear the cache
-    if clear_cache:
-        logger.info(f'Clearing caches for all experiments.')
-        pn.state.clear_caches()
-
     # All experiments selected
     if run_all:
         for experiment in list(experiments.keys()):
             if visualize:
                 save_charts(experiment)
             else:
-                run_experiment(experiment, pickle, samples)
+                df = run_experiment(experiment, pickle, samples, days)
 
     # Single experiment selected
     else:
         if visualize:
             save_charts(experiment)
         else:
-            run_experiment(experiment, pickle, samples)
+            df = run_experiment(experiment, pickle, samples, days)
 
     # Conditionally drop into an IPython shell
     if interactive:
