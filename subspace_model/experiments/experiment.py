@@ -15,6 +15,8 @@ from subspace_model.experiments.logic import (
     SUPPLY_EARNED,
     SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
+    TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
+    TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
 )
 from subspace_model.params import DEFAULT_PARAMS, INITIAL_STATE, ISSUANCE_FOR_FARMERS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
@@ -39,7 +41,16 @@ def sanity_check_run(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
     return sim_df
 
 
@@ -85,7 +96,16 @@ def standard_stochastic_run(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
     return sim_df
 
 
@@ -120,7 +140,16 @@ def issuance_sweep(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
     return sim_df
 
 
@@ -153,7 +182,16 @@ def fund_inclusion(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
 
     # Return the simulation results dataframe
     return sim_df
@@ -188,7 +226,16 @@ def reward_split_sweep(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
     return sim_df
 
 
@@ -201,21 +248,62 @@ def sweep_credit_supply(
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
     # Get the sweep params in the form of single length arrays
-    param_set_1 = DEFAULT_PARAMS
-
     param_set_1 = deepcopy(DEFAULT_PARAMS)
     param_set_1['label'] = 'supply-issued'
+    param_set_1['environmental_label'] = 'constant-utilization'
     param_set_1['credit_supply_definition'] = SUPPLY_ISSUED
+    param_set_1[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'supply-earned'
+    param_set_2['environmental_label'] = 'constant-utilization'
     param_set_2['credit_supply_definition'] = SUPPLY_EARNED
+    param_set_2[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
     param_set_3 = deepcopy(DEFAULT_PARAMS)
     param_set_3['label'] = 'supply-earned-minus-burned'
+    param_set_3['environmental_label'] = 'constant-utilization'
     param_set_3['credit_supply_definition'] = SUPPLY_EARNED_MINUS_BURNED
+    param_set_3[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
-    param_sets = [param_set_1, param_set_2, param_set_3]
+    param_set_4 = deepcopy(DEFAULT_PARAMS)
+    param_set_4['label'] = 'supply-issued'
+    param_set_4['environmental_label'] = 'growing-utilization'
+    param_set_4['credit_supply_definition'] = SUPPLY_ISSUED
+    param_set_4[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS
+
+    param_set_5 = deepcopy(DEFAULT_PARAMS)
+    param_set_5['label'] = 'supply-earned'
+    param_set_5['environmental_label'] = 'growing-utilization'
+    param_set_5['credit_supply_definition'] = SUPPLY_EARNED
+    param_set_5[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS
+
+    param_set_6 = deepcopy(DEFAULT_PARAMS)
+    param_set_6['label'] = 'supply-earned-minus-burned'
+    param_set_6['environmental_label'] = 'growing-utilization'
+    param_set_6['credit_supply_definition'] = SUPPLY_EARNED_MINUS_BURNED
+    param_set_6[
+        'transaction_count_per_day_function'
+    ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS
+
+    param_sets = [
+        param_set_1,
+        param_set_2,
+        param_set_3,
+        param_set_4,
+        param_set_5,
+        param_set_6,
+    ]
 
     sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
     for param_set in param_sets:
@@ -226,5 +314,14 @@ def sweep_credit_supply(
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
     # Run simulation
-    sim_df = easy_run(*sim_args, assign_params=False)
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
     return sim_df

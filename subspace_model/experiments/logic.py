@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 
-from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR
+from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR, DAY_TO_SECONDS
 from subspace_model.metrics import earned_supply, issued_supply
 from subspace_model.types import (
     StochasticFunction,
@@ -142,3 +142,35 @@ REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS = [
 ]
 
 DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
+
+
+def TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50(
+    params: SubspaceModelParams, state: SubspaceModelState
+) -> float:
+    average_transaction_size = state['average_transaction_size']
+    max_size = (
+        params['max_block_size'] * DAY_TO_SECONDS * params['block_time_in_seconds']
+    )
+
+    # Hold a constant utilization rate of 0.5
+    transaction_count = 0.5 * max_size / average_transaction_size
+
+    return transaction_count
+
+
+def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
+    params: SubspaceModelParams, state: SubspaceModelState
+) -> float:
+
+    days_passed = state['days_passed']
+    average_transaction_size = state['average_transaction_size']
+    max_size = (
+        params['max_block_size'] * DAY_TO_SECONDS * params['block_time_in_seconds']
+    )
+
+    utilization = min(days_passed / (2 * 365), 1)
+
+    # Grow utilization rate from 0 to 1 over 2 years
+    transaction_count = utilization * max_size / average_transaction_size
+
+    return transaction_count

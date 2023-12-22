@@ -170,6 +170,8 @@ def run_experiment(
             filename=f'{experiment}-{timestamp}.pkl.gz',
         )
 
+    return df
+
 
 @click.command()
 @click.option(
@@ -258,14 +260,14 @@ def main(
             if visualize:
                 save_charts(experiment)
             else:
-                run_experiment(experiment, pickle, samples, days)
+                df = run_experiment(experiment, pickle, samples, days)
 
     # Single experiment selected
     else:
         if visualize:
             save_charts(experiment)
         else:
-            run_experiment(experiment, pickle, samples, days)
+            df = run_experiment(experiment, pickle, samples, days)
 
     # Conditionally drop into an IPython shell
     if interactive:
