@@ -4,7 +4,7 @@ import plotly
 import plotly.express as px
 import seaborn as sns
 
-from subspace_model.trajectory_metrics import window_volatility
+from subspace_model.experiments.metrics import window_volatility
 
 
 def ab_circulating_supply(
