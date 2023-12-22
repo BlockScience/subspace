@@ -70,29 +70,6 @@ def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> Signal:
     }
 
 
-# def s_days_passed(
-#     _1, _2, _3, state: SubspaceModelState, signal: Signal
-# ) -> VariableUpdate:
-#     """ """
-#     return ('days_passed', signal['delta_days'] + state['days_passed'])
-#
-#
-# def s_delta_blocks(
-#     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, signal
-# ) -> VariableUpdate:
-#     """ """
-#     delta_seconds = signal['delta_days'] * (24 * 60 * 60)
-#     delta_blocks = delta_seconds / params['block_time_in_seconds']
-#     return ('delta_blocks', delta_blocks)
-#
-#
-# def s_blocks_passed(
-#     _1, _2, _3, state: SubspaceModelState, signal: Signal
-# ) -> VariableUpdate:
-#     """ """
-#     return ('blocks_passed', signal['delta_blocks'] + state['blocks_passed'])
-
-
 ## Farmer Rewards ##
 
 
@@ -310,56 +287,34 @@ def s_transaction_count(
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
     """
-    return (
-        'transaction_count',
-        max(
-            params['transaction_count_per_day_function'](
-                params,
-                state,
-            ),
-            0,
+    transaction_count = max(
+        params['transaction_count_per_day_function'](
+            params,
+            state,
         ),
+        0,
     )
+
+    return ('transaction_count', transaction_count)
 
 
 def s_bundle_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> VariableUpdate:
     """
-    Simulate the ts-average transaction size through a Poisson process.
+    Simulate the bs-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
     """
     # TODO: refactor
-    return (
-        'transaction_count',
-        max(
-            params['bundle_count_per_day_function'](
-                params,
-                state,
-            ),
-            0,
+    bundle_count = max(
+        params['bundle_count_per_day_function'](
+            params,
+            state,
         ),
+        0,
     )
 
-
-def s_bundle_count(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
-    """
-    Simulate the ts-average transaction size through a Poisson process.
-    XXX: depends on an stochastic process assumption.
-    """
-    # TODO: refactor
-    return (
-        'transaction_count',
-        max(
-            params['bundle_count_per_day_function'](
-                params,
-                state,
-            ),
-            0,
-        ),
-    )
+    return ('bundle_count', bundle_count)
 
 
 ## Compute & Operator Fees
