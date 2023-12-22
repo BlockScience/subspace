@@ -637,15 +637,16 @@ def s_block_utilization(
 
 
 def p_reference_subsidy(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+    params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState
 ) -> Signal:
     """ """
-    referece_subsidy = sum(
-        [
-            component(state['blocks_passed'])
-            for component in params['reference_subsidy_components']
-        ]
-    )
+    previous_block_time = state_history[-1][-1]['blocks_passed']
+    current_block_time = state['blocks_passed']
+    rewards_during_last_timestep = 0.0
+    for t in range(int(previous_block_time), int(current_block_time)):
+        rewards_during_last_timestep += sum(
+            [component(t) for component in params['reference_subsidy_components']]
+        )
     return {
-        'reference_subsidy': referece_subsidy,
+        'reference_subsidy': rewards_during_last_timestep,
     }

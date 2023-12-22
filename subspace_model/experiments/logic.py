@@ -26,10 +26,8 @@ def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelS
     # Calculate s(g)
     s_g = a + b * math.tanh(-c * (g - d))
 
-    # Ensure s(g) is non-negative
-    s_g = max(s_g, 0)
-
-    block_reward = s_g * state['delta_blocks']
+    # Ensure block_reward is non-negative
+    block_reward = max(s_g, 0)
 
     return block_reward
 
