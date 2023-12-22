@@ -26,6 +26,7 @@ from subspace_model.experiments.experiment import (
     standard_stochastic_run,
     sweep_credit_supply,
 )
+from subspace_model.experiments.metrics import average_profit1, profit1
 
 # Define a dictionary to map string log levels to their corresponding constants in logging module
 log_levels = {
@@ -46,29 +47,36 @@ experiments = {
 }
 
 experiment_charts = {
-    'sanity_check_run': [],
-    'standard_stochastic_run': [
-        # ab_circulating_supply,
-        # ab_operator_pool_shares,
-        # ab_nominator_pool_shares,
-        # ab_block_utilization,
-    ],
-    'issuance_sweep': [
-        # ab_circulating_supply,
-        # ab_operator_pool_shares,
-        # ab_nominator_pool_shares,
-        # ab_block_utilization,
-        # ab_circulating_supply_volatility,
-    ],
-    'fund_inclusion': [],
-    'reward_split_sweep': [],
-    'sweep_credit_supply': [
+    'sanity_check_run': [
         ab_circulating_supply,
         ab_operator_pool_shares,
         ab_nominator_pool_shares,
         ab_block_utilization,
         ab_circulating_supply_volatility,
     ],
+    'standard_stochastic_run': [],
+    'issuance_sweep': [],
+    'fund_inclusion': [],
+    'reward_split_sweep': [],
+    'sweep_credit_supply': [],
+}
+
+experiment_timestep_metrics = {
+    'sanity_check_run': [profit1, profit1],
+    'standard_stochastic_run': [profit1],
+    'issuance_sweep': [profit1],
+    'fund_inclusion': [],
+    'reward_split_sweep': [],
+    'sweep_credit_supply': [],
+}
+
+experiment_trajectory_metrics = {
+    'sanity_check_run': [average_profit1, average_profit1],
+    'standard_stochastic_run': [average_profit1],
+    'issuance_sweep': [average_profit1],
+    'fund_inclusion': [],
+    'reward_split_sweep': [],
+    'sweep_credit_supply': [],
 }
 
 
@@ -139,11 +147,40 @@ def save_charts(experiment: str):
             )
 
 
+def run_calculate_metrics(sim_df: pd.DataFrame, experiment: str):
+    logger.info(f'Running metrics calculations for {experiment}...')
+
+    # Timestep metrics
+    timestep_metrics = experiment_timestep_metrics[experiment]
+    if len(timestep_metrics):
+        timestep_metrics_df = pd.concat(
+            [metrics(sim_df) for metrics in timestep_metrics], axis=1
+        )
+    else:
+        timestep_metrics_df = pd.DataFrame()
+    logger.info(f'Timestep metrics for {experiment}:')
+    logger.info(timestep_metrics_df)
+
+    # Trajectory metrics
+    trajectory_metrics = experiment_trajectory_metrics[experiment]
+    if len(trajectory_metrics):
+        trajectory_metrics_df = pd.concat(
+            [metrics(sim_df) for metrics in experiment_trajectory_metrics[experiment]],
+            axis=1,
+        )
+    else:
+        trajectory_metrics_df = pd.DataFrame()
+    logger.info(f'Trajectory metrics for {experiment}:')
+    logger.info(trajectory_metrics_df)
+    logger.info(f'Finished metrics calculations for {experiment}...')
+    return timestep_metrics_df, trajectory_metrics_df
+
+
 def run_experiment(
-    experiment: str, pickle: bool, samples: int | None = None, days: int | None = None
+    experiment: str, samples: int | None = None, days: int | None = None
 ):
     """
-    Run an experiment and optionally pickle the results.
+    Run an experiment with for a given number of days and samples.
     """
     logger.info(f'Executing experiment: {experiment}...')
     experiment_run = experiments[experiment]
@@ -160,15 +197,6 @@ def run_experiment(
 
     logger.info(f'{experiment} executed.')
     logger.info(df)
-
-    # Conditionally pickle the results
-    if pickle:
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        write_pickle_results(
-            df,
-            directory='data/simulations/',
-            filename=f'{experiment}-{timestamp}.pkl.gz',
-        )
 
     return df
 
@@ -238,6 +266,14 @@ def run_experiment(
     type=int,
     help='Number of simulation days.',
 )
+@click.option(
+    '-m',
+    '--metrics',
+    'calculate_metrics',
+    default=False,
+    is_flag=True,
+    help='Run experiment metrics calculations. Optionally save to disk with -p.',
+)
 def main(
     experiment: str,
     pickle: bool,
@@ -247,6 +283,7 @@ def main(
     visualize: bool,
     samples: int | None,
     days: int | None,
+    calculate_metrics: bool,
 ) -> None:
     # Initialize logging
 
@@ -259,15 +296,46 @@ def main(
         for experiment in list(experiments.keys()):
             if visualize:
                 save_charts(experiment)
+                return
             else:
-                df = run_experiment(experiment, pickle, samples, days)
+                sim_df = run_experiment(experiment, samples, days)
+                if calculate_metrics:
+                    timestep_metrics_df, trajectory_metrics_df = run_calculate_metrics(
+                        sim_df,
+                        experiment,
+                    )
 
     # Single experiment selected
     else:
         if visualize:
             save_charts(experiment)
+            return
         else:
-            df = run_experiment(experiment, pickle, samples, days)
+            sim_df = run_experiment(experiment, samples, days)
+            if calculate_metrics:
+                timestep_metrics_df, trajectory_metrics_df = run_calculate_metrics(
+                    sim_df, experiment
+                )
+
+    # Conditionally pickle the results
+    if pickle:
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        write_pickle_results(
+            sim_df,
+            directory='data/simulations/',
+            filename=f'{experiment}-{timestamp}.pkl.gz',
+        )
+    if pickle and calculate_metrics:
+        write_pickle_results(
+            timestep_metrics_df,
+            directory='data/metrics/',
+            filename=f'{experiment}-timestep-metrics-{timestamp}.pkl.gz',
+        )
+        write_pickle_results(
+            trajectory_metrics_df,
+            directory='data/metrics/',
+            filename=f'{experiment}-trajectory-metrics-{timestamp}.pkl.gz',
+        )
 
     # Conditionally drop into an IPython shell
     if interactive:
