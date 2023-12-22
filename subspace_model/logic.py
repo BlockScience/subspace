@@ -59,23 +59,38 @@ def add_suf(variable: str, default_value=0.0) -> Callable:
 
 def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> Signal:
     """ """
-    return {'delta_days': params['timestep_in_days']}
-
-
-def s_days_passed(
-    _1, _2, _3, state: SubspaceModelState, signal: Signal
-) -> VariableUpdate:
-    """ """
-    return ('days_passed', signal['delta_days'] + state['days_passed'])
-
-
-def s_delta_blocks(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, signal
-) -> VariableUpdate:
-    """ """
-    delta_seconds = signal['delta_days'] * (24 * 60 * 60)
+    delta_days = params['timestep_in_days']
+    delta_seconds = delta_days * DAY_TO_SECONDS
     delta_blocks = delta_seconds / params['block_time_in_seconds']
-    return ('delta_blocks', delta_blocks)
+    return {
+        'delta_days': delta_days,
+        'days_passed': delta_days,
+        'delta_blocks': delta_blocks,
+        'blocks_passed': delta_blocks,
+    }
+
+
+# def s_days_passed(
+#     _1, _2, _3, state: SubspaceModelState, signal: Signal
+# ) -> VariableUpdate:
+#     """ """
+#     return ('days_passed', signal['delta_days'] + state['days_passed'])
+#
+#
+# def s_delta_blocks(
+#     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, signal
+# ) -> VariableUpdate:
+#     """ """
+#     delta_seconds = signal['delta_days'] * (24 * 60 * 60)
+#     delta_blocks = delta_seconds / params['block_time_in_seconds']
+#     return ('delta_blocks', delta_blocks)
+#
+#
+# def s_blocks_passed(
+#     _1, _2, _3, state: SubspaceModelState, signal: Signal
+# ) -> VariableUpdate:
+#     """ """
+#     return ('blocks_passed', signal['delta_blocks'] + state['blocks_passed'])
 
 
 ## Farmer Rewards ##
@@ -664,3 +679,18 @@ def s_block_utilization(
     )
     value = size / max_size
     return ('block_utilization', value)
+
+
+def p_reference_subsidy(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> Signal:
+    """ """
+    referece_subsidy = sum(
+        [
+            component(state['blocks_passed'])
+            for component in params['reference_subsidy_components']
+        ]
+    )
+    return {
+        'reference_subsidy': referece_subsidy,
+    }

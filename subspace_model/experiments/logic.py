@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 
+from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR
 from subspace_model.metrics import earned_supply, issued_supply
 from subspace_model.types import (
     StochasticFunction,
@@ -10,20 +11,25 @@ from subspace_model.types import (
 
 
 def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
-    g = state['block_utilization'] if state['block_utilization'] else 0
-    scale_factor = 100
-    s_min = 0.1 * scale_factor   # Governance set parameter
-    C_max = 2 * scale_factor   # Governance set parameter
-    a = 1 * scale_factor
-    c = 1
+    # Extract necessary values from the state
+    a = state['reference_subsidy']
     F = state['storage_fee_volume']
-    s_max = max(C_max - F, 0)
-    b = (s_min - s_max) / (np.tanh(c))
-    s = a + b * np.tanh(-c * g)
+    g = state['block_utilization']
 
-    block_reward = (
-        s * state['delta_blocks']
-    )   # XXX: Assumes that state does not change over the extrapolation period
+    # Fixed parameters. These can be tuned as needed.
+    c = 1
+    d = 1
+
+    # Calculate b
+    b = (a - max(a - F, 0)) / math.tanh(c)
+
+    # Calculate s(g)
+    s_g = a + b * math.tanh(-c * (g - d))
+
+    # Ensure s(g) is non-negative
+    s_g = max(s_g, 0)
+
+    block_reward = s_g * state['delta_blocks']
 
     return block_reward
 
@@ -61,3 +67,78 @@ SUPPLY_ISSUED = issued_supply
 SUPPLY_EARNED = earned_supply
 
 SUPPLY_EARNED_MINUS_BURNED = lambda state: earned_supply(state) - state['burnt_balance']
+
+
+import math
+from dataclasses import dataclass
+
+
+@dataclass
+class SubsidyComponent:
+    initial_period_start: float    # τ_{0, i}
+    initial_period_end: float      # τ_{1, i}
+    max_cumulative_subsidy: float  # Ω_i
+    max_reference_subsidy: float   # α_i
+
+    def __call__(self, t: float) -> float:
+        """Allow the instance to be called as a function to calculate the subsidy."""
+        return self.calculate_subsidy(t)
+
+    def calculate_subsidy(self, t: float) -> float:
+        """Calculate S(t) the subsidy for a given time."""
+        if t < self.initial_period_start:
+            return 0
+        elif self.initial_period_start <= t <= self.initial_period_end:
+            already_distributed = self.max_reference_subsidy * (
+                t - self.initial_period_start
+            )
+            if already_distributed >= self.max_cumulative_subsidy:
+                return 0
+            elif (
+                already_distributed + self.max_reference_subsidy
+                > self.max_cumulative_subsidy
+            ):
+                return self.max_cumulative_subsidy - already_distributed
+            else:
+                return self.max_reference_subsidy
+        else:
+            return self.calculate_exponential_subsidy(t)
+
+    def calculate_exponential_subsidy(self, t: float) -> float:
+        """Calculate S_e(t) the exponential subsidy for a given time."""
+        K = self.max_total_subsidy_during_exponential_period
+        if K > 0:
+            return self.max_reference_subsidy * math.exp(
+                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end))
+            )
+        else:
+            return 0
+
+    @property
+    def max_total_subsidy_during_exponential_period(self) -> float:
+        """Calculate K the maximum total subsidy during the exponential period."""
+        return self.max_cumulative_subsidy - self.max_reference_subsidy * (
+            self.initial_period_end - self.initial_period_start
+        )
+
+    @property
+    def halving_period(self) -> float:
+        """Calculate L the halving period for the component rewards."""
+        K = self.max_total_subsidy_during_exponential_period
+        return K * math.log(2) / self.max_reference_subsidy
+
+
+REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT = [
+    SubsidyComponent(0, 2 * BLOCKS_PER_YEAR, 10_000, 10_000 / (2 * BLOCKS_PER_YEAR)),
+]
+REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT = [
+    SubsidyComponent(0, BLOCKS_PER_MONTH, 10_000, 1_000 / BLOCKS_PER_MONTH),
+]
+REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS = [
+    SubsidyComponent(0, BLOCKS_PER_MONTH, 5_000, 1_000 / BLOCKS_PER_MONTH),
+    SubsidyComponent(
+        6 * BLOCKS_PER_MONTH, 7 * BLOCKS_PER_MONTH, 5_000, 1_000 / BLOCKS_PER_MONTH
+    ),
+]
+
+DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
