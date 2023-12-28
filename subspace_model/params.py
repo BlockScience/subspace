@@ -24,6 +24,7 @@ INITIAL_STATE = SubspaceModelState(
     circulating_supply=0.0,
     user_supply=0.0,
     issued_supply=0.0,
+    total_supply=0.0,
     sum_of_stocks=0.0,
     block_utilization=0.0,
     # Governance Variables
