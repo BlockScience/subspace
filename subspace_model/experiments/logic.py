@@ -2,7 +2,12 @@ import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 
 from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR, DAY_TO_SECONDS
-from subspace_model.metrics import earned_supply, issued_supply
+from subspace_model.metrics import (
+    earned_minus_burned_supply,
+    earned_supply,
+    issued_supply,
+    total_supply,
+)
 from subspace_model.types import (
     StochasticFunction,
     SubspaceModelParams,
@@ -17,7 +22,7 @@ def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelS
     g = state['block_utilization']
 
     # Fixed parameters. These can be tuned as needed.
-    c = 1
+    c = params['issuance_function_constant']
     d = 1
 
     # Calculate b
@@ -64,7 +69,9 @@ SUPPLY_ISSUED = issued_supply
 
 SUPPLY_EARNED = earned_supply
 
-SUPPLY_EARNED_MINUS_BURNED = lambda state: earned_supply(state) - state['burnt_balance']
+SUPPLY_EARNED_MINUS_BURNED = earned_minus_burned_supply
+
+SUPPLY_TOTAL = total_supply
 
 
 import math
