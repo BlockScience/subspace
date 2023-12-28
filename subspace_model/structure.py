@@ -169,6 +169,10 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 'sum_of_stocks',
                 sum_of_stocks(state),
             ),
+            'total_supply': lambda _1, _2, _3, state, _5: (
+                'total_supply',
+                total_supply(state),
+            ),
         },
     },
 ]
