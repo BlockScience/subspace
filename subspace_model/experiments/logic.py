@@ -179,3 +179,7 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     transaction_count = utilization * max_size / average_transaction_size
 
     return transaction_count
+
+
+def WEEKLY_VARYING(params: SubspaceModelParams, state: SubspaceModelState):
+    return 2 + np.sin(2 * np.pi * state['days_passed'] / 7)

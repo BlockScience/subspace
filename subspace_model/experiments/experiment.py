@@ -22,7 +22,12 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     SubsidyComponent,
 )
-from subspace_model.params import DEFAULT_PARAMS, INITIAL_STATE, ISSUANCE_FOR_FARMERS
+from subspace_model.params import (
+    DEFAULT_PARAMS,
+    ENVIRONMENTAL_SCENARIOS,
+    INITIAL_STATE,
+    ISSUANCE_FOR_FARMERS,
+)
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 from subspace_model.types import SubspaceModelParams
 
@@ -70,31 +75,12 @@ def standard_stochastic_run(
 
     # Get the sweep parameters in the form of single length arrays
     param_set = deepcopy(DEFAULT_PARAMS)
-    param_set['label'] = 'deterministic'
-    param_set['base_fee_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1))
-    param_set['priority_fee_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5))
-    param_set['compute_weights_per_tx_function'] = POSITIVE_INTEGER(
-        NORMAL_GENERATOR(60_000_000, 15_000_000)
-    )
-    param_set['compute_weight_per_bundle_function'] = POSITIVE_INTEGER(
-        NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
-    )
-    param_set['transaction_size_function'] = POSITIVE_INTEGER(
-        NORMAL_GENERATOR(256, 100)
-    )
-    param_set['bundle_size_function'] = POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000))
-    param_set['transaction_count_per_day_function'] = POISSON_GENERATOR(
-        1 * BLOCKS_PER_DAY
-    )
-
-    param_set['bundle_count_per_day_function'] = POISSON_GENERATOR(6 * BLOCKS_PER_DAY)
-    param_set['slash_per_day_function'] = POISSON_GENERATOR(0.1)
-    param_set['new_sectors_per_day_function'] = POSITIVE_INTEGER(
-        NORMAL_GENERATOR(1000, 500)
-    )
 
     # Get the sweep params in the form of single length arrays
-    sweep_params = {k: [v] for k, v in param_set.items()}
+    sweep_params = {
+        **{k: [v] for k, v in param_set.items()},
+        **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS['stochastic'].items()},
+    }
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
