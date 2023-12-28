@@ -12,6 +12,7 @@ from subspace_model.experiments.logic import (
     SUPPLY_EARNED,
     SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
+    WEEKLY_VARYING,
 )
 from subspace_model.types import *
 
@@ -117,3 +118,36 @@ DEFAULT_PARAMS = SubspaceModelParams(
     slash_per_day_function=lambda p, s: 0.1,
     new_sectors_per_day_function=lambda p, s: 1000,
 )
+
+ENVIRONMENTAL_SCENARIOS = {
+    'stochastic': {
+        'environmental_label': 'stochastic',
+        'base_fee_function': POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
+        'priority_fee_function': POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),
+        'compute_weights_per_tx_function': POSITIVE_INTEGER(
+            NORMAL_GENERATOR(60_000_000, 15_000_000)
+        ),
+        'compute_weight_per_bundle_function': POSITIVE_INTEGER(
+            NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
+        ),
+        'transaction_size_function': POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
+        'bundle_size_function': POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
+        'transaction_count_per_day_function': POISSON_GENERATOR(1 * BLOCKS_PER_DAY),
+        'bundle_count_per_day_function': POISSON_GENERATOR(6 * BLOCKS_PER_DAY),
+        'slash_per_day_function': POISSON_GENERATOR(0.1),
+        'new_sectors_per_day_function': POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
+    },
+    'weekly-varying': {
+        'environmental_label': 'weekly-varying',
+        'base_fee_function': WEEKLY_VARYING,
+        'priority_fee_function': WEEKLY_VARYING,
+    },
+    'constant-utilization': {
+        'environmental_label': 'constant-utilization',
+        'transaction_count_per_day_function': TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
+    },
+    'growing-utilization': {
+        'environmental_label': 'growing-utilization',
+        'transaction_count_per_day_function': TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
+    },
+}
