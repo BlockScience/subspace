@@ -1,3 +1,5 @@
+import holoviews as hv
+import hvplot.pandas
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly
@@ -46,12 +48,18 @@ def ab_nominator_pool_shares(
 def ab_block_utilization(
     sim_df: pd.DataFrame, experiment: str
 ) -> plotly.graph_objects.Figure:
-    fig = px.line(
-        sim_df,
+    """
+    Returns a plotly figure. Show in jupyter with pio.show(fig)
+    """
+    chart = sim_df.hvplot.line(
         x='days_passed',
         y='block_utilization',
+        by=['environmental_label', 'label'],
         title=f'{experiment} - AB Test Block Utilization',
+        height=500,
+        width=1400,
     )
+    fig = plotly.graph_objects.Figure(hv.render(chart, backend='plotly'))
     return fig
 
 
@@ -71,3 +79,17 @@ def ab_circulating_supply_volatility(
         title=f'{experiment} - AB Test Windowed Volatility of Circulating Supply',
     )
     return fig
+
+
+# def mc_total_supply(
+#     sim_df: pd.DataFrame, experiment: str
+# ) -> plotly.graph_objects.Figure:
+#     fig = px.line(
+#         sim_df,
+#         x='days_passed',
+#         y='total_supply',
+#         groupby='run',
+#         color='label',
+#         title=f'{experiment} - Monte Carlo Examine Total Supply',
+#     )
+#     return fig

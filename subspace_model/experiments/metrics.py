@@ -16,7 +16,10 @@ def window_volatility(_s: pd.Series) -> pd.Series:
     return s_new
 
 
-def profit1(sim_df: pd.DataFrame) -> pd.DataFrame:
+def profit1_trajectory(sim_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    This is a timestep metric.
+    """
     sim_df = sim_df.set_index('days_passed')
     # Identify the balance columns
     balance_columns = [c for c in sim_df.columns if 'balance' in c]
@@ -34,7 +37,10 @@ def profit1(sim_df: pd.DataFrame) -> pd.DataFrame:
     return profit1
 
 
-def average_profit1(sim_df: pd.DataFrame) -> pd.DataFrame:
+def profit1_mean(sim_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    This is a trajectory metric.
+    """
     # Set the desired multi-level index
     sim_df = sim_df.set_index(['label', 'environmental_label', 'days_passed'])
 
@@ -42,9 +48,45 @@ def average_profit1(sim_df: pd.DataFrame) -> pd.DataFrame:
     balance_columns = [c for c in sim_df.columns if 'balance' in c]
 
     # Calculate the difference and then the mean for each group
-    average_profit1 = (
+    mean_profit1 = (
         sim_df[balance_columns]
         .groupby(level=['label', 'environmental_label'])
         .apply(lambda g: g.diff().mean())
-    ).add_prefix('average_profit1_')
-    return average_profit1
+    ).add_prefix('mean_profit1_')
+    return mean_profit1
+
+
+def total_supply_max(sim_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    This is a trajectory metric.
+    """
+    # Set the desired multi-level index
+    sim_df = sim_df.set_index(['label', 'environmental_label', 'days_passed'])
+
+    # sim_df = sim_df.set_index('days_passed')
+    max_total_supply = (
+        sim_df.groupby(level=['label', 'environmental_label'])[['total_supply']]
+        .max()
+        .add_prefix('max_total_supply_')
+    )
+    # return pd.DataFrame({'max_total_supply': [max_total_supply]})
+
+    return max_total_supply
+
+
+def total_supply_mean(sim_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    This is a trajectory metric.
+    """
+    # Set the desired multi-level index
+    sim_df = sim_df.set_index(['label', 'environmental_label', 'days_passed'])
+
+    # sim_df = sim_df.set_index('days_passed')
+    max_total_supply = (
+        sim_df.groupby(level=['label', 'environmental_label'])[['total_supply']]
+        .mean()
+        .add_prefix('mean_total_supply_')
+    )
+    # return pd.DataFrame({'max_total_supply': [max_total_supply]})
+
+    return max_total_supply

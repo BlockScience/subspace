@@ -11,7 +11,10 @@ import click
 import IPython
 import pandas as pd
 
-from subspace_model.experiments.charts import (
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
+from subspace_model.experiments.charts import (  # mc_total_supply,
     ab_block_utilization,
     ab_circulating_supply,
     ab_circulating_supply_volatility,
@@ -26,7 +29,12 @@ from subspace_model.experiments.experiment import (
     standard_stochastic_run,
     sweep_credit_supply,
 )
-from subspace_model.experiments.metrics import average_profit1, profit1
+from subspace_model.experiments.metrics import (
+    profit1_mean,
+    profit1_trajectory,
+    total_supply_max,
+    total_supply_mean,
+)
 
 # Define a dictionary to map string log levels to their corresponding constants in logging module
 log_levels = {
@@ -47,13 +55,16 @@ experiments = {
 }
 
 experiment_charts = {
-    'sanity_check_run': [
-        ab_circulating_supply,
-        ab_operator_pool_shares,
-        ab_nominator_pool_shares,
-        ab_block_utilization,
-        ab_circulating_supply_volatility,
-    ],
+    'sanity_check_run': [],
+    'standard_stochastic_run': [ab_block_utilization],
+    'issuance_sweep': [],
+    'fund_inclusion': [],
+    'reward_split_sweep': [],
+    'sweep_credit_supply': [ab_block_utilization],
+}
+
+experiment_timestep_metrics = {
+    'sanity_check_run': [],
     'standard_stochastic_run': [],
     'issuance_sweep': [],
     'fund_inclusion': [],
@@ -61,19 +72,10 @@ experiment_charts = {
     'sweep_credit_supply': [],
 }
 
-experiment_timestep_metrics = {
-    'sanity_check_run': [profit1, profit1],
-    'standard_stochastic_run': [profit1],
-    'issuance_sweep': [profit1],
-    'fund_inclusion': [],
-    'reward_split_sweep': [],
-    'sweep_credit_supply': [],
-}
-
 experiment_trajectory_metrics = {
-    'sanity_check_run': [average_profit1, average_profit1],
-    'standard_stochastic_run': [average_profit1],
-    'issuance_sweep': [average_profit1],
+    'sanity_check_run': [total_supply_mean, total_supply_max, profit1_mean],
+    'standard_stochastic_run': [total_supply_mean, total_supply_max, profit1_mean],
+    'issuance_sweep': [],
     'fund_inclusion': [],
     'reward_split_sweep': [],
     'sweep_credit_supply': [],
