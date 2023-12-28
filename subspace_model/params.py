@@ -71,7 +71,8 @@ DEFAULT_PARAMS = SubspaceModelParams(
     timestep_in_days=1,
     # Mechanisms TBD
     reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
-    issuance_function=DEFAULT_ISSUANCE_FUNCTION,  # TODO
+    issuance_function=DEFAULT_ISSUANCE_FUNCTION,
+    issuance_function_constant=1,
     slash_function=DEFAULT_SLASH_FUNCTION,  # TODO
     # Implementation params
     block_time_in_seconds=BLOCK_TIME,

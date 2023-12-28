@@ -1,7 +1,9 @@
 from copy import deepcopy
 
+import numpy as np
 import pandas as pd
 from cadCAD_tools import easy_run  # type: ignore
+from cadCAD_tools.preparation import sweep_cartesian_product
 from pandas import DataFrame
 
 from subspace_model.const import *
@@ -15,8 +17,10 @@ from subspace_model.experiments.logic import (
     SUPPLY_EARNED,
     SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
+    SUPPLY_TOTAL,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
+    SubsidyComponent,
 )
 from subspace_model.params import DEFAULT_PARAMS, INITIAL_STATE, ISSUANCE_FOR_FARMERS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
@@ -309,6 +313,73 @@ def sweep_credit_supply(
     for param_set in param_sets:
         for k, v in param_set.items():
             sweep_params[k].append(v)
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+    )
+    return sim_df
+
+
+def sweep_over_single_component_and_credit_supply(
+    SIMULATION_DAYS: int = 700,
+    TIMESTEP_IN_DAYS: int = 1,
+    SAMPLES: int = 1,
+) -> DataFrame:
+    """ """
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+
+    c_params = np.linspace(start=0.1, stop=10, num=3)
+    credit_supply_definition_params = [SUPPLY_ISSUED, SUPPLY_TOTAL]
+    reference_subsidy_x_1_params = np.linspace(
+        start=1 * BLOCKS_PER_MONTH, stop=2 * BLOCKS_PER_MONTH, num=3
+    )
+    reference_subsidy_x_2_params = np.linspace(
+        start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=3
+    )
+
+    params = {
+        'issuance_function_constant': c_params,
+        'credit_supply_definition': credit_supply_definition_params,
+        'reference_subsidy_x_1': reference_subsidy_x_1_params,
+        'reference_subsidy_x_2': reference_subsidy_x_2_params,
+    }
+
+    sweep_params = sweep_cartesian_product(params)
+
+    sweep_params['reference_subsidy_x_3'] = [
+        x2 / x1
+        for x1, x2 in zip(
+            sweep_params['reference_subsidy_x_1'], sweep_params['reference_subsidy_x_2']
+        )
+    ]
+
+    sweep_params['reference_subsidy_components'] = [
+        [
+            SubsidyComponent(0, x1, x2, x3),
+        ]
+        for x1, x2, x3 in zip(
+            sweep_params['reference_subsidy_x_1'],
+            sweep_params['reference_subsidy_x_2'],
+            sweep_params['reference_subsidy_x_3'],
+        )
+    ]
+
+    sweep_params.pop('reference_subsidy_x_1', None)
+    sweep_params.pop('reference_subsidy_x_2', None)
+    sweep_params.pop('reference_subsidy_x_3', None)
+
+    sweep_params = {**{k: [v] for k, v in DEFAULT_PARAMS.items()}, **sweep_params}
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)

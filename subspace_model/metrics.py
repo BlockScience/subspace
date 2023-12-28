@@ -26,6 +26,10 @@ def issued_supply(state: SubspaceModelState):
     )   # TODO Document the identity
 
 
+def earned_minus_burned_supply(state: SubspaceModelState):
+    earned_supply(state) - state['burnt_balance']
+
+
 def total_supply(state: SubspaceModelState):
     return issued_supply(state) - state['burnt_balance']
 

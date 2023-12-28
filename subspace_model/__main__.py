@@ -28,6 +28,7 @@ from subspace_model.experiments.experiment import (
     sanity_check_run,
     standard_stochastic_run,
     sweep_credit_supply,
+    sweep_over_single_component_and_credit_supply,
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
@@ -52,6 +53,7 @@ experiments = {
     'fund_inclusion': fund_inclusion,
     'reward_split_sweep': reward_split_sweep,
     'sweep_credit_supply': sweep_credit_supply,
+    'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
 }
 
 experiment_charts = {
