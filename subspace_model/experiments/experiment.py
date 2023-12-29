@@ -76,7 +76,6 @@ def standard_stochastic_run(
     # Get the sweep parameters in the form of single length arrays
     param_set = deepcopy(DEFAULT_PARAMS)
 
-    # Get the sweep params in the form of single length arrays
     sweep_params = {
         **{k: [v] for k, v in param_set.items()},
         **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS['stochastic'].items()},
@@ -318,9 +317,9 @@ def sweep_credit_supply(
 
 
 def sweep_over_single_component_and_credit_supply(
-    SIMULATION_DAYS: int = 700,
+    SIMULATION_DAYS: int = 365 * 3,
     TIMESTEP_IN_DAYS: int = 1,
-    SAMPLES: int = 1,
+    SAMPLES: int = 30,
 ) -> DataFrame:
     """ """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
@@ -334,15 +333,20 @@ def sweep_over_single_component_and_credit_supply(
         start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=3
     )
 
-    params = {
+    sweep_params = {
         'issuance_function_constant': c_params,
         'credit_supply_definition': credit_supply_definition_params,
         'reference_subsidy_x_1': reference_subsidy_x_1_params,
         'reference_subsidy_x_2': reference_subsidy_x_2_params,
     }
 
-    sweep_params = sweep_cartesian_product(params)
+    sweep_params = sweep_cartesian_product(sweep_params)
+    cardinality = max([len(v) for v in sweep_params.values()])
 
+    # Prepare for x_3 expansion
+    sweep_params = {k: v * 3 for k, v in sweep_params.items()}
+
+    # Generate x_3
     sweep_params['reference_subsidy_x_3'] = [
         x2 / x1
         for x1, x2 in zip(
@@ -350,6 +354,18 @@ def sweep_over_single_component_and_credit_supply(
         )
     ]
 
+    sweep_params['reference_subsidy_x_3'] = (
+        cardinality * [0]
+        + [
+            x_3 / 2
+            for x_3 in sweep_params['reference_subsidy_x_3'][
+                cardinality : 2 * cardinality
+            ]
+        ]
+        + sweep_params['reference_subsidy_x_3'][2 * cardinality : 3 * cardinality]
+    )
+
+    # Generate reference_subsidy_components
     sweep_params['reference_subsidy_components'] = [
         [
             SubsidyComponent(0, x1, x2, x3),
@@ -361,11 +377,39 @@ def sweep_over_single_component_and_credit_supply(
         )
     ]
 
+    # Drop x_1, x_2, x_3
     sweep_params.pop('reference_subsidy_x_1', None)
     sweep_params.pop('reference_subsidy_x_2', None)
     sweep_params.pop('reference_subsidy_x_3', None)
 
-    sweep_params = {**{k: [v] for k, v in DEFAULT_PARAMS.items()}, **sweep_params}
+    # Used for adding environmental scenarios
+    cardinality = max([len(v) for v in sweep_params.values()])
+
+    # Environmental scenarios
+    environmental_param_sets = list(ENVIRONMENTAL_SCENARIOS.values())
+
+    # Repeat control scenarios for each environmental scenario
+    sweep_params = {
+        k: list(v * len(environmental_param_sets)) if len(v) == cardinality else v
+        for k, v in sweep_params.items()
+    }
+
+    sweep_params = {**{k: [] for k in DEFAULT_PARAMS.keys()}, **sweep_params}
+
+    for (
+        k,
+        v,
+    ) in DEFAULT_PARAMS.items():
+        for param_set in environmental_param_sets:
+            if k in param_set.keys():
+                sweep_params[k] += [param_set[k]] * cardinality
+            elif len(sweep_params[k]) != cardinality * len(environmental_param_sets):
+                sweep_params[k] += [DEFAULT_PARAMS[k]] * cardinality
+
+    sweep_params = {
+        **{k: [v] for k, v in DEFAULT_PARAMS.items()},
+        **{k: v for k, v in sweep_params.items() if len(v) > 0},
+    }
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
