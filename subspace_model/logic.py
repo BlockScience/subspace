@@ -345,6 +345,9 @@ def p_storage_fees(
     # TODO: use average storage fee rather than immediate storage fee instead
 
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
+    print(
+        f'{credit_supply=}, {total_space_pledged=}, {blockchain_size=}, {replication_factor=}, {free_space=}, {storage_fee_in_credits_per_bytes=}, {transaction_bytes=}'
+    )
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
     eff_total_storage_fees = min(
