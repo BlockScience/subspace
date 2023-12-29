@@ -27,7 +27,7 @@ def issued_supply(state: SubspaceModelState):
 
 
 def earned_minus_burned_supply(state: SubspaceModelState):
-    earned_supply(state) - state['burnt_balance']
+    return earned_supply(state) - state['burnt_balance']
 
 
 def total_supply(state: SubspaceModelState):

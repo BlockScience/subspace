@@ -239,48 +239,48 @@ def sweep_credit_supply(
     # Get the sweep params in the form of single length arrays
     param_set_1 = deepcopy(DEFAULT_PARAMS)
     param_set_1['label'] = 'supply-issued'
-    param_set_1['environmental_label'] = 'constant-utilization'
     param_set_1['credit_supply_definition'] = SUPPLY_ISSUED
+    param_set_1['environmental_label'] = 'constant-utilization'
     param_set_1[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'supply-earned'
-    param_set_2['environmental_label'] = 'constant-utilization'
     param_set_2['credit_supply_definition'] = SUPPLY_EARNED
+    param_set_2['environmental_label'] = 'constant-utilization'
     param_set_2[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
     param_set_3 = deepcopy(DEFAULT_PARAMS)
     param_set_3['label'] = 'supply-earned-minus-burned'
-    param_set_3['environmental_label'] = 'constant-utilization'
     param_set_3['credit_supply_definition'] = SUPPLY_EARNED_MINUS_BURNED
+    param_set_3['environmental_label'] = 'constant-utilization'
     param_set_3[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50
 
     param_set_4 = deepcopy(DEFAULT_PARAMS)
     param_set_4['label'] = 'supply-issued'
-    param_set_4['environmental_label'] = 'growing-utilization'
     param_set_4['credit_supply_definition'] = SUPPLY_ISSUED
+    param_set_4['environmental_label'] = 'growing-utilization'
     param_set_4[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS
 
     param_set_5 = deepcopy(DEFAULT_PARAMS)
     param_set_5['label'] = 'supply-earned'
-    param_set_5['environmental_label'] = 'growing-utilization'
     param_set_5['credit_supply_definition'] = SUPPLY_EARNED
+    param_set_5['environmental_label'] = 'growing-utilization'
     param_set_5[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS
 
     param_set_6 = deepcopy(DEFAULT_PARAMS)
     param_set_6['label'] = 'supply-earned-minus-burned'
-    param_set_6['environmental_label'] = 'growing-utilization'
     param_set_6['credit_supply_definition'] = SUPPLY_EARNED_MINUS_BURNED
+    param_set_6['environmental_label'] = 'growing-utilization'
     param_set_6[
         'transaction_count_per_day_function'
     ] = TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS

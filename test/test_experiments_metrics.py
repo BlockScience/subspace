@@ -3,8 +3,8 @@ import pytest
 
 from subspace_model.experiments.experiment import sanity_check_run
 from subspace_model.experiments.metrics import (
-    average_profit1,
-    profit1,
+    profit1_mean,
+    profit1_trajectory,
     window_volatility,
 )
 
@@ -50,11 +50,11 @@ def test_window_volatility_methods(sim_df_sanity_check):
     pd.testing.assert_frame_equal(result_1, result_2, check_dtype=True)
 
 
-def test_profit1(sim_df_sanity_check):
-    result = profit1(sim_df_sanity_check)
+def test_profit1_trajectory(sim_df_sanity_check):
+    result = profit1_trajectory(sim_df_sanity_check)
     return result
 
 
-def test_average_profit1(sim_df_sanity_check):
-    result = average_profit1(sim_df_sanity_check)
+def test_profit1_mean(sim_df_sanity_check):
+    result = profit1_mean(sim_df_sanity_check)
     return result
