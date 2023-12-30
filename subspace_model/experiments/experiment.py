@@ -2,8 +2,8 @@ from copy import deepcopy
 
 import numpy as np
 import pandas as pd
-from cadCAD_tools import easy_run  # type: ignore
-from cadCAD_tools.preparation import sweep_cartesian_product
+from cadCAD.tools import easy_run  # type: ignore
+from cadCAD.tools.preparation import sweep_cartesian_product
 from pandas import DataFrame
 
 from subspace_model.const import *
@@ -114,11 +114,13 @@ def issuance_sweep(
     param_set_1['label'] = 'default-issuance-function'
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'mock-issuance-function'
-    param_set_2['issuance_function'] = MOCK_ISSUANCE_FUNCTION
-    param_set_3 = deepcopy(DEFAULT_PARAMS)
-    param_set_3['label'] = 'mock-issuance-function-2'
-    param_set_3['issuance_function'] = MOCK_ISSUANCE_FUNCTION_2
-    param_sets = [param_set_1, param_set_2, param_set_3]
+    # param_set_2['issuance_function'] = MOCK_ISSUANCE_FUNCTION
+    # param_set_2['issuance_function'] = lambda p, s: 1
+    # param_set_3 = deepcopy(DEFAULT_PARAMS)
+    # param_set_3['label'] = 'mock-issuance-function-2'
+    # param_set_3['issuance_function'] = MOCK_ISSUANCE_FUNCTION_2
+    param_sets = [param_set_1, param_set_2]
+    # param_sets = [param_set_1, param_set_2, param_set_3]
 
     sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
     for param_set in param_sets:
@@ -424,5 +426,6 @@ def sweep_over_single_component_and_credit_supply(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
     )
     return sim_df

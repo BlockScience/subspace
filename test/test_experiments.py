@@ -5,6 +5,7 @@ from subspace_model.experiments.experiment import (
     sanity_check_run,
     standard_stochastic_run,
     sweep_credit_supply,
+    sweep_over_single_component_and_credit_supply,
 )
 
 
@@ -30,3 +31,9 @@ def test_reward_split_sweep():
 
 def test_sweep_credit_supply():
     sim_df = sweep_credit_supply(SIMULATION_DAYS=70, TIMESTEP_IN_DAYS=1, SAMPLES=1)
+
+
+def test_sweep_over_single_component_and_credit_supply():
+    sim_df = sweep_over_single_component_and_credit_supply(
+        SIMULATION_DAYS=1, TIMESTEP_IN_DAYS=1, SAMPLES=1
+    )
