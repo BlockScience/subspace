@@ -28,7 +28,7 @@ This will generate an pickled file at `data/simulations/` using the default sing
 system parameters & initial state.
     - To perform a multiple run, pass `python -m subspace_model -e`
 - Option 2 (cadCAD-tools easy run method): Import the objects at `subspace_model/__init__.py`
-and use them as arguments to the `cadCAD_tools.execution.easy_run` method. Refer to `subspace_model/__main__.py` to an example.
+and use them as arguments to the `cadCAD.tools.execution.easy_run` method. Refer to `subspace_model/__main__.py` to an example.
 
 ## File structure
 

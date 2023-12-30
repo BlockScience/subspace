@@ -172,7 +172,7 @@ def run_calculate_metrics(sim_df: pd.DataFrame, experiment: str):
         trajectory_metrics_df = pd.concat(
             [metrics(sim_df) for metrics in experiment_trajectory_metrics[experiment]],
             axis=1,
-        )
+        ).T
     else:
         trajectory_metrics_df = pd.DataFrame()
     logger.info(f'Trajectory metrics for {experiment}:')
@@ -201,7 +201,7 @@ def run_experiment(
             df = experiment_run()
 
     logger.info(f'{experiment} executed.')
-    logger.info(df)
+    logger.info(df.columns)
 
     return df
 

@@ -2,7 +2,7 @@ from math import ceil, floor
 from random import randint
 from typing import Callable
 
-from cadCAD_tools.types import Signal, VariableUpdate  # type: ignore
+from cadCAD.types import PolicyOutput, StateUpdateFunction  # type: ignore
 
 from subspace_model.const import *
 from subspace_model.metrics import *
@@ -57,7 +57,7 @@ def add_suf(variable: str, default_value=0.0) -> Callable:
 ## Time Tracking ##
 
 
-def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> Signal:
+def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> PolicyOutput:
     """ """
     delta_days = params['timestep_in_days']
     delta_seconds = delta_days * DAY_TO_SECONDS
@@ -73,7 +73,7 @@ def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> Signal:
 ## Farmer Rewards ##
 
 
-def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
+def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> PolicyOutput:
     """
     Farmer rewards that originates from the DSF.
     """
@@ -84,7 +84,7 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> Signal:
 
 def p_issuance_reward(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """
     Farmer rewards that originates from protocol issuance.
     XXX: there's a hard cap on how much can be issued.
@@ -103,7 +103,7 @@ def p_issuance_reward(
 
 def p_split_reward(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """ """
     reward = state['block_reward']
     reward_to_fund = (
@@ -116,7 +116,7 @@ def p_split_reward(
 ## Operator Rewards
 
 
-def p_operator_reward(_1, _2, _3, _4) -> Signal:
+def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
     """
     Protocol issued rewards to Staked Operators.
     XXX: Assumed to be zero
@@ -130,7 +130,7 @@ def p_operator_reward(_1, _2, _3, _4) -> Signal:
 
 def p_pledge_sectors(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """
     Decide amount of commited bytes to be added based on an
     gaussian process.
@@ -147,7 +147,9 @@ def p_pledge_sectors(
     return {'space_pledged': new_bytes}
 
 
-def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_archive(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
     """
     TODO: check if underlying assumptions / terminology are valid.
     TODO: revisit assumption on the supply & demand matching.
@@ -173,7 +175,7 @@ def p_archive(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
 def s_average_base_fee(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average base fee during an timestep through
     a Gaussian process.
@@ -190,7 +192,7 @@ def s_average_base_fee(
 
 def s_average_priority_fee(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average priority fee during an timestep through
     a Gaussian process.
@@ -207,7 +209,7 @@ def s_average_priority_fee(
 
 def s_average_compute_weight_per_tx(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -223,7 +225,7 @@ def s_average_compute_weight_per_tx(
 
 def s_average_compute_weight_per_bundle(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -243,7 +245,7 @@ def s_average_compute_weight_per_bundle(
 
 def s_average_compute_weight_per_bundle(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -263,7 +265,7 @@ def s_average_compute_weight_per_bundle(
 
 def s_average_transaction_size(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average transaction size through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -282,7 +284,7 @@ def s_average_transaction_size(
 
 def s_transaction_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
@@ -300,7 +302,7 @@ def s_transaction_count(
 
 def s_bundle_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """
     Simulate the bs-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
@@ -320,7 +322,7 @@ def s_bundle_count(
 ## Compute & Operator Fees
 def p_storage_fees(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """
     HACK: If holders balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
@@ -345,9 +347,6 @@ def p_storage_fees(
     # TODO: use average storage fee rather than immediate storage fee instead
 
     transaction_bytes = state['transaction_count'] * state['average_transaction_size']
-    print(
-        f'{credit_supply=}, {total_space_pledged=}, {blockchain_size=}, {replication_factor=}, {free_space=}, {storage_fee_in_credits_per_bytes=}, {transaction_bytes=}'
-    )
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
     eff_total_storage_fees = min(
@@ -368,7 +367,7 @@ def p_storage_fees(
 
 def p_compute_fees(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """
     HACK: If holders balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
@@ -428,7 +427,9 @@ def p_compute_fees(
     }
 
 
-def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_slash(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
     """
     XXX: depends on an stochastic process assumption.
     TODO: validate if correct
@@ -477,7 +478,9 @@ def p_slash(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> S
     }
 
 
-def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_unvest(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
     """
     Impl notes: 30% of total.
     22% to be unvested with 24mo and 8% to be unvested with 48mo.
@@ -512,7 +515,9 @@ def p_unvest(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> 
 ### User Behavioral Processes
 
 
-def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) -> Signal:
+def p_staking(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
     """
     XXX: this assumes that operators and nominators will always
     stake a given % of their free balance every timestep.
@@ -579,7 +584,7 @@ def p_staking(params: SubspaceModelParams, _2, _3, state: SubspaceModelState) ->
 
 def p_transfers(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """
     XXX: stakeholders will always transfer a give % of their balance every ts
     """
@@ -629,7 +634,7 @@ def p_transfers(
 
 def s_block_utilization(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> VariableUpdate:
+) -> StateUpdateFunction:
     """ """
     size = state['transaction_count'] * state['average_transaction_size']
     max_size = (
@@ -641,7 +646,7 @@ def s_block_utilization(
 
 def p_reference_subsidy(
     params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState
-) -> Signal:
+) -> PolicyOutput:
     """ """
     previous_block_time = state_history[-1][-1]['blocks_passed']
     current_block_time = state['blocks_passed']
