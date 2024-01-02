@@ -54,7 +54,7 @@ experiments = {
     'fund_inclusion': fund_inclusion,
     'reward_split_sweep': reward_split_sweep,
     'sweep_credit_supply': sweep_credit_supply,
-    'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
+    # 'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
 }
 
 experiment_charts = {
@@ -310,6 +310,26 @@ def main(
                         experiment,
                     )
 
+                # Conditionally pickle the results
+                if pickle:
+                    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                    write_pickle_results(
+                        sim_df,
+                        directory='data/simulations/',
+                        filename=f'{experiment}-{timestamp}.pkl.gz',
+                    )
+                if pickle and calculate_metrics:
+                    write_pickle_results(
+                        timestep_metrics_df,
+                        directory='data/metrics/',
+                        filename=f'{experiment}-timestep-metrics-{timestamp}.pkl.gz',
+                    )
+                    write_pickle_results(
+                        trajectory_metrics_df,
+                        directory='data/metrics/',
+                        filename=f'{experiment}-trajectory-metrics-{timestamp}.pkl.gz',
+                    )
+
     # Single experiment selected
     else:
         if visualize:
@@ -322,25 +342,25 @@ def main(
                     sim_df, experiment
                 )
 
-    # Conditionally pickle the results
-    if pickle:
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        write_pickle_results(
-            sim_df,
-            directory='data/simulations/',
-            filename=f'{experiment}-{timestamp}.pkl.gz',
-        )
-    if pickle and calculate_metrics:
-        write_pickle_results(
-            timestep_metrics_df,
-            directory='data/metrics/',
-            filename=f'{experiment}-timestep-metrics-{timestamp}.pkl.gz',
-        )
-        write_pickle_results(
-            trajectory_metrics_df,
-            directory='data/metrics/',
-            filename=f'{experiment}-trajectory-metrics-{timestamp}.pkl.gz',
-        )
+            # Conditionally pickle the results
+            if pickle:
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                write_pickle_results(
+                    sim_df,
+                    directory='data/simulations/',
+                    filename=f'{experiment}-{timestamp}.pkl.gz',
+                )
+            if pickle and calculate_metrics:
+                write_pickle_results(
+                    timestep_metrics_df,
+                    directory='data/metrics/',
+                    filename=f'{experiment}-timestep-metrics-{timestamp}.pkl.gz',
+                )
+                write_pickle_results(
+                    trajectory_metrics_df,
+                    directory='data/metrics/',
+                    filename=f'{experiment}-trajectory-metrics-{timestamp}.pkl.gz',
+                )
 
     # Conditionally drop into an IPython shell
     if interactive:

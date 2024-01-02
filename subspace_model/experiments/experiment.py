@@ -33,7 +33,7 @@ from subspace_model.types import SubspaceModelParams
 
 
 def sanity_check_run(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """
     This experiment tests the model with default parameters and with deterministic parameters.
@@ -64,7 +64,7 @@ def sanity_check_run(
 
 
 def standard_stochastic_run(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
+    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -99,7 +99,7 @@ def standard_stochastic_run(
 
 
 def issuance_sweep(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Sweeps issuance functions.
 
@@ -145,7 +145,7 @@ def issuance_sweep(
 
 
 def fund_inclusion(
-    SIMULATION_DAYS: int = 700, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -189,7 +189,7 @@ def fund_inclusion(
 
 
 def reward_split_sweep(
-    SIMULATION_DAYS: int = 700,
+    SIMULATION_DAYS: int = 1095,
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 1,
 ) -> DataFrame:
@@ -231,7 +231,7 @@ def reward_split_sweep(
 
 
 def sweep_credit_supply(
-    SIMULATION_DAYS: int = 700,
+    SIMULATION_DAYS: int = 1095,
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 1,
 ) -> DataFrame:
