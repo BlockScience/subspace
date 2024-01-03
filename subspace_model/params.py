@@ -104,10 +104,10 @@ DEFAULT_PARAMS = SubspaceModelParams(
     # Behavioral Parameters Between 0 and 1
     operator_stake_per_ts_function=lambda p, s: 0.01,
     nominator_stake_per_ts_function=lambda p, s: 0.01,
-    transfer_farmer_to_holder_per_day=lambda p, s: 0.05,
-    transfer_operator_to_holder_per_day=lambda p, s: 0.05,
-    transfer_holder_to_nominator_per_day=lambda p, s: 0.01,
-    transfer_holder_to_operator_per_day=lambda p, s: 0.01,
+    transfer_farmer_to_holder_per_day_function=lambda p, s: 0.05,
+    transfer_operator_to_holder_per_day_function=lambda p, s: 0.05,
+    transfer_holder_to_nominator_per_day_function=lambda p, s: 0.01,
+    transfer_holder_to_operator_per_day_function=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
     base_fee_function=lambda p, s: 1,
     priority_fee_function=lambda p, s: 3,
@@ -123,6 +123,15 @@ DEFAULT_PARAMS = SubspaceModelParams(
 
 ENVIRONMENTAL_SCENARIOS = {
     'stochastic': {
+        # Behavioral Parameters Between 0 and 1
+        'operator_stake_per_ts_function': MAGNITUDE(NORMAL_GENERATOR(0.01,0.02)),
+        'nominator_stake_per_ts_function': MAGNITUDE(NORMAL_GENERATOR(0.01,0.02)),
+        'transfer_farmer_to_holder_per_day_function': MAGNITUDE(NORMAL_GENERATOR(0.05,0.05)),
+        'transfer_operator_to_holder_per_day_function': MAGNITUDE(NORMAL_GENERATOR(0.05,0.05)),
+        'transfer_holder_to_nominator_per_day_function': MAGNITUDE(NORMAL_GENERATOR(0.01,0.02)),
+        'transfer_holder_to_operator_per_day_function': MAGNITUDE(NORMAL_GENERATOR(0.01,0.02)),
+
+        # Environmental Parameters (Integer positive in [0,inf])
         'environmental_label': 'stochastic',
         'base_fee_function': POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
         'priority_fee_function': POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),

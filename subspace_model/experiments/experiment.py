@@ -114,13 +114,11 @@ def issuance_sweep(
     param_set_1['label'] = 'default-issuance-function'
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'mock-issuance-function'
-    # param_set_2['issuance_function'] = MOCK_ISSUANCE_FUNCTION
-    # param_set_2['issuance_function'] = lambda p, s: 1
-    # param_set_3 = deepcopy(DEFAULT_PARAMS)
-    # param_set_3['label'] = 'mock-issuance-function-2'
-    # param_set_3['issuance_function'] = MOCK_ISSUANCE_FUNCTION_2
-    param_sets = [param_set_1, param_set_2]
-    # param_sets = [param_set_1, param_set_2, param_set_3]
+    param_set_2['issuance_function'] = MOCK_ISSUANCE_FUNCTION
+    param_set_3 = deepcopy(DEFAULT_PARAMS)
+    param_set_3['label'] = 'mock-issuance-function-2'
+    param_set_3['issuance_function'] = MOCK_ISSUANCE_FUNCTION_2
+    param_sets = [param_set_1, param_set_2, param_set_3]
 
     sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
     for param_set in param_sets:
