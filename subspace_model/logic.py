@@ -595,7 +595,7 @@ def p_transfers(
 
     # Farmers to Holders
     if state['farmers_balance'] > 0:
-        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day'](
+        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day_function'](
             params, state
         )
         delta_farmers -= delta
@@ -604,7 +604,7 @@ def p_transfers(
     # Operators to Holders
     if state['operators_balance'] > 0:
         delta = state['operators_balance'] * params[
-            'transfer_operator_to_holder_per_day'
+            'transfer_operator_to_holder_per_day_function'
         ](params, state)
         delta_operators -= delta
         delta_holders += delta
@@ -612,14 +612,14 @@ def p_transfers(
     # Holder to Nominators
     if state['holders_balance'] > 0:
         delta = state['holders_balance'] * params[
-            'transfer_holder_to_nominator_per_day'
+            'transfer_holder_to_nominator_per_day_function'
         ](params, state)
         delta_holders -= delta
         delta_nominators += delta
 
         # Holder to Operators
         delta = state['holders_balance'] * params[
-            'transfer_holder_to_operator_per_day'
+            'transfer_holder_to_operator_per_day_function'
         ](params, state)
         delta_holders -= delta
         delta_operators += delta

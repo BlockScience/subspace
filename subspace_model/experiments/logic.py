@@ -50,11 +50,13 @@ def DEFAULT_SLASH_FUNCTION(params: SubspaceModelParams, state: SubspaceModelStat
 
 
 def NORMAL_GENERATOR(mu: float, sigma: float) -> StochasticFunction:
-    return lambda p, s: norm.rvs(mu, sigma)
+    np.random.seed()
+    return lambda p, s: norm.rvs(mu, sigma, random_state=np.random.RandomState())
 
 
 def POISSON_GENERATOR(mu: float) -> StochasticFunction:
-    return lambda p, s: poisson.rvs(mu)
+    np.random.seed()
+    return lambda p, s: poisson.rvs(mu, random_state=np.random.RandomState())
 
 
 def POSITIVE_INTEGER(generator: StochasticFunction) -> StochasticFunction:

@@ -54,7 +54,7 @@ experiments = {
     'fund_inclusion': fund_inclusion,
     'reward_split_sweep': reward_split_sweep,
     'sweep_credit_supply': sweep_credit_supply,
-    # 'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
+    'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
 }
 
 experiment_charts = {
@@ -64,6 +64,7 @@ experiment_charts = {
     'fund_inclusion': [],
     'reward_split_sweep': [],
     'sweep_credit_supply': [ab_block_utilization],
+    'sweep_over_single_component_and_credit_supply': [],
 }
 
 experiment_timestep_metrics = {
@@ -73,6 +74,7 @@ experiment_timestep_metrics = {
     'fund_inclusion': [],
     'reward_split_sweep': [],
     'sweep_credit_supply': [],
+    'sweep_over_single_component_and_credit_supply': [],
 }
 
 experiment_trajectory_metrics = {
@@ -82,6 +84,7 @@ experiment_trajectory_metrics = {
     'fund_inclusion': [],
     'reward_split_sweep': [],
     'sweep_credit_supply': [],
+    'sweep_over_single_component_and_credit_supply': [],
 }
 
 
