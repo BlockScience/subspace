@@ -1,5 +1,5 @@
 from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR
-from subspace_model.experiments.logic import SubsidyComponent
+from subspace_model.experiments.logic import SubsidyComponent, NORMAL_GENERATOR, POISSON_GENERATOR, POSITIVE_INTEGER, MAGNITUDE
 
 
 def test_reference_subsidy():
@@ -15,3 +15,14 @@ def test_reference_subsidy():
     assert sum([component2(t=BLOCKS_PER_MONTH - 1)]) == 1_000 / BLOCKS_PER_MONTH
     assert sum([component2(t=BLOCKS_PER_MONTH)]) == 1_000 / BLOCKS_PER_MONTH
     assert sum([component2(t=BLOCKS_PER_MONTH + 1)]) < 1_000 / BLOCKS_PER_MONTH
+
+
+def test_generators():
+    normal = MAGNITUDE(NORMAL_GENERATOR(0.1, 0.1))(0, 0)
+    print(normal)
+    assert normal
+
+def test_generators_2():
+    normal = MAGNITUDE(NORMAL_GENERATOR(0.1, 0.1))(0, 0)
+    print(normal)
+    assert normal
