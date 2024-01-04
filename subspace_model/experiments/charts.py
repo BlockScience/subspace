@@ -7,6 +7,7 @@ import plotly.express as px
 import seaborn as sns
 
 from subspace_model.experiments.metrics import window_volatility
+from subspace_model.util import get_hex_colors_from_matplotlib_cmap
 
 
 def ab_circulating_supply(
@@ -80,16 +81,87 @@ def ab_circulating_supply_volatility(
     )
     return fig
 
+def ssc_metrics(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+# Ensure numeric types for plotly
+    for col in sim_df.columns:
+        if "supply" in col or col == "sum_of_stocks":
+            sim_df[col] = pd.to_numeric(sim_df[col], errors='coerce')
+    chart = sim_df.hvplot(
+        x="days_passed", 
+        y=[col for col in sim_df.columns if "supply" in col or col == "sum_of_stocks"], 
+        title="SSC Metrics", logy=True, 
+        ylabel="SSC Value", width=1000, height=500)
 
-# def mc_total_supply(
-#     sim_df: pd.DataFrame, experiment: str
-# ) -> plotly.graph_objects.Figure:
-#     fig = px.line(
-#         sim_df,
-#         x='days_passed',
-#         y='total_supply',
-#         groupby='run',
-#         color='label',
-#         title=f'{experiment} - Monte Carlo Examine Total Supply',
-#     )
-#     return fig
+    return chart
+
+def aggregate_staking_pool_share_composition(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    chart = sim_df.hvplot(
+        x="days_passed", 
+        y=[el for el in sim_df.columns if "shares" in el],
+        title="Aggregate Staking Pool share composition", logy=True, 
+        ylabel="SSC Value", width=1000, height=500)
+
+    return chart
+
+def ssc_stock_composition(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    chart = sim_df.hvplot(
+        x="days_passed", 
+        y=[c for c in sim_df.columns if "_balance" in c],
+        title="SSC Stock Composition", logy=True, 
+        ylabel="SSC Value", width=1000, height=500,
+    )
+    return chart
+
+def total_fee_volume_per_day(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    chart = sim_df.hvplot(
+        x="days_passed", 
+        y=[el for el in sim_df.columns if "volume" in el],
+        title="Total Fee Volume per Day", logy=True, width=1000, height=500,
+    )    
+    return chart
+
+def environmental_processes(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    # Columns of Interest
+    columns = [el for el in sim_df.columns if "average" in el]
+
+    # Get hex colors
+    colors = get_hex_colors_from_matplotlib_cmap(n=len(columns), cmap_name='tab10')
+
+    chart = sim_df.hvplot.line(x='days_passed', y=[el for el in sim_df.columns if "average" in el], logy=True, color=colors, by='variable', width=1000, height=500, title='Environmental Processes')
+
+    return chart
+
+def blockchain_size(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    chart = sim_df.hvplot.line(x='days_passed', y=['history_size', 'space_pledged'], logy=True, width=1000, height=500, title='Blockchain Size', ylabel='Bytes')
+    return chart
+
+def block_utilization(sim_df: pd.DataFrame, experiment: str) -> hv.core.overlay.NdOverlay:
+    chart = sim_df.hvplot.line(x='days_passed', y=['block_utilization'], width=1000, height=500, title='Block Utilization')
+    return chart
+
+def non_negative_profits(profit1_timestep_df: pd.DataFrame) -> hv.core.overlay.NdOverlay:
+    chart = profit1_timestep_df.loc[:, (profit1_timestep_df >= 0).all()].reset_index().hvplot.line(x='days_passed', logy=True, width=1000, height=500, title='Non Negative Profits')
+    return chart
+
+def negative_profits(profit1_timestep_df: pd.DataFrame) -> hv.core.overlay.NdOverlay:
+    chart = profit1_timestep_df.loc[:, (profit1_timestep_df < 0).any()].reset_index().hvplot.line(x='days_passed', logy=True, width=1000, height=500, title='Non Negative Profits')
+    return chart
+
+def holomap_selector_curve(profit1_timestep_df: pd.DataFrame) -> hv.core.overlay.NdOverlay:
+    curve_dict = {column: profit1_timestep_df.reset_index().groupby(['label', 'environmental_label', 'days_passed']).mean().reset_index().hvplot.line(y=column, by=['label', 'environmental_label'], x='days_passed', width=1000, height=500).opts(title=column) for column in profit1_timestep_df.columns}
+    holomap = hv.HoloMap(curve_dict)
+    return holomap
+
+def holomap_selector_box(profit1_timestep_df: pd.DataFrame) -> hv.core.overlay.NdOverlay:
+    def plot_quantile(df, column):
+        plot = df.reset_index().groupby(['label', 'environmental_label', 'days_passed']).mean().reset_index().hvplot.box(y=column, by=['label', 'environmental_label']).opts(title=column)
+        return plot
+
+    curve_dict = {column: plot_quantile(profit1_timestep_df, column) for column in profit1_timestep_df.columns}
+    holomap = hv.HoloMap(curve_dict)
+    return holomap
+
+
+
+# def default_metrics(sim_df: pd.DataFrame, experiment: str) -> plotly.graph_objects.Figure:
+

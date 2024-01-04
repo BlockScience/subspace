@@ -33,7 +33,7 @@ from subspace_model.experiments.experiment import (
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
-    profit1_trajectory,
+    profit1_timestep,
     total_supply_max,
     total_supply_mean,
 )
@@ -215,7 +215,7 @@ def run_experiment(
     '--experiment',
     'experiment',
     type=click.Choice(experiments.keys(), case_sensitive=False),
-    default='standard_stochastic_run',
+    default='sanity_check_run',
     help='Select an experiment to run.',
 )
 @click.option(
