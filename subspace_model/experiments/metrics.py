@@ -16,7 +16,7 @@ def window_volatility(_s: pd.Series) -> pd.Series:
     return s_new
 
 
-def profit1_trajectory(sim_df: pd.DataFrame) -> pd.DataFrame:
+def profit1_timestep(sim_df: pd.DataFrame) -> pd.DataFrame:
     """
     This is a timestep metric.
     """

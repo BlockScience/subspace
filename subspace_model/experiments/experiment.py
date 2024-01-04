@@ -59,6 +59,8 @@ def sanity_check_run(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df
 
@@ -94,6 +96,8 @@ def standard_stochastic_run(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df
 
@@ -138,6 +142,8 @@ def issuance_sweep(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df
 
@@ -180,6 +186,8 @@ def fund_inclusion(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
 
     # Return the simulation results dataframe
@@ -224,6 +232,8 @@ def reward_split_sweep(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df
 
@@ -312,6 +322,8 @@ def sweep_credit_supply(
             'block_time_in_seconds',
             'max_credit_supply',
         },
+        exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df
 
@@ -425,5 +437,6 @@ def sweep_over_single_component_and_credit_supply(
             'max_credit_supply',
         },
         exec_mode='single',
+        deepcopy_off=True,
     )
     return sim_df

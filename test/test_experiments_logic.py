@@ -19,10 +19,4 @@ def test_reference_subsidy():
 
 def test_generators():
     normal = MAGNITUDE(NORMAL_GENERATOR(0.1, 0.1))(0, 0)
-    print(normal)
-    assert normal
-
-def test_generators_2():
-    normal = MAGNITUDE(NORMAL_GENERATOR(0.1, 0.1))(0, 0)
-    print(normal)
-    assert normal
+    assert (normal >= 0) and (normal <= 1)
