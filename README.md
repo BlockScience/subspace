@@ -97,7 +97,7 @@ $ source ~/cadcad/bin/activate
 (cadcad) $
 ```
 
-***Deactivate** virtual environment:*
+***To Deactivate** virtual environment:*
 ```bash
 (cadcad) $ deactivate
 $
@@ -105,11 +105,6 @@ $
 
 ### 2. Installation: 
 Requires [>= Python 3.6](https://www.python.org/downloads/) 
-
-**Install Using [pip](https://pypi.org/project/cadCAD/)** 
-```bash
-$ pip3 install cadcad==0.4.28
-```
 
 **Install all packages with requirement.txt**
 ```bash
