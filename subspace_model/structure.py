@@ -161,17 +161,25 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 'user_supply',
                 user_supply(state),
             ),
+            'earned_supply': lambda _1, _2, _3, state, _5: (
+                'user_supply',
+                earned_supply(state),
+            ),
             'issued_supply': lambda _1, _2, _3, state, _5: (
                 'issued_supply',
                 issued_supply(state),
             ),
-            'sum_of_stocks': lambda _1, _2, _3, state, _5: (
-                'sum_of_stocks',
-                sum_of_stocks(state),
+            'earned_minus_burned_supply': lambda _1, _2, _3, state, _5: (
+                'user_supply',
+                earned_minus_burned_supply(state),
             ),
             'total_supply': lambda _1, _2, _3, state, _5: (
                 'total_supply',
                 total_supply(state),
+            ),
+            'sum_of_stocks': lambda _1, _2, _3, state, _5: (
+                'sum_of_stocks',
+                sum_of_stocks(state),
             ),
         },
     },
