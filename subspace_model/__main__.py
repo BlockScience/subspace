@@ -12,8 +12,8 @@ import IPython
 import pandas as pd
 
 pd.set_option('display.width', None)
-pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
+# pd.set_option('display.max_rows', None)
 
 from subspace_model.experiments.charts import (  # mc_total_supply,
     ab_block_utilization,
@@ -30,6 +30,7 @@ from subspace_model.experiments.experiment import (
     standard_stochastic_run,
     sweep_credit_supply,
     sweep_over_single_component_and_credit_supply,
+    initial_conditions,
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
@@ -55,6 +56,7 @@ experiments = {
     'reward_split_sweep': reward_split_sweep,
     'sweep_credit_supply': sweep_credit_supply,
     'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
+    'initial_conditions': initial_conditions,
 }
 
 experiment_charts = {
@@ -65,6 +67,7 @@ experiment_charts = {
     'reward_split_sweep': [],
     'sweep_credit_supply': [ab_block_utilization],
     'sweep_over_single_component_and_credit_supply': [],
+    'initial_conditions': [],
 }
 
 experiment_timestep_metrics = {
@@ -75,6 +78,7 @@ experiment_timestep_metrics = {
     'reward_split_sweep': [],
     'sweep_credit_supply': [],
     'sweep_over_single_component_and_credit_supply': [],
+    'initial_conditions': [],
 }
 
 experiment_trajectory_metrics = {
@@ -85,6 +89,7 @@ experiment_trajectory_metrics = {
     'reward_split_sweep': [],
     'sweep_credit_supply': [],
     'sweep_over_single_component_and_credit_supply': [],
+    'initial_conditions': [],
 }
 
 

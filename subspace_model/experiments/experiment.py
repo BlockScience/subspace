@@ -440,3 +440,40 @@ def sweep_over_single_component_and_credit_supply(
         deepcopy_off=True,
     )
     return sim_df
+
+def initial_conditions(
+    SIMULATION_DAYS: int = 90, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 30
+) -> DataFrame:
+    """Function which runs the cadCAD simulations
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+
+    # Get the sweep parameters in the form of single length arrays
+    param_set = deepcopy(DEFAULT_PARAMS)
+
+    sweep_params = {
+        **{k: [v] for k, v in param_set.items()},
+        **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS['stochastic'].items()},
+    }
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+        exec_mode='single',
+        deepcopy_off=True,
+    )
+    return sim_df
+
