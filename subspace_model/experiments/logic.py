@@ -96,20 +96,22 @@ class SubsidyComponent:
         if t < self.initial_period_start:
             return 0
         elif self.initial_period_start <= t <= self.initial_period_end:
-            already_distributed = self.max_reference_subsidy * (
-                t - self.initial_period_start
-            )
-            if already_distributed >= self.max_cumulative_subsidy:
-                return 0
-            elif (
-                already_distributed + self.max_reference_subsidy
-                > self.max_cumulative_subsidy
-            ):
-                return self.max_cumulative_subsidy - already_distributed
-            else:
-                return self.max_reference_subsidy
+            return self.calculate_linear_subsidy(t)
         else:
             return self.calculate_exponential_subsidy(t)
+
+    def calculate_linear_subsidy(self, t: float) -> float:
+        """Calculate S_l(t) the linear subsidy for a given time."""
+        already_distributed = self.max_reference_subsidy * (
+            t - self.initial_period_start
+        )
+        if already_distributed >= self.max_cumulative_subsidy:
+            return 0
+        elif already_distributed + self.max_reference_subsidy > self.max_cumulative_subsidy:
+            return self.max_cumulative_subsidy - already_distributed
+        else:
+            return self.max_reference_subsidy
+
 
     def calculate_exponential_subsidy(self, t: float) -> float:
         """Calculate S_e(t) the exponential subsidy for a given time."""
