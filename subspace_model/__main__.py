@@ -31,6 +31,7 @@ from subspace_model.experiments.experiment import (
     sweep_credit_supply,
     sweep_over_single_component_and_credit_supply,
     initial_conditions,
+    reference_subsidy_sweep,
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
@@ -57,6 +58,7 @@ experiments = {
     'sweep_credit_supply': sweep_credit_supply,
     'sweep_over_single_component_and_credit_supply': sweep_over_single_component_and_credit_supply,
     'initial_conditions': initial_conditions,
+    'reference_subsidy_sweep': reference_subsidy_sweep,
 }
 
 experiment_charts = {
@@ -68,6 +70,7 @@ experiment_charts = {
     'sweep_credit_supply': [ab_block_utilization],
     'sweep_over_single_component_and_credit_supply': [],
     'initial_conditions': [],
+    'reference_subsidy_sweep': [],
 }
 
 experiment_timestep_metrics = {
@@ -79,6 +82,7 @@ experiment_timestep_metrics = {
     'sweep_credit_supply': [],
     'sweep_over_single_component_and_credit_supply': [],
     'initial_conditions': [],
+    'reference_subsidy_sweep': [],
 }
 
 experiment_trajectory_metrics = {
@@ -90,6 +94,7 @@ experiment_trajectory_metrics = {
     'sweep_credit_supply': [],
     'sweep_over_single_component_and_credit_supply': [],
     'initial_conditions': [],
+    'reference_subsidy_sweep': [],
 }
 
 

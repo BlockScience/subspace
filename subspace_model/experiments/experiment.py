@@ -21,6 +21,9 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     SubsidyComponent,
+    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
 )
 from subspace_model.params import (
     DEFAULT_PARAMS,
@@ -33,7 +36,7 @@ from subspace_model.types import SubspaceModelParams
 
 
 def sanity_check_run(
-    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """
     This experiment tests the model with default parameters and with deterministic parameters.
@@ -66,7 +69,7 @@ def sanity_check_run(
 
 
 def standard_stochastic_run(
-    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -103,7 +106,7 @@ def standard_stochastic_run(
 
 
 def issuance_sweep(
-    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Sweeps issuance functions.
 
@@ -112,6 +115,7 @@ def issuance_sweep(
     """
 
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+
 
     # Get the sweep params in the form of single length arrays
     param_set_1 = DEFAULT_PARAMS
@@ -149,7 +153,7 @@ def issuance_sweep(
 
 
 def fund_inclusion(
-    SIMULATION_DAYS: int = 1095, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -195,7 +199,7 @@ def fund_inclusion(
 
 
 def reward_split_sweep(
-    SIMULATION_DAYS: int = 1095,
+    SIMULATION_DAYS: int = 183,
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 1,
 ) -> DataFrame:
@@ -239,7 +243,7 @@ def reward_split_sweep(
 
 
 def sweep_credit_supply(
-    SIMULATION_DAYS: int = 1095,
+    SIMULATION_DAYS: int = 183,
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 1,
 ) -> DataFrame:
@@ -329,7 +333,7 @@ def sweep_credit_supply(
 
 
 def sweep_over_single_component_and_credit_supply(
-    SIMULATION_DAYS: int = 365 * 3,
+    SIMULATION_DAYS: int = 183,
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 30,
 ) -> DataFrame:
@@ -442,7 +446,7 @@ def sweep_over_single_component_and_credit_supply(
     return sim_df
 
 def initial_conditions(
-    SIMULATION_DAYS: int = 90, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 30
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 30
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -458,6 +462,59 @@ def initial_conditions(
         **{k: [v] for k, v in param_set.items()},
         **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS['stochastic'].items()},
     }
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            'label',
+            'environmental_label',
+            'timestep_in_days',
+            'block_time_in_seconds',
+            'max_credit_supply',
+        },
+        exec_mode='single',
+        deepcopy_off=True,
+    )
+    return sim_df
+
+
+def reference_subsidy_sweep(
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+) -> DataFrame:
+    """Sweeps issuance functions.
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+
+    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
+
+    # Get the sweep params in the form of single length arrays
+    param_set_1 = deepcopy(DEFAULT_PARAMS)
+    param_set_1['label'] = 'constant-single-component'
+    param_set_1['reference_subsidy_components'] = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
+
+    param_set_2 = deepcopy(DEFAULT_PARAMS)
+    param_set_2['label'] = 'hybrid-single-component'
+    param_set_2['reference_subsidy_components'] = REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT
+
+    param_set_3 = deepcopy(DEFAULT_PARAMS)
+    param_set_3['label'] = 'hybrid-two-components'
+    param_set_3['reference_subsidy_components'] = REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS
+    param_sets = [param_set_1, param_set_2, param_set_3]
+
+    sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
+    for param_set in param_sets:
+        for k, v in param_set.items():
+            sweep_params[k].append(v)
 
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
