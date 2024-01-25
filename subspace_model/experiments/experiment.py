@@ -333,20 +333,21 @@ def sweep_credit_supply(
 
 
 def sweep_over_single_component_and_credit_supply(
-    SIMULATION_DAYS: int = 183,
+    SIMULATION_DAYS: int = 183/2,
     TIMESTEP_IN_DAYS: int = 1,
-    SAMPLES: int = 30,
+    SAMPLES: int = 1,
+    N_PARAM_SWEEP: int = 1
 ) -> DataFrame:
     """ """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    c_params = np.linspace(start=0.1, stop=10, num=3)
-    credit_supply_definition_params = [SUPPLY_ISSUED, SUPPLY_TOTAL]
+    c_params = np.linspace(start=0.1, stop=10, num=N_PARAM_SWEEP)
+    credit_supply_definition_params = [SUPPLY_TOTAL]
     reference_subsidy_x_1_params = np.linspace(
-        start=1 * BLOCKS_PER_MONTH, stop=2 * BLOCKS_PER_MONTH, num=3
+        start=1 * BLOCKS_PER_MONTH, stop=2 * BLOCKS_PER_MONTH, num=N_PARAM_SWEEP
     )
     reference_subsidy_x_2_params = np.linspace(
-        start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=3
+        start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=N_PARAM_SWEEP
     )
 
     sweep_params = {
