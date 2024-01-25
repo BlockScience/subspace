@@ -1,0 +1,16 @@
+
+                  ___________    ____
+  ________ __ ___/ / ____/   |  / __ \
+ / ___/ __` / __  / /   / /| | / / / /
+/ /__/ /_/ / /_/ / /___/ ___ |/ /_/ /
+\___/\__,_/\__,_/\____/_/  |_/_____/
+by cadCAD
+
+cadCAD Version: 0.5.1
+Execution Mode: single_proc
+Simulation Dimensions:
+Entire Simulation: (Models, Unique Timesteps, Params, Total Runs, Sub-States) = (1, 92, 43, 12, 39)
+     Simulation 0: (Timesteps, Params, Runs, Sub-States) = (92, 43, 12, 39)
+Execution Method: single_proc_exec
+Execution Mode: single_threaded
+Total execution time: 42.37s
