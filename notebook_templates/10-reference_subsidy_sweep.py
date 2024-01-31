@@ -47,31 +47,49 @@ from bokeh.palettes import Turbo256, Category20
 
 from subspace_model.util import g
 
-# %% [markdown] papermill={"duration": 0.007342, "end_time": "2024-01-31T00:37:30.762917", "exception": false, "start_time": "2024-01-31T00:37:30.755575", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.006671, "end_time": "2024-01-31T08:17:08.602231", "exception": false, "start_time": "2024-01-31T08:17:08.595560", "status": "completed"}
 # ## Part 2. Load Simulation Data
 
-# %% [markdown] papermill={"duration": 0.003634, "end_time": "2024-01-31T00:37:30.771089", "exception": false, "start_time": "2024-01-31T00:37:30.767455", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.00683, "end_time": "2024-01-31T08:17:08.617129", "exception": false, "start_time": "2024-01-31T08:17:08.610299", "status": "completed"}
 # Load the simulation results data.
 
-# %% papermill={"duration": 0.01675, "end_time": "2024-01-31T00:37:30.791167", "exception": false, "start_time": "2024-01-31T00:37:30.774417", "status": "completed"}
-sim_df = pd.read_pickle(
-    "../data/simulations/reference_subsidy_sweep-2024-01-30_11-07-21.pkl.gz"
-).drop(['timestep', 'simulation', 'subset', 'timestep_in_days', 'block_time_in_seconds', 'delta_days', 'delta_blocks'], axis=1)
+# %% papermill={"duration": 0.021693, "end_time": "2024-01-31T08:17:08.644912", "exception": false, "start_time": "2024-01-31T08:17:08.623219", "status": "completed"}
+import glob
+import os
 
-# %% papermill={"duration": 0.043776, "end_time": "2024-01-31T00:37:30.838477", "exception": false, "start_time": "2024-01-31T00:37:30.794701", "status": "completed"}
+def load_latest_simulation(simulation_name):
+    files = glob.glob(f"../data/simulations/{simulation_name}-*.pkl.gz")
+    latest_file = max(files, key=os.path.getctime)
+
+    print(f"Loading Latest File: {latest_file}")
+    df = pd.read_pickle(latest_file)
+    df = df.drop(['timestep', 'simulation', 'subset', 'timestep_in_days', 'block_time_in_seconds', 'delta_days', 'delta_blocks'], axis=1)
+    return df
+
+
+# %% papermill={"duration": 0.06953, "end_time": "2024-01-31T08:17:08.720237", "exception": false, "start_time": "2024-01-31T08:17:08.650707", "status": "completed"}
+sim_df = load_latest_simulation("reference_subsidy_sweep")
+sim_df
+
+# %% papermill={"duration": 0.0231, "end_time": "2024-01-31T08:17:08.749916", "exception": false, "start_time": "2024-01-31T08:17:08.726816", "status": "completed"}
+# sim_df = pd.read_pickle(
+#     "../data/simulations/reference_subsidy_sweep-2024-01-30_11-07-21.pkl.gz"
+# ).drop(['timestep', 'simulation', 'subset', 'timestep_in_days', 'block_time_in_seconds', 'delta_days', 'delta_blocks'], axis=1)
+
+# %% papermill={"duration": 0.042732, "end_time": "2024-01-31T08:17:08.799469", "exception": false, "start_time": "2024-01-31T08:17:08.756737", "status": "completed"}
 sim_df.head(5)
 
-# %% [markdown] papermill={"duration": 0.003682, "end_time": "2024-01-31T00:37:30.848336", "exception": false, "start_time": "2024-01-31T00:37:30.844654", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.013319, "end_time": "2024-01-31T08:17:08.825605", "exception": false, "start_time": "2024-01-31T08:17:08.812286", "status": "completed"}
 # Simulation Runs.
 
-# %% papermill={"duration": 0.01825, "end_time": "2024-01-31T00:37:30.870234", "exception": false, "start_time": "2024-01-31T00:37:30.851984", "status": "completed"}
+# %% papermill={"duration": 0.034271, "end_time": "2024-01-31T08:17:08.874627", "exception": false, "start_time": "2024-01-31T08:17:08.840356", "status": "completed"}
 sim_df.groupby(['run', 'label', 'environmental_label']).size().reset_index(name='Days').head()
 
-# %% [markdown] papermill={"duration": 0.004013, "end_time": "2024-01-31T00:37:30.879600", "exception": false, "start_time": "2024-01-31T00:37:30.875587", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.012138, "end_time": "2024-01-31T08:17:08.901732", "exception": false, "start_time": "2024-01-31T08:17:08.889594", "status": "completed"}
 # ### Coloring Metrics
 # Use a constant mapping from columns to colors
 
-# %% papermill={"duration": 0.132155, "end_time": "2024-01-31T00:37:31.015368", "exception": false, "start_time": "2024-01-31T00:37:30.883213", "status": "completed"}
+# %% papermill={"duration": 0.263454, "end_time": "2024-01-31T08:17:09.179476", "exception": false, "start_time": "2024-01-31T08:17:08.916022", "status": "completed"}
 color_palette = Category20
 # columns_to_color = sorted(list(set(sim_df.columns) - {'environmental_label', 'label', 'run', 'blocks_passed', 'days_passed'}))
 columns_to_color = sim_df.columns
@@ -85,7 +103,7 @@ if color_palette == Category20:
 sim_df.count().to_frame().T.hvplot.bar(y=columns_to_color, color=[column_colors[c] for c in columns_to_color], rot=90, width=1400, height=500, title='Column Color Map', fontscale=1.4, yaxis=None)
 
 
-# %% papermill={"duration": 0.022351, "end_time": "2024-01-31T00:37:31.041750", "exception": false, "start_time": "2024-01-31T00:37:31.019399", "status": "completed"}
+# %% papermill={"duration": 0.03437, "end_time": "2024-01-31T08:17:09.221250", "exception": false, "start_time": "2024-01-31T08:17:09.186880", "status": "completed"}
 def snake_to_title(s):
     """Utility function used for printing chart titles and labels as Title Case.
     Example:
@@ -144,17 +162,17 @@ def fan_chart_quantile(df, column='circulating_supply', median_only=False):
 
 
 
-# %% [markdown] papermill={"duration": 0.003877, "end_time": "2024-01-31T00:37:31.049879", "exception": false, "start_time": "2024-01-31T00:37:31.046002", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.007473, "end_time": "2024-01-31T08:17:09.236361", "exception": false, "start_time": "2024-01-31T08:17:09.228888", "status": "completed"}
 # ### KPIs
 
-# %% papermill={"duration": 0.01453, "end_time": "2024-01-31T00:37:31.068276", "exception": false, "start_time": "2024-01-31T00:37:31.053746", "status": "completed"}
+# %% papermill={"duration": 0.024543, "end_time": "2024-01-31T08:17:09.268126", "exception": false, "start_time": "2024-01-31T08:17:09.243583", "status": "completed"}
 sim_df['issuance'] = sim_df['block_reward'] + sim_df['reference_subsidy']
 
 sim_df['fees'] = sim_df['compute_fee_volume'] + sim_df['storage_fee_volume']
 
 fees_and_issuance = ['compute_fee_volume','storage_fee_volume', 'fees', 'block_reward', 'reference_subsidy', 'issuance']
 
-# %% papermill={"duration": 0.014772, "end_time": "2024-01-31T00:37:31.086966", "exception": false, "start_time": "2024-01-31T00:37:31.072194", "status": "completed"}
+# %% papermill={"duration": 0.031197, "end_time": "2024-01-31T08:17:09.306698", "exception": false, "start_time": "2024-01-31T08:17:09.275501", "status": "completed"}
 # Compute Fees and Storage Fees
 
 # The dynamics of storage fees vs issuance. Who will dominate at the beginning, storage fees or issues rewards? Note that this is a metric.
@@ -162,7 +180,7 @@ fees_and_issuance = ['compute_fee_volume','storage_fee_volume', 'fees', 'block_r
 # revenue = proposer_reward + storage_fees. For data blocks and voters you only have rewards not fees. Farmers is the sum of those three.
 # The above topics are what has been discussed and therefor are higher priority than the stocks. 
 
-# %% papermill={"duration": 0.124681, "end_time": "2024-01-31T00:37:31.215460", "exception": false, "start_time": "2024-01-31T00:37:31.090779", "status": "completed"}
+# %% papermill={"duration": 0.269027, "end_time": "2024-01-31T08:17:09.583552", "exception": false, "start_time": "2024-01-31T08:17:09.314525", "status": "completed"}
 color_palette = Category20
 # columns_to_color = sorted(list(set(sim_df.columns) - {'environmental_label', 'label', 'run', 'blocks_passed', 'days_passed'}))
 columns_to_color = sim_df.columns
@@ -175,10 +193,10 @@ if color_palette == Category20:
 
 sim_df.count().to_frame().T.hvplot.bar(y=columns_to_color, color=[column_colors[c] for c in columns_to_color], rot=90, width=1400, height=500, title='Column Color Map', fontscale=1.4, yaxis=None)
 
-# %% [markdown] papermill={"duration": 0.007487, "end_time": "2024-01-31T00:37:31.230512", "exception": false, "start_time": "2024-01-31T00:37:31.223025", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.007376, "end_time": "2024-01-31T08:17:09.598583", "exception": false, "start_time": "2024-01-31T08:17:09.591207", "status": "completed"}
 # ### Balances and Supplies
 
-# %% papermill={"duration": 0.015998, "end_time": "2024-01-31T00:37:31.251164", "exception": false, "start_time": "2024-01-31T00:37:31.235166", "status": "completed"}
+# %% papermill={"duration": 0.028049, "end_time": "2024-01-31T08:17:09.634202", "exception": false, "start_time": "2024-01-31T08:17:09.606153", "status": "completed"}
 system_balances = ['other_issuance_balance', 'reward_issuance_balance']
 agent_balances = [
     'farmers_balance',
@@ -192,53 +210,53 @@ other_balances = list(set([c for c in sim_df.columns if 'balance' in c]) - set(s
 supply_columns = list({c for c in sim_df.columns if 'supply' in c} - {'max_credit_supply', 'issued_supply', 'total_supply'})
 balance_columns = list(set([c for c in sim_df.columns if 'balance' in c]) - set(system_balances))
 
-# %% papermill={"duration": 0.014246, "end_time": "2024-01-31T00:37:31.270740", "exception": false, "start_time": "2024-01-31T00:37:31.256494", "status": "completed"}
+# %% papermill={"duration": 0.027302, "end_time": "2024-01-31T08:17:09.669151", "exception": false, "start_time": "2024-01-31T08:17:09.641849", "status": "completed"}
 system_balances
 
-# %% papermill={"duration": 0.013729, "end_time": "2024-01-31T00:37:31.288512", "exception": false, "start_time": "2024-01-31T00:37:31.274783", "status": "completed"}
+# %% papermill={"duration": 0.022893, "end_time": "2024-01-31T08:17:09.700239", "exception": false, "start_time": "2024-01-31T08:17:09.677346", "status": "completed"}
 agent_balances
 
-# %% papermill={"duration": 0.014164, "end_time": "2024-01-31T00:37:31.306725", "exception": false, "start_time": "2024-01-31T00:37:31.292561", "status": "completed"}
+# %% papermill={"duration": 0.023792, "end_time": "2024-01-31T08:17:09.734393", "exception": false, "start_time": "2024-01-31T08:17:09.710601", "status": "completed"}
 agent_pool_balances
 
-# %% papermill={"duration": 0.013745, "end_time": "2024-01-31T00:37:31.325191", "exception": false, "start_time": "2024-01-31T00:37:31.311446", "status": "completed"}
+# %% papermill={"duration": 0.025267, "end_time": "2024-01-31T08:17:09.767505", "exception": false, "start_time": "2024-01-31T08:17:09.742238", "status": "completed"}
 protocol_treasury_balances
 
-# %% papermill={"duration": 0.014175, "end_time": "2024-01-31T00:37:31.343747", "exception": false, "start_time": "2024-01-31T00:37:31.329572", "status": "completed"}
+# %% papermill={"duration": 0.023173, "end_time": "2024-01-31T08:17:09.798535", "exception": false, "start_time": "2024-01-31T08:17:09.775362", "status": "completed"}
 other_balances
 
-# %% papermill={"duration": 0.013757, "end_time": "2024-01-31T00:37:31.361847", "exception": false, "start_time": "2024-01-31T00:37:31.348090", "status": "completed"}
+# %% papermill={"duration": 0.022609, "end_time": "2024-01-31T08:17:09.828956", "exception": false, "start_time": "2024-01-31T08:17:09.806347", "status": "completed"}
 supply_columns
 
-# %% papermill={"duration": 0.014413, "end_time": "2024-01-31T00:37:31.380437", "exception": false, "start_time": "2024-01-31T00:37:31.366024", "status": "completed"}
+# %% papermill={"duration": 0.022744, "end_time": "2024-01-31T08:17:09.859454", "exception": false, "start_time": "2024-01-31T08:17:09.836710", "status": "completed"}
 balance_columns
 
-# %% papermill={"duration": 0.014648, "end_time": "2024-01-31T00:37:31.399373", "exception": false, "start_time": "2024-01-31T00:37:31.384725", "status": "completed"}
+# %% papermill={"duration": 0.026633, "end_time": "2024-01-31T08:17:09.893783", "exception": false, "start_time": "2024-01-31T08:17:09.867150", "status": "completed"}
 balance_columns
 
-# %% papermill={"duration": 0.014591, "end_time": "2024-01-31T00:37:31.418581", "exception": false, "start_time": "2024-01-31T00:37:31.403990", "status": "completed"}
+# %% papermill={"duration": 0.023625, "end_time": "2024-01-31T08:17:09.926145", "exception": false, "start_time": "2024-01-31T08:17:09.902520", "status": "completed"}
 supply_columns
 
-# %% papermill={"duration": 0.014276, "end_time": "2024-01-31T00:37:31.437217", "exception": false, "start_time": "2024-01-31T00:37:31.422941", "status": "completed"}
+# %% papermill={"duration": 0.02561, "end_time": "2024-01-31T08:17:09.959575", "exception": false, "start_time": "2024-01-31T08:17:09.933965", "status": "completed"}
 fees_and_issuance
 
-# %% papermill={"duration": 0.013831, "end_time": "2024-01-31T00:37:31.455649", "exception": false, "start_time": "2024-01-31T00:37:31.441818", "status": "completed"}
+# %% papermill={"duration": 0.033531, "end_time": "2024-01-31T08:17:10.001925", "exception": false, "start_time": "2024-01-31T08:17:09.968394", "status": "completed"}
 # balance_columns = fees_and_issuance
 # balance_columns = supply_columns
 
-# %% papermill={"duration": 0.018626, "end_time": "2024-01-31T00:37:31.478722", "exception": false, "start_time": "2024-01-31T00:37:31.460096", "status": "completed"}
+# %% papermill={"duration": 0.032984, "end_time": "2024-01-31T08:17:10.043305", "exception": false, "start_time": "2024-01-31T08:17:10.010321", "status": "completed"}
 box_df = sim_df.set_index(['days_passed', 'label'])[balance_columns]
 box_df
 
-# %% papermill={"duration": 0.020693, "end_time": "2024-01-31T00:37:31.504000", "exception": false, "start_time": "2024-01-31T00:37:31.483307", "status": "completed"}
+# %% papermill={"duration": 0.036044, "end_time": "2024-01-31T08:17:10.087792", "exception": false, "start_time": "2024-01-31T08:17:10.051748", "status": "completed"}
 describe_df = box_df.describe().drop('count')
 describe_df
 
-# %% papermill={"duration": 0.030261, "end_time": "2024-01-31T00:37:31.538895", "exception": false, "start_time": "2024-01-31T00:37:31.508634", "status": "completed"}
+# %% papermill={"duration": 0.055186, "end_time": "2024-01-31T08:17:10.151591", "exception": false, "start_time": "2024-01-31T08:17:10.096405", "status": "completed"}
 describe_labels_df = box_df.groupby('label').apply(lambda label: label.describe().drop('count'))
 describe_labels_df
 
-# %% papermill={"duration": 0.043875, "end_time": "2024-01-31T00:37:31.587778", "exception": false, "start_time": "2024-01-31T00:37:31.543903", "status": "completed"}
+# %% papermill={"duration": 0.08472, "end_time": "2024-01-31T08:17:10.244843", "exception": false, "start_time": "2024-01-31T08:17:10.160123", "status": "completed"}
 describe_difference_df = pd.DataFrame(describe_labels_df.values - pd.concat([describe_df for i in range(sim_df['label'].nunique())]).values, columns=describe_labels_df.columns, index=describe_labels_df.index)
 df = describe_difference_df
 
@@ -274,7 +292,7 @@ df.columns.name = 'balance'
 describe_difference_df_styled = df.style.map(color_scale).set_table_styles(header_styles)
 describe_difference_df_styled
 
-# %% papermill={"duration": 0.694678, "end_time": "2024-01-31T00:37:32.287748", "exception": false, "start_time": "2024-01-31T00:37:31.593070", "status": "completed"}
+# %% papermill={"duration": 1.227929, "end_time": "2024-01-31T08:17:11.485105", "exception": false, "start_time": "2024-01-31T08:17:10.257176", "status": "completed"}
 box_df_melted = box_df.reset_index().drop('days_passed',axis=1).melt(id_vars=['label'])
 
 violin_list = [label.hvplot.violin(y='value', by='variable', c='variable', legend='top_left', width=1200, height=500, title=f'SSC Balances {name}', cmap=column_colors, ylim=(0,box_df.max().max()*0.75)) for name, label in box_df_melted.groupby('label')]
@@ -284,33 +302,33 @@ layout = hv.Layout(violin_list).cols(1)
 
 layout
 
-# %% papermill={"duration": 0.025703, "end_time": "2024-01-31T00:37:32.320057", "exception": false, "start_time": "2024-01-31T00:37:32.294354", "status": "completed"}
+# %% papermill={"duration": 0.039464, "end_time": "2024-01-31T08:17:11.539156", "exception": false, "start_time": "2024-01-31T08:17:11.499692", "status": "completed"}
 [label for name, label in box_df.reset_index().groupby('label')][0]
 
-# %% papermill={"duration": 1.064872, "end_time": "2024-01-31T00:37:33.391532", "exception": false, "start_time": "2024-01-31T00:37:32.326660", "status": "completed"}
+# %% papermill={"duration": 1.893138, "end_time": "2024-01-31T08:17:13.443415", "exception": false, "start_time": "2024-01-31T08:17:11.550277", "status": "completed"}
 line_list = [hv.Overlay([fan_chart_quantile(label, column) for column in label.columns if column not in ['label', 'days_passed']]).opts(title=f'SSC Balances {name}', legend_opts={'location':'top_left'}) for name, label in box_df.reset_index().groupby('label')]
 layout = hv.Layout(line_list).cols(1)
 layout
 
-# %% papermill={"duration": 0.812031, "end_time": "2024-01-31T00:37:34.213748", "exception": false, "start_time": "2024-01-31T00:37:33.401717", "status": "completed"}
+# %% papermill={"duration": 1.613757, "end_time": "2024-01-31T08:17:15.081252", "exception": false, "start_time": "2024-01-31T08:17:13.467495", "status": "completed"}
 violin_list = [variable.hvplot.violin(y='value', by='label', color=column_colors[name], width=1200, height=500, title=f'SSC Balances {name}', ylim=(0,variable.max()['value'].max()), ylabel=name) for name, variable in box_df_melted.groupby('variable')]
 
 layout = hv.Layout(violin_list).cols(1).opts(shared_axes=False)
 
 layout
 
-# %% papermill={"duration": 0.513818, "end_time": "2024-01-31T00:37:34.740457", "exception": false, "start_time": "2024-01-31T00:37:34.226639", "status": "completed"}
+# %% papermill={"duration": 0.928905, "end_time": "2024-01-31T08:17:16.030647", "exception": false, "start_time": "2024-01-31T08:17:15.101742", "status": "completed"}
 line_list = [variable.hvplot.line(x='days_passed', by='label', y='value', title=name, legend='top_left', line_width=3).opts(legend_opts={'background_fill_color': column_colors[name], 'background_fill_alpha': 0.2}) for name, variable in box_df.reset_index().melt(id_vars=['label', 'days_passed']).groupby('variable')]
 
 layout = hv.Layout(line_list).cols(2).opts(shared_axes=False)
 layout
 
-# %% [markdown] papermill={"duration": 0.01537, "end_time": "2024-01-31T00:37:34.771189", "exception": false, "start_time": "2024-01-31T00:37:34.755819", "status": "completed"}
+# %% [markdown] papermill={"duration": 0.028686, "end_time": "2024-01-31T08:17:16.083323", "exception": false, "start_time": "2024-01-31T08:17:16.054637", "status": "completed"}
 # Definition (per timestep) storage_fees_per_rewards = state['storage_fee_volume'] / state['block_reward']
 #
 # We are interested in having the (95%, 50%, 5%) quantile distribution over that metric when taking windows of 1 week, 4 weeks and 12 weeks.
 
-# %% papermill={"duration": 0.134439, "end_time": "2024-01-31T00:37:34.920649", "exception": false, "start_time": "2024-01-31T00:37:34.786210", "status": "completed"}
+# %% papermill={"duration": 0.238559, "end_time": "2024-01-31T08:17:16.347213", "exception": false, "start_time": "2024-01-31T08:17:16.108654", "status": "completed"}
 opts = dict(width=800, height=400)
 charts = []
 for weeks in [1,4,12]:
@@ -324,5 +342,5 @@ for weeks in [1,4,12]:
     chart = fan * median
     charts.append(chart.opts(**opts))
 
-# %% papermill={"duration": 0.368155, "end_time": "2024-01-31T00:37:35.305892", "exception": false, "start_time": "2024-01-31T00:37:34.937737", "status": "completed"}
+# %% papermill={"duration": 0.923605, "end_time": "2024-01-31T08:17:17.305800", "exception": false, "start_time": "2024-01-31T08:17:16.382195", "status": "completed"}
 hv.Layout(charts).cols(3)
