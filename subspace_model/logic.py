@@ -59,14 +59,14 @@ def add_suf(variable: str, default_value=0.0) -> Callable:
 
 def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> PolicyOutput:
     """ """
-    delta_days = params['timestep_in_days']
+    delta_days = params["timestep_in_days"]
     delta_seconds = delta_days * DAY_TO_SECONDS
-    delta_blocks = delta_seconds / params['block_time_in_seconds']
+    delta_blocks = delta_seconds / params["block_time_in_seconds"]
     return {
-        'delta_days': delta_days,
-        'days_passed': delta_days,
-        'delta_blocks': delta_blocks,
-        'blocks_passed': delta_blocks,
+        "delta_days": delta_days,
+        "days_passed": delta_days,
+        "delta_blocks": delta_blocks,
+        "blocks_passed": delta_blocks,
     }
 
 
@@ -77,9 +77,9 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> PolicyOutput:
     """
     Farmer rewards that originates from the DSF.
     """
-    dsf_share = state['dsf_relative_disbursal_per_day'] ** state['delta_days']
-    reward = state['fund_balance'] * dsf_share
-    return {'block_reward': reward, 'fund_balance': -reward}
+    dsf_share = state["dsf_relative_disbursal_per_day"] ** state["delta_days"]
+    reward = state["fund_balance"] * dsf_share
+    return {"block_reward": reward, "fund_balance": -reward}
 
 
 def p_issuance_reward(
@@ -89,28 +89,28 @@ def p_issuance_reward(
     Farmer rewards that originates from protocol issuance.
     XXX: there's a hard cap on how much can be issued.
     """
-    issuance_per_day = params['issuance_function'](params, state)
-    reward = issuance_per_day * state['delta_days']
+    issuance_per_day = params["issuance_function"](params, state)
+    reward = issuance_per_day * state["delta_days"]
 
     # Make sure that the protocol has tokens to issue
-    if reward > state['reward_issuance_balance']:
-        reward = state['reward_issuance_balance']
+    if reward > state["reward_issuance_balance"]:
+        reward = state["reward_issuance_balance"]
     else:
         pass
 
-    return {'block_reward': reward, 'reward_issuance_balance': -reward}
+    return {"block_reward": reward, "reward_issuance_balance": -reward}
 
 
 def p_split_reward(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
     """ """
-    reward = state['block_reward']
+    reward = state["block_reward"]
     reward_to_fund = (
-        reward * params['reward_proposer_share'] * params['fund_tax_on_proposer_reward']
+        reward * params["reward_proposer_share"] * params["fund_tax_on_proposer_reward"]
     )
     reward_to_farmers = reward - reward_to_fund
-    return {'farmers_balance': reward_to_farmers, 'fund_balance': reward_to_fund}
+    return {"farmers_balance": reward_to_farmers, "fund_balance": reward_to_fund}
 
 
 ## Operator Rewards
@@ -122,7 +122,7 @@ def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
     XXX: Assumed to be zero
     """
     reward = 0.0
-    return {'other_issuance_balance': -reward, 'operators_balance': reward}
+    return {"other_issuance_balance": -reward, "operators_balance": reward}
 
 
 ## Environmental processes
@@ -139,12 +139,12 @@ def p_pledge_sectors(
     """
     new_sectors = int(
         max(
-            params['new_sectors_per_day_function'](params, state),
+            params["new_sectors_per_day_function"](params, state),
             0,
         )
     )
     new_bytes = new_sectors * SECTOR_SIZE
-    return {'space_pledged': new_bytes}
+    return {"space_pledged": new_bytes}
 
 
 def p_archive(
@@ -156,13 +156,13 @@ def p_archive(
     FIXME: homogenize terminology
     """
     # how much data does every block contain aside from tx data
-    header_volume = state['delta_blocks'] * params['header_size']
+    header_volume = state["delta_blocks"] * params["header_size"]
 
-    tx_volume = state['transaction_count'] * state['average_transaction_size']
+    tx_volume = state["transaction_count"] * state["average_transaction_size"]
     new_buffer_bytes = tx_volume + header_volume
-    current_buffer = new_buffer_bytes + state['buffer_size']
+    current_buffer = new_buffer_bytes + state["buffer_size"]
     segments_being_archived = int(
-        floor(current_buffer / params['archival_buffer_segment_size'])
+        floor(current_buffer / params["archival_buffer_segment_size"])
     )
 
     new_history_bytes = 0
@@ -170,7 +170,7 @@ def p_archive(
         new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
         new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
 
-    return {'history_size': new_history_bytes, 'buffer_size': new_buffer_bytes}
+    return {"history_size": new_history_bytes, "buffer_size": new_buffer_bytes}
 
 
 def s_average_base_fee(
@@ -182,10 +182,10 @@ def s_average_base_fee(
     XXX: depends on an stochastic process assumption.
     """
     return (
-        'average_base_fee',
+        "average_base_fee",
         max(
-            params['base_fee_function'](params, state),
-            params['min_base_fee'],
+            params["base_fee_function"](params, state),
+            params["min_base_fee"],
         ),
     )
 
@@ -199,9 +199,9 @@ def s_average_priority_fee(
     XXX: depends on an stochastic process assumption.
     """
     return (
-        'average_priority_fee',
+        "average_priority_fee",
         max(
-            params['priority_fee_function'](params, state),
+            params["priority_fee_function"](params, state),
             0,
         ),
     )
@@ -215,10 +215,10 @@ def s_average_compute_weight_per_tx(
     XXX: depends on an stochastic process assumption.
     """
     return (
-        'average_compute_weight_per_tx',
+        "average_compute_weight_per_tx",
         max(
-            params['compute_weights_per_tx_function'](params, state),
-            params['min_compute_weights_per_tx'],
+            params["compute_weights_per_tx_function"](params, state),
+            params["min_compute_weights_per_tx"],
         ),
     )
 
@@ -232,13 +232,13 @@ def s_average_compute_weight_per_bundle(
     """
     # TODO: verify that is implemented correctly
     return (
-        'average_compute_weight_per_budle',
+        "average_compute_weight_per_budle",
         max(
-            params['compute_weight_per_bundle_function'](
+            params["compute_weight_per_bundle_function"](
                 params,
                 state,
             ),
-            params['min_compute_weights_per_bundle'],
+            params["min_compute_weights_per_bundle"],
         ),
     )
 
@@ -252,13 +252,13 @@ def s_average_compute_weight_per_bundle(
     """
     # TODO: verify that is implemented correctly
     return (
-        'average_compute_weight_per_budle',
+        "average_compute_weight_per_budle",
         max(
-            params['compute_weight_per_bundle_function'](
+            params["compute_weight_per_bundle_function"](
                 params,
                 state,
             ),
-            params['min_compute_weights_per_bundle'],
+            params["min_compute_weights_per_bundle"],
         ),
     )
 
@@ -271,13 +271,13 @@ def s_average_transaction_size(
     XXX: depends on an stochastic process assumption.
     """
     return (
-        'average_transaction_size',
+        "average_transaction_size",
         max(
-            params['transaction_size_function'](
+            params["transaction_size_function"](
                 params,
                 state,
             ),
-            params['min_transaction_size'],
+            params["min_transaction_size"],
         ),
     )
 
@@ -290,14 +290,14 @@ def s_transaction_count(
     XXX: depends on an stochastic process assumption.
     """
     transaction_count = max(
-        params['transaction_count_per_day_function'](
+        params["transaction_count_per_day_function"](
             params,
             state,
         ),
         0,
     )
 
-    return ('transaction_count', transaction_count)
+    return ("transaction_count", transaction_count)
 
 
 def s_bundle_count(
@@ -309,14 +309,14 @@ def s_bundle_count(
     """
     # TODO: refactor
     bundle_count = max(
-        params['bundle_count_per_day_function'](
+        params["bundle_count_per_day_function"](
             params,
             state,
         ),
         0,
     )
 
-    return ('bundle_count', bundle_count)
+    return ("bundle_count", bundle_count)
 
 
 ## Compute & Operator Fees
@@ -331,10 +331,10 @@ def p_storage_fees(
     - https://github.com/subspace/subspace/blob/53dca169379e65b4fb97b5c7753f5d00bded2ef2/crates/pallet-transaction-fees/src/lib.rs#L271
     """
     # Input
-    credit_supply = params['credit_supply_definition'](state)
-    total_space_pledged = state['space_pledged']
-    blockchain_size = state['history_size']
-    replication_factor = params['replication_factor']
+    credit_supply = params["credit_supply_definition"](state)
+    total_space_pledged = state["space_pledged"]
+    blockchain_size = state["history_size"]
+    replication_factor = params["replication_factor"]
 
     free_space = total_space_pledged - blockchain_size * replication_factor
 
@@ -346,22 +346,22 @@ def p_storage_fees(
     # Compute total storage fees during this timestep
     # TODO: use average storage fee rather than immediate storage fee instead
 
-    transaction_bytes = state['transaction_count'] * state['average_transaction_size']
+    transaction_bytes = state["transaction_count"] * state["average_transaction_size"]
     total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
 
     eff_total_storage_fees = min(
-        total_storage_fees, state['holders_balance'] / 2
-    )   # HACK
+        total_storage_fees, state["holders_balance"] / 2
+    )  # HACK
 
     # Fee distribution
-    fees_to_fund = params['fund_tax_on_storage_fees'] * eff_total_storage_fees
+    fees_to_fund = params["fund_tax_on_storage_fees"] * eff_total_storage_fees
     fees_to_farmers = eff_total_storage_fees - fees_to_fund
 
     return {
-        'farmers_balance': fees_to_farmers,
-        'fund_balance': fees_to_fund,
-        'holders_balance': -eff_total_storage_fees,
-        'storage_fee_volume': eff_total_storage_fees,
+        "farmers_balance": fees_to_farmers,
+        "fund_balance": fees_to_fund,
+        "holders_balance": -eff_total_storage_fees,
+        "storage_fee_volume": eff_total_storage_fees,
     }
 
 
@@ -374,41 +374,41 @@ def p_compute_fees(
     """
 
     tx_compute_weight = (
-        state['average_compute_weight_per_tx'] * state['transaction_count']
+        state["average_compute_weight_per_tx"] * state["transaction_count"]
     )
     bundles_compute_weight = (
-        state['average_compute_weight_per_bundle'] * state['bundle_count']
+        state["average_compute_weight_per_bundle"] * state["bundle_count"]
     )
 
     total_compute_weights: ComputeWeights = tx_compute_weight + bundles_compute_weight
     base_fees: Credits = (
-        state['average_base_fee'] * total_compute_weights * SHANNON_IN_CREDITS
+        state["average_base_fee"] * total_compute_weights * SHANNON_IN_CREDITS
     )
     priority_fees: Credits = (
-        state['average_priority_fee'] * total_compute_weights * SHANNON_IN_CREDITS
+        state["average_priority_fee"] * total_compute_weights * SHANNON_IN_CREDITS
     )
 
     total_fees = base_fees + priority_fees
-    eff_total_fees = min(total_fees, state['holders_balance'])   # HACK
+    eff_total_fees = min(total_fees, state["holders_balance"])  # HACK
     eff_scale = eff_total_fees / total_fees
 
     eff_base_fees = base_fees * eff_scale
     eff_priority_fees = priority_fees * eff_scale
 
-    fees_to_farmers = eff_priority_fees * params['compute_fees_to_farmers']
+    fees_to_farmers = eff_priority_fees * params["compute_fees_to_farmers"]
     fees_to_distribute = eff_base_fees + (eff_priority_fees - fees_to_farmers)
 
     bundle_share_of_fees = bundles_compute_weight / total_compute_weights
     fees_to_pool = fees_to_distribute * bundle_share_of_fees
     fees_to_farmers += fees_to_distribute - fees_to_pool
 
-    denominator = state['operator_pool_shares'] + state['nominator_pool_shares']
+    denominator = state["operator_pool_shares"] + state["nominator_pool_shares"]
     if denominator == 0:
         denominator = 1 / 2
-    nominators_share = state['nominator_pool_shares'] / denominator
+    nominators_share = state["nominator_pool_shares"] / denominator
 
     fees_to_nominators = (
-        fees_to_pool * nominators_share * (1 - params['compute_fees_tax_to_operators'])
+        fees_to_pool * nominators_share * (1 - params["compute_fees_tax_to_operators"])
     )
 
     fees_to_operators = fees_to_pool - fees_to_nominators
@@ -418,12 +418,12 @@ def p_compute_fees(
     # TODO: check if fees goes to the farmers/nominators balance
     # or if is auto-staked
     return {
-        'farmers_balance': fees_to_farmers,
-        'nominators_balance': fees_to_nominators,
-        'operators_balance': fees_to_operators,
-        'holders_balance': -eff_total_fees,
-        'compute_fee_volume': eff_total_fees,
-        'rewards_to_nominators': fees_to_nominators,
+        "farmers_balance": fees_to_farmers,
+        "nominators_balance": fees_to_nominators,
+        "operators_balance": fees_to_operators,
+        "holders_balance": -eff_total_fees,
+        "compute_fee_volume": eff_total_fees,
+        "rewards_to_nominators": fees_to_nominators,
     }
 
 
@@ -441,18 +441,18 @@ def p_slash(
     slash_to_burn = 0.0
 
     # XXX: no slash occurs if the pool balance is zero.
-    pool_balance = state['staking_pool_balance']
+    pool_balance = state["staking_pool_balance"]
     if pool_balance > 0:
-        slash_count = params['slash_per_day_function'](
+        slash_count = params["slash_per_day_function"](
             params,
             state,
         )
         slash_value = min(
-            slash_count * params['slash_function'](params, state), pool_balance
+            slash_count * params["slash_function"](params, state), pool_balance
         )
         if slash_value > 0:
-            slash_to_fund = slash_value * params['slash_to_fund']
-            slash_to_holders = slash_value * params['slash_to_holders']
+            slash_to_fund = slash_value * params["slash_to_fund"]
+            slash_to_holders = slash_value * params["slash_to_holders"]
             slash_to_burn = slash_value - (slash_to_fund + slash_to_holders)
 
             # XXX: we assume that the slash is aplied on the staking pool
@@ -461,7 +461,7 @@ def p_slash(
 
             pool_balance_after = pool_balance - slash_value
             total_shares = (
-                state['operator_pool_shares'] + state['nominator_pool_shares']
+                state["operator_pool_shares"] + state["nominator_pool_shares"]
             )
             operator_shares_to_subtract = total_shares * (
                 pool_balance_after / pool_balance - 1.0
@@ -470,11 +470,11 @@ def p_slash(
             slash_value = 0.0
 
     return {
-        'staking_pool_balance': -slash_value,
-        'fund_balance': slash_to_fund,
-        'holders_balance': slash_to_holders,
-        'operator_pool_shares': operator_shares_to_subtract,
-        'burnt_balance': slash_to_burn,
+        "staking_pool_balance": -slash_value,
+        "fund_balance": slash_to_fund,
+        "holders_balance": slash_to_holders,
+        "operator_pool_shares": operator_shares_to_subtract,
+        "burnt_balance": slash_to_burn,
     }
 
 
@@ -489,26 +489,26 @@ def p_unvest(
     # TODO: parametrize / generalize the schedule
     # TODO: what happens if there's less than 51% community owned?
     """
-    if state['days_passed'] < 365:
+    if state["days_passed"] < 365:
         allocated_tokens = 0.0
-    elif state['days_passed'] >= 365:
+    elif state["days_passed"] >= 365:
         allocated_tokens = 0.30 * 0.25
         allocated_tokens += (
-            0.22 * 0.75 * min((state['days_passed'] - 365) / (365 * 2), 1)
-        )   # Investors
+            0.22 * 0.75 * min((state["days_passed"] - 365) / (365 * 2), 1)
+        )  # Investors
         allocated_tokens += (
-            0.08 * 0.75 * min((state['days_passed'] - 365) / (4 * 365), 1)
-        )   # Team
-        allocated_tokens *= params['max_credit_supply']
+            0.08 * 0.75 * min((state["days_passed"] - 365) / (4 * 365), 1)
+        )  # Team
+        allocated_tokens *= params["max_credit_supply"]
 
-    tokens_to_allocate = allocated_tokens - state['allocated_tokens']
+    tokens_to_allocate = allocated_tokens - state["allocated_tokens"]
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
 
     return {
-        'other_issuance_balance': other_issuance_balance,
-        'holders_balance': holders_balance,
-        'allocated_tokens': allocated_tokens,
+        "other_issuance_balance": other_issuance_balance,
+        "holders_balance": holders_balance,
+        "allocated_tokens": allocated_tokens,
     }
 
 
@@ -524,41 +524,41 @@ def p_staking(
     XXX: assumes an invariant product
     TODO: enforce minimum staking amounts
     """
-    if state['operator_pool_shares'] > 0 or state['nominator_pool_shares'] > 0:
-        invariant = state['staking_pool_balance'] / (
-            state['operator_pool_shares'] + state['nominator_pool_shares']
+    if state["operator_pool_shares"] > 0 or state["nominator_pool_shares"] > 0:
+        invariant = state["staking_pool_balance"] / (
+            state["operator_pool_shares"] + state["nominator_pool_shares"]
         )
         # invariant = 1
-    elif state['operator_pool_shares'] == 0 and state['nominator_pool_shares'] == 0:
+    elif state["operator_pool_shares"] == 0 and state["nominator_pool_shares"] == 0:
         invariant = 1
     else:
         invariant = None
 
     # Stake operation
-    operator_stake_fraction = params['operator_stake_per_ts_function'](
+    operator_stake_fraction = params["operator_stake_per_ts_function"](
         params,
         state,
     )
 
     if operator_stake_fraction > 0:
-        operator_stake = state['operators_balance'] * operator_stake_fraction
+        operator_stake = state["operators_balance"] * operator_stake_fraction
     elif invariant > 0:
         operator_stake = (
-            state['operator_pool_shares'] * operator_stake_fraction * invariant
+            state["operator_pool_shares"] * operator_stake_fraction * invariant
         )
     else:
         operator_stake = 0.0
 
-    nominator_stake_fraction = params['nominator_stake_per_ts_function'](
+    nominator_stake_fraction = params["nominator_stake_per_ts_function"](
         params,
         state,
     )
 
     if nominator_stake_fraction > 0:
-        nominator_stake = state['nominators_balance'] * nominator_stake_fraction
+        nominator_stake = state["nominators_balance"] * nominator_stake_fraction
     elif invariant > 0:
         nominator_stake = (
-            state['nominator_pool_shares'] * nominator_stake_fraction * invariant
+            state["nominator_pool_shares"] * nominator_stake_fraction * invariant
         )
     else:
         nominator_stake = 0.0
@@ -566,19 +566,19 @@ def p_staking(
     total_stake = operator_stake + nominator_stake
 
     # NOTE: for handling withdraws bigger than the pool itself.
-    if -total_stake > state['staking_pool_balance']:
+    if -total_stake > state["staking_pool_balance"]:
         old_total_stake = total_stake
-        total_stake = -state['staking_pool_balance']
+        total_stake = -state["staking_pool_balance"]
         scale = total_stake / old_total_stake
         operator_stake *= scale
         nominator_stake *= scale
 
     return {
-        'operators_balance': -operator_stake,
-        'operator_pool_shares': operator_stake / invariant,
-        'nominator_pool_shares': nominator_stake / invariant,
-        'nominators_balance': -nominator_stake,
-        'staking_pool_balance': total_stake,
+        "operators_balance": -operator_stake,
+        "operator_pool_shares": operator_stake / invariant,
+        "nominator_pool_shares": nominator_stake / invariant,
+        "nominators_balance": -nominator_stake,
+        "staking_pool_balance": total_stake,
     }
 
 
@@ -594,41 +594,41 @@ def p_transfers(
     delta_operators = 0.0
 
     # Farmers to Holders
-    if state['farmers_balance'] > 0:
-        delta = state['farmers_balance'] * params['transfer_farmer_to_holder_per_day_function'](
-            params, state
-        )
+    if state["farmers_balance"] > 0:
+        delta = state["farmers_balance"] * params[
+            "transfer_farmer_to_holder_per_day_function"
+        ](params, state)
         delta_farmers -= delta
         delta_holders += delta
 
     # Operators to Holders
-    if state['operators_balance'] > 0:
-        delta = state['operators_balance'] * params[
-            'transfer_operator_to_holder_per_day_function'
+    if state["operators_balance"] > 0:
+        delta = state["operators_balance"] * params[
+            "transfer_operator_to_holder_per_day_function"
         ](params, state)
         delta_operators -= delta
         delta_holders += delta
 
     # Holder to Nominators
-    if state['holders_balance'] > 0:
-        delta = state['holders_balance'] * params[
-            'transfer_holder_to_nominator_per_day_function'
+    if state["holders_balance"] > 0:
+        delta = state["holders_balance"] * params[
+            "transfer_holder_to_nominator_per_day_function"
         ](params, state)
         delta_holders -= delta
         delta_nominators += delta
 
         # Holder to Operators
-        delta = state['holders_balance'] * params[
-            'transfer_holder_to_operator_per_day_function'
+        delta = state["holders_balance"] * params[
+            "transfer_holder_to_operator_per_day_function"
         ](params, state)
         delta_holders -= delta
         delta_operators += delta
 
     return {
-        'operators_balance': delta_operators,
-        'holders_balance': delta_holders,
-        'nominators_balance': delta_nominators,
-        'farmers_balance': delta_farmers,
+        "operators_balance": delta_operators,
+        "holders_balance": delta_holders,
+        "nominators_balance": delta_nominators,
+        "farmers_balance": delta_farmers,
     }
 
 
@@ -636,25 +636,25 @@ def s_block_utilization(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> StateUpdateFunction:
     """ """
-    size = state['transaction_count'] * state['average_transaction_size']
+    size = state["transaction_count"] * state["average_transaction_size"]
     max_size = (
-        params['max_block_size'] * DAY_TO_SECONDS * params['block_time_in_seconds']
+        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
     )
     value = size / max_size
-    return ('block_utilization', value)
+    return ("block_utilization", value)
 
 
 def p_reference_subsidy(
     params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState
 ) -> PolicyOutput:
     """ """
-    previous_block_time = state_history[-1][-1]['blocks_passed']
-    current_block_time = state['blocks_passed']
+    previous_block_time = state_history[-1][-1]["blocks_passed"]
+    current_block_time = state["blocks_passed"]
     rewards_during_last_timestep = 0.0
     for t in range(int(previous_block_time), int(current_block_time)):
         rewards_during_last_timestep += sum(
-            [component(t) for component in params['reference_subsidy_components']]
+            [component(t) for component in params["reference_subsidy_components"]]
         )
     return {
-        'reference_subsidy': rewards_during_last_timestep,
+        "reference_subsidy": rewards_during_last_timestep,
     }
