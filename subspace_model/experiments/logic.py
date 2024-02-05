@@ -17,12 +17,12 @@ from subspace_model.types import (
 
 def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
     # Extract necessary values from the state
-    a = state['reference_subsidy']
-    F = state['storage_fee_volume']
-    g = state['block_utilization']
+    a = state["reference_subsidy"]
+    F = state["storage_fee_volume"]
+    g = state["block_utilization"]
 
     # Fixed parameters. These can be tuned as needed.
-    c = params['issuance_function_constant']
+    c = params["issuance_function_constant"]
     d = 1
 
     # Calculate b
@@ -38,15 +38,15 @@ def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelS
 
 
 def MOCK_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
-    return state['reward_issuance_balance'] * 0.01  # HACK
+    return state["reward_issuance_balance"] * 0.01  # HACK
 
 
 def MOCK_ISSUANCE_FUNCTION_2(params: SubspaceModelParams, state: SubspaceModelState):
-    return state['reward_issuance_balance'] / 5 * 365  # HACK
+    return state["reward_issuance_balance"] / 5 * 365  # HACK
 
 
 def DEFAULT_SLASH_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
-    return state['staking_pool_balance'] * 0.001  # HACK
+    return state["staking_pool_balance"] * 0.001  # HACK
 
 
 def NORMAL_GENERATOR(mu: float, sigma: float) -> StochasticFunction:
@@ -82,10 +82,10 @@ from dataclasses import dataclass
 
 @dataclass
 class SubsidyComponent:
-    initial_period_start: float    # τ_{0, i}
-    initial_period_end: float      # τ_{1, i}
+    initial_period_start: float  # τ_{0, i}
+    initial_period_end: float  # τ_{1, i}
     max_cumulative_subsidy: float  # Ω_i
-    max_reference_subsidy: float   # α_i
+    max_reference_subsidy: float  # α_i
 
     def __call__(self, t: float) -> float:
         """Allow the instance to be called as a function to calculate the subsidy."""
@@ -107,11 +107,13 @@ class SubsidyComponent:
         )
         if already_distributed >= self.max_cumulative_subsidy:
             return 0
-        elif already_distributed + self.max_reference_subsidy > self.max_cumulative_subsidy:
+        elif (
+            already_distributed + self.max_reference_subsidy
+            > self.max_cumulative_subsidy
+        ):
             return self.max_cumulative_subsidy - already_distributed
         else:
             return self.max_reference_subsidy
-
 
     def calculate_exponential_subsidy(self, t: float) -> float:
         """Calculate S_e(t) the exponential subsidy for a given time."""
@@ -156,9 +158,9 @@ DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONE
 def TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
-    average_transaction_size = state['average_transaction_size']
+    average_transaction_size = state["average_transaction_size"]
     max_size = (
-        params['max_block_size'] * DAY_TO_SECONDS * params['block_time_in_seconds']
+        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
     )
 
     # Hold a constant utilization rate of 0.5
@@ -171,10 +173,10 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
 
-    days_passed = state['days_passed']
-    average_transaction_size = state['average_transaction_size']
+    days_passed = state["days_passed"]
+    average_transaction_size = state["average_transaction_size"]
     max_size = (
-        params['max_block_size'] * DAY_TO_SECONDS * params['block_time_in_seconds']
+        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
     )
 
     utilization = min(days_passed / (2 * 365), 1)
@@ -186,4 +188,4 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
 
 
 def WEEKLY_VARYING(params: SubspaceModelParams, state: SubspaceModelState):
-    return 2 + np.sin(2 * np.pi * state['days_passed'] / 7)
+    return 2 + np.sin(2 * np.pi * state["days_passed"] / 7)

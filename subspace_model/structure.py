@@ -39,7 +39,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "average_compute_weight_per_tx": s_average_compute_weight_per_tx,
             "transaction_count": s_transaction_count,
             "average_transaction_size": s_average_transaction_size,
-            "space_pledged": add_suf,
+            "total_space_pledged": add_suf,
             "average_compute_weight_per_bundle": s_average_compute_weight_per_bundle,
             "bundle_count": s_bundle_count,
         },
@@ -48,7 +48,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "label": "Archival Process and Compute Block Utilization",
         "policies": {"archival": p_archive},
         "variables": {
-            "history_size": add_suf,
+            "blockchain_history_size": add_suf,
             "buffer_size": add_suf,
             "block_utilization": s_block_utilization,
         },
@@ -87,6 +87,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "farmers_balance": add_suf,
             "fund_balance": add_suf,
             "storage_fee_volume": replace_suf,
+            "transaction_byte_fee": replace_suf,
+            "extrinsic_length_in_bytes": replace_suf,
         },
     },
     {

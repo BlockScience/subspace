@@ -144,7 +144,7 @@ def p_pledge_sectors(
         )
     )
     new_bytes = new_sectors * SECTOR_SIZE
-    return {"space_pledged": new_bytes}
+    return {"total_space_pledged": new_bytes}
 
 
 def p_archive(
@@ -170,7 +170,10 @@ def p_archive(
         new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
         new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
 
-    return {"history_size": new_history_bytes, "buffer_size": new_buffer_bytes}
+    return {
+        "blockchain_history_size": new_history_bytes,
+        "buffer_size": new_buffer_bytes,
+    }
 
 
 def s_average_base_fee(
@@ -331,37 +334,39 @@ def p_storage_fees(
     - https://github.com/subspace/subspace/blob/53dca169379e65b4fb97b5c7753f5d00bded2ef2/crates/pallet-transaction-fees/src/lib.rs#L271
     """
     # Input
-    credit_supply = params["credit_supply_definition"](state)
-    total_space_pledged = state["space_pledged"]
-    blockchain_size = state["history_size"]
-    replication_factor = params["replication_factor"]
+    total_credit_supply = params["credit_supply_definition"](state)
+    total_space_pledged = state["total_space_pledged"]
+    blockchain_history_size = state["blockchain_history_size"]
+    min_replication_factor = params["min_replication_factor"]
 
-    free_space = total_space_pledged - blockchain_size * replication_factor
+    free_space = max(
+        total_space_pledged / min_replication_factor - blockchain_history_size, 1
+    )
 
-    if free_space > 0:
-        storage_fee_in_credits_per_bytes = credit_supply / free_space
-    else:
-        storage_fee_in_credits_per_bytes = credit_supply
+    transaction_byte_fee = total_credit_supply / free_space
 
-    # Compute total storage fees during this timestep
-    # TODO: use average storage fee rather than immediate storage fee instead
+    extrinsic_length_in_bytes = (
+        state["transaction_count"] * state["average_transaction_size"]
+    )
 
-    transaction_bytes = state["transaction_count"] * state["average_transaction_size"]
-    total_storage_fees = storage_fee_in_credits_per_bytes * transaction_bytes
+    # storage_fee(tx) as per spec
+    storage_fee_volume = transaction_byte_fee * extrinsic_length_in_bytes
 
-    eff_total_storage_fees = min(
-        total_storage_fees, state["holders_balance"] / 2
-    )  # HACK
+    # HACK : Constrain total_storage_fees to 1/2 all holders balance
+    eff_storage_fee_volume = min(total_storage_fees, state["holders_balance"] / 2)
 
     # Fee distribution
-    fees_to_fund = params["fund_tax_on_storage_fees"] * eff_total_storage_fees
-    fees_to_farmers = eff_total_storage_fees - fees_to_fund
+    fees_to_fund = params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
+    fees_to_farmers = eff_storage_fee_volume - fees_to_fund
 
     return {
+        "free_space": free_space,
+        "transaction_byte_fee": transaction_byte_fee,
+        "extrinsic_length_in_bytes": extrinsic_length_in_bytes,
+        "storage_fee_volume": eff_storage_fee_volume,
         "farmers_balance": fees_to_farmers,
         "fund_balance": fees_to_fund,
-        "holders_balance": -eff_total_storage_fees,
-        "storage_fee_volume": eff_total_storage_fees,
+        "holders_balance": -eff_storage_fee_volume,
     }
 
 
@@ -372,6 +377,31 @@ def p_compute_fees(
     HACK: If holders balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
     """
+
+    weight_to_fee = params["weight_to_fee"]
+    block_weight_for_2_seconds = params["block_weight_for_2_seconds"]
+
+    max_normal_weight = 0.75 * block_weight_for_2_seconds
+    max_bundle_weight = state["max_bundle_weight"]
+    target_block_fullness = state["target_block_fullness"]
+    block_weight_utilization = state["block_utilization"]
+    adjustment_variable = state["adjustment_variable"]
+
+    target_block_delta = target_block_fullness - block_weight_utilization
+
+    targeted_adjustment_parameter = (
+        1
+        + adjustment_variable * target_block_delta
+        + adjustment_variable**2 * target_block_delta**2 / 2
+    )
+
+    prev_compute_fee_multiplier = state["compute_fee_multiplier"]
+    compute_fee_multiplier = targeted_adjustment_parameter * prev_compute_fee_multiplier
+
+    weight = state["extrinsic_length_in_bytes"]
+    compute_fee = compute_fee_multiplier * weight_to_fee * weight
+
+    ### Checkpoint
 
     tx_compute_weight = (
         state["average_compute_weight_per_tx"] * state["transaction_count"]
