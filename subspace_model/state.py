@@ -1,5 +1,63 @@
+from dataclasses import dataclass
+
 from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE
-from subspace_model.types import SubspaceModelState
+
+
+class SubspaceModelState(TypedDict):
+    # Time Variables
+    days_passed: Days
+    delta_days: Days
+    delta_blocks: Blocks
+
+    # Metrics
+    circulating_supply: Credits
+    user_supply: Credits
+    issued_supply: Credits
+    sum_of_stocks: Credits
+    block_utilization: Percentage
+
+    # Governance Variables
+    dsf_relative_disbursal_per_day: Percentage
+
+    # Stocks
+    reward_issuance_balance: Credits
+    other_issuance_balance: Credits
+    operators_balance: Credits
+    nominators_balance: Credits
+    holders_balance: Credits
+    farmers_balance: Credits
+    staking_pool_balance: Credits
+    fund_balance: Credits
+    burnt_balance: Credits
+
+    # Staking Pool Shares
+    nominator_pool_shares: float
+    operator_pool_shares: float
+
+    # Deterministic Variables
+    block_reward: Credits
+    blockchain_history_size: Bytes
+    total_space_pledged: Bytes
+    allocated_tokens: Credits
+    buffer_size: Bytes
+
+    # Stochastic Variables
+    average_base_fee: Optional[ShannonPerComputeWeights]
+    average_priority_fee: Optional[ShannonPerComputeWeights]
+
+    average_compute_weight_per_tx: ComputeWeights
+    average_transaction_size: Bytes
+    transaction_count: int
+
+    average_compute_weight_per_bundle: ComputeWeights
+    average_bundle_size: Bytes
+    bundle_count: int
+
+    # Metrics
+    compute_fee_volume: Credits
+    storage_fee_volume: Credits
+    rewards_to_nominators: Credits
+
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
