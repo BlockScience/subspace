@@ -23,6 +23,14 @@ SEGMENT_SIZE: Bytes = 128 * MIB_IN_BYTES  # As per discussions
 SEGMENT_HISTORY_SIZE: Bytes = SEGMENT_SIZE * 2  # As per discussions
 SHANNON_IN_CREDITS: Credits = 1e-18
 
+# Weight References
+WEIGHT_REF_TIME_PER_SECOND: Picoseconds = 10e12
+WEIGHT_REF_TIME_PER_MILLI: PicosecondsS = 10e6
+WEIGHT_REF_TIME_PER_MICRO: PicosecondsS = 10e3
+WEIGHT_REF_TIME_PER_NANO: PicosecondsS = 10
+BLOCK_WEIGHT_FOR_2_SEC: Picoseconds = 2 * WEIGHT_REF_TIME_PER_SECOND
+
+
 # Convenience Constants
 BLOCKS_PER_DAY: Blocks = DAY_TO_SECONDS / BLOCK_TIME
 BLOCKS_PER_YEAR: Blocks = BLOCKS_PER_DAY * 365
