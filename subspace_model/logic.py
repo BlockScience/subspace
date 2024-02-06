@@ -355,13 +355,25 @@ def p_storage_fees(
     storage_fee_volume = transaction_byte_fee * extrinsic_length_in_bytes
 
     # HACK : Constrain total_storage_fees to 1/2 all holders balance
-    eff_storage_fee_volume = min(total_storage_fees, state["holders_balance"] / 2)
+    storage_fee_volume = min(total_storage_fees, state["holders_balance"] / 2)
+
+    # Storage Fees
+    # Fee distribution
+    storage_fees_to_fund = params["fund_tax_on_storage_fees"] * storage_fee_volume
+    storage_fees_to_farmers = storage_fee_volume - fees_to_fund
 
     return {
+        # Fee Calculation
         "free_space": free_space,
         "transaction_byte_fee": transaction_byte_fee,
         "extrinsic_length_in_bytes": extrinsic_length_in_bytes,
         "storage_fee_volume": eff_storage_fee_volume,
+        # Reward Distribution
+        "storage_fees_to_farmers": storage_fees_to_farmers,
+        "farmers_balance": storage_fees_to_farmers,
+        "storage_fees_to_fund": storage_fees_to_fund,
+        "fund_balance": storage_fees_to_fund,
+        "holders_balance": -storage_fee_volume,
     }
 
 
@@ -412,12 +424,62 @@ def p_compute_fees(
     eff_compute_fee_volume = min(compute_fee_volume, state["holders_balance"])
     eff_scale = eff_compute_fee_volume / compute_fee_volume
 
+    # (Deprecated.) Compute Fees
+    # fees_to_farmers = eff_priority_fees * params["compute_fees_to_farmers"]
+    # fees_to_distribute = eff_base_fees + (eff_priority_fees - fees_to_farmers)
+
+    rewards_to_distribute = compute_fee_volume
+
+    # Bundle relevant rewards go to operators rather than farmers
+    bundle_share_of_weight = bundles_compute_weight / total_compute_weights
+
+    # Fee volume to be from bundles
+    rewards_from_bundles = rewards_to_distribute * bundle_share_of_weight
+
+    # Fee volume for farmers
+    rewards_to_farmers += rewards_to_distribute - rewards_from_bundles
+
+    # (Deprecated. Bundle rewards will go straight to operators rather than proposing farmers. )
+    # # Safety division to compute nominators pool share percentage
+    # denominator = state["operator_pool_shares"] + state["nominator_pool_shares"]
+    # if denominator == 0:
+    #     denominator = 1 / 2
+    # nominators_share = state["nominator_pool_shares"] / denominator
+    #
+    # # Calculate the rewards to nominators as the nominators share of the bundle rewards minus the operators tax
+    # rewards_to_nominators = (
+    #     rewards_from_bundles
+    #     * nominators_share
+    #     * (1 - params["compute_fees_tax_to_operators"])
+    # )
+    #
+    # # Calculate the rewards to oper
+    # rewards_to_operators = rewards_from_bundles - rewards_to_nominators
+    #
+    # # Calculate total rewards
+    # total_rewards = rewards_to_farmers + rewards_to_nominators + rewards_to_operators
+
+    # Calculate total rewards
+    total_rewards = rewards_to_farmers + rewards_to_operators
+
+    # TODO: check if rewards goes to the farmers/nominators balance
+    # or if is auto-staked
+
+    return {}
+
     return {
+        # Compute fee calculations
         "target_block_delta": target_block_delta,
         "targeted_adjustment_parameter": targeted_adjustment_parameter,
         "compute_fee_multiplier": compute_fee_multiplier,
         "tx_compute_weight": tx_compute_weight,
         "compute_fee_volume": eff_compute_fee_volume,
+        # Fees and rewards
+        "farmers_balance": rewards_to_farmers,
+        "nominators_balance": rewards_to_nominators,
+        "operators_balance": rewards_to_operators,
+        "holders_balance": -eff_total_fees,
+        "rewards_to_nominators": rewards_to_nominators,
     }
 
 
@@ -427,51 +489,6 @@ def p_combine_and_split_fees(
     """
     Combine storage, compute, and bundle fees and split them as rewards.
     """
-    storage_fee_volume = state["storage_fee_volume"]
-    compute_fee_volume = state["compute_fee_volume"]
-
-    # Storage Fees
-    # Fee distribution
-    fees_to_fund = params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
-    fees_to_farmers = eff_storage_fee_volume - fees_to_fund
-
-    return {
-        "farmers_balance": fees_to_farmers,
-        "fund_balance": fees_to_fund,
-        "holders_balance": -eff_storage_fee_volume,
-    }
-
-    # Compute Fees
-    fees_to_farmers = eff_priority_fees * params["compute_fees_to_farmers"]
-    fees_to_distribute = eff_base_fees + (eff_priority_fees - fees_to_farmers)
-
-    bundle_share_of_fees = bundles_compute_weight / total_compute_weights
-    fees_to_pool = fees_to_distribute * bundle_share_of_fees
-    fees_to_farmers += fees_to_distribute - fees_to_pool
-
-    denominator = state["operator_pool_shares"] + state["nominator_pool_shares"]
-    if denominator == 0:
-        denominator = 1 / 2
-    nominators_share = state["nominator_pool_shares"] / denominator
-
-    fees_to_nominators = (
-        fees_to_pool * nominators_share * (1 - params["compute_fees_tax_to_operators"])
-    )
-
-    fees_to_operators = fees_to_pool - fees_to_nominators
-
-    total_fees = fees_to_farmers + fees_to_nominators + fees_to_operators
-
-    # TODO: check if fees goes to the farmers/nominators balance
-    # or if is auto-staked
-
-    return {
-        "farmers_balance": fees_to_farmers,
-        "nominators_balance": fees_to_nominators,
-        "operators_balance": fees_to_operators,
-        "holders_balance": -eff_total_fees,
-        "rewards_to_nominators": fees_to_nominators,
-    }
 
 
 def p_slash(
