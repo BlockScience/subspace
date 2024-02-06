@@ -176,21 +176,21 @@ def p_archive(
     }
 
 
-def s_average_base_fee(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
-    """
-    Simulate the ts-average base fee during an timestep through
-    a Gaussian process.
-    XXX: depends on an stochastic process assumption.
-    """
-    return (
-        "average_base_fee",
-        max(
-            params["base_fee_function"](params, state),
-            params["min_base_fee"],
-        ),
-    )
+# def s_average_base_fee(
+#     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+# ) -> StateUpdateFunction:
+#     """
+#     Simulate the ts-average base fee during an timestep through
+#     a Gaussian process.
+#     XXX: depends on an stochastic process assumption.
+#     """
+#     return (
+#         "average_base_fee",
+#         max(
+#             params["base_fee_function"](params, state),
+#             params["min_base_fee"],
+#         ),
+#     )
 
 
 def s_average_priority_fee(
@@ -355,12 +355,12 @@ def p_storage_fees(
     storage_fee_volume = transaction_byte_fee * extrinsic_length_in_bytes
 
     # HACK : Constrain total_storage_fees to 1/2 all holders balance
-    storage_fee_volume = min(total_storage_fees, state["holders_balance"] / 2)
+    eff_storage_fee_volume = min(storage_fee_volume, state["holders_balance"] / 2)
 
     # Storage Fees
     # Fee distribution
-    storage_fees_to_fund = params["fund_tax_on_storage_fees"] * storage_fee_volume
-    storage_fees_to_farmers = storage_fee_volume - fees_to_fund
+    storage_fees_to_fund = params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
+    storage_fees_to_farmers = eff_storage_fee_volume - storage_fees_to_fund
 
     return {
         # Fee Calculation
@@ -373,7 +373,7 @@ def p_storage_fees(
         "farmers_balance": storage_fees_to_farmers,
         "storage_fees_to_fund": storage_fees_to_fund,
         "fund_balance": storage_fees_to_fund,
-        "holders_balance": -storage_fee_volume,
+        "holders_balance": -eff_storage_fee_volume,
     }
 
 
@@ -395,6 +395,7 @@ def p_compute_fees(
     target_block_fullness = state["target_block_fullness"]
     block_weight_utilization = state["block_utilization"]
     adjustment_variable = state["adjustment_variable"]
+    priority_fee_volume = state["average_priority_fee"]
 
     target_block_delta = target_block_fullness - block_weight_utilization
 
@@ -418,7 +419,13 @@ def p_compute_fees(
     total_compute_weights: ComputeWeights = tx_compute_weight + bundles_compute_weight
 
     # Calculate compute fee volume
-    compute_fee_volume = compute_fee_multiplier * weight_to_fee * bundles_compute_weight
+    compute_fee_volume = max(
+        (
+            compute_fee_multiplier * weight_to_fee * bundles_compute_weight
+            + priority_fee_volume
+        ),
+        1,
+    )
 
     # Constrain compute fee volume to be less than holders balance
     eff_compute_fee_volume = min(compute_fee_volume, state["holders_balance"])
@@ -437,7 +444,7 @@ def p_compute_fees(
     rewards_from_bundles = rewards_to_distribute * bundle_share_of_weight
 
     # Fee volume for farmers
-    rewards_to_farmers += rewards_to_distribute - rewards_from_bundles
+    rewards_to_farmers = rewards_to_distribute - rewards_from_bundles
 
     # (Deprecated. Bundle rewards will go straight to operators rather than proposing farmers. )
     # # Safety division to compute nominators pool share percentage
@@ -453,11 +460,14 @@ def p_compute_fees(
     #     * (1 - params["compute_fees_tax_to_operators"])
     # )
     #
-    # # Calculate the rewards to oper
+    # # Calculate the rewards to operators
     # rewards_to_operators = rewards_from_bundles - rewards_to_nominators
     #
     # # Calculate total rewards
     # total_rewards = rewards_to_farmers + rewards_to_nominators + rewards_to_operators
+
+    # # Calculate the rewards to operators
+    rewards_to_operators = rewards_from_bundles
 
     # Calculate total rewards
     total_rewards = rewards_to_farmers + rewards_to_operators
@@ -474,7 +484,8 @@ def p_compute_fees(
         "compute_fee_multiplier": compute_fee_multiplier,
         "tx_compute_weight": tx_compute_weight,
         "compute_fee_volume": eff_compute_fee_volume,
-        # Fees and rewards
+        "priority_fee_volume": priority_fee_volume,
+        # Fees and rewards distribution
         "farmers_balance": rewards_to_farmers,
         "nominators_balance": rewards_to_nominators,
         "operators_balance": rewards_to_operators,
