@@ -475,8 +475,6 @@ def p_compute_fees(
     # TODO: check if rewards goes to the farmers/nominators balance
     # or if is auto-staked
 
-    return {}
-
     return {
         # Compute fee calculations
         "target_block_delta": target_block_delta,
@@ -492,14 +490,6 @@ def p_compute_fees(
         "holders_balance": -eff_total_fees,
         "rewards_to_nominators": rewards_to_nominators,
     }
-
-
-def p_combine_and_split_fees(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-):
-    """
-    Combine storage, compute, and bundle fees and split them as rewards.
-    """
 
 
 def p_slash(
