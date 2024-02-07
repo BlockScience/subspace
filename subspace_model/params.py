@@ -17,92 +17,6 @@ from subspace_model.experiments.logic import (
     WEEKLY_VARYING,
 )
 
-
-class SubspaceModelParams(TypedDict):
-    label: str
-    timestep_in_days: Days
-
-    # Mechanisms to be determined
-    issuance_function: Callable
-    slash_function: Callable[[SubspaceModelState], Credits]
-
-    # Implementation parameters
-    block_time_in_seconds: Seconds
-    archival_depth: Blocks
-    archival_buffer_segment_size: Bytes
-    header_size: Bytes
-    min_replication_factor: float
-    max_block_size: Bytes
-
-    # Economic Parameters
-    reward_proposer_share: Percentage
-    max_credit_supply: Credits
-    credit_supply_definition: Callable[[SubspaceModelState], Credits]
-
-    # Fees & Taxes
-    fund_tax_on_proposer_reward: Percentage
-    fund_tax_on_storage_fees: Percentage
-    compute_fees_to_farmers: Percentage
-    compute_fees_tax_to_operators: Percentage
-
-    # Slash Parameters
-    slash_to_fund: Percentage
-    slash_to_holders: Percentage
-
-    # Behavioral Parameters
-    operator_stake_per_ts_function: Callable[[bool], Percentage]
-    nominator_stake_per_ts_function: Callable[[bool], Percentage]
-    # operator_avg_stake_per_ts: Callable[[bool], Percentage]
-    # nominator_avg_stake_per_ts: Callable[[bool], Percentage]
-    # operator_std_stake_per_ts: Callable[[bool], Percentage]
-    # nominator_std_stake_per_ts: Callable[[bool], Percentage]
-    transfer_farmer_to_holder_per_day: Percentage
-    transfer_operator_to_holder_per_day: Percentage
-    transfer_holder_to_nominator_per_day: Percentage
-    transfer_holder_to_operator_per_day: Percentage
-
-    # Environmental Parameters
-    base_fee_function: Callable[[bool], Percentage]
-    # avg_base_fee: Credits
-    # std_base_fee: Credits
-    min_base_fee: Credits
-
-    priority_fee_function: Callable[[bool], Percentage]
-    # avg_priority_fee: Credits
-    # std_priority_fee: Credits
-
-    compute_weights_per_tx_function: Callable[[bool], ComputeWeights]
-    # avg_compute_weights_per_tx: ComputeWeights
-    # std_compute_weights_per_tx: ComputeWeights
-    min_compute_weights_per_tx: ComputeWeights
-
-    compute_weights_per_bundle_function: Callable[[bool], ComputeWeights]
-    # avg_compute_weights_per_bundle: ComputeWeights
-    # std_compute_weights_per_bundle: ComputeWeights
-    min_compute_weights_per_bundle: ComputeWeights
-
-    transaction_size_function: Callable[[bool], Bytes]
-    # avg_transaction_size: Bytes
-    # std_transaction_size: Bytes
-    min_transaction_size: Bytes
-
-    bundle_size_function: Callable[[bool], Bytes]
-    # avg_bundle_size: Bytes # TODO: confirm
-    # std_bundle_size: Bytes # TODO: confirm
-    min_bundle_size: Bytes  # TODO: confirm
-
-    transaction_count_per_day_function: Callable[[bool], float]
-    # avg_transaction_count_per_day: float
-    bundle_count_per_day_function: Callable[[bool], float]
-    # avg_bundle_count_per_day: float
-
-    slash_per_day_function: Callable[[bool], float]
-    # avg_slash_per_day: float
-    new_sectors_per_day_function: Callable[[bool], float]
-    # avg_new_sectors_per_day: float
-    # std_new_sectors_per_day: float
-
-
 DEFAULT_PARAMS = SubspaceModelParams(
     label="standard",
     environmental_label="standard",
@@ -145,8 +59,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     transfer_holder_to_nominator_per_day_function=lambda p, s: 0.01,
     transfer_holder_to_operator_per_day_function=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
-    base_fee_function=lambda p, s: 1,
-    priority_fee_function=lambda p, s: 3,
+    priority_fee_function=lambda p, s: 0,
     compute_weights_per_tx_function=lambda p, s: 60_000_000,
     compute_weight_per_bundle_function=lambda p, s: 10_000_000_000,
     transaction_size_function=lambda p, s: 256,
@@ -176,8 +89,7 @@ ENVIRONMENTAL_SCENARIOS = {
         ),
         # Environmental Parameters (Integer positive in [0,inf])
         "environmental_label": "stochastic",
-        "base_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
-        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),
+        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(0, 0.001)),
         "compute_weights_per_tx_function": POSITIVE_INTEGER(
             NORMAL_GENERATOR(60_000_000, 15_000_000)
         ),
@@ -193,7 +105,6 @@ ENVIRONMENTAL_SCENARIOS = {
     },
     "weekly-varying": {
         "environmental_label": "weekly-varying",
-        "base_fee_function": WEEKLY_VARYING,
         "priority_fee_function": WEEKLY_VARYING,
     },
     "constant-utilization": {
