@@ -59,4 +59,9 @@ INITIAL_STATE = SubspaceModelState(
     max_bundle_weight=0.0,
     target_block_fullness=0.0,
     adjustment_variable=0.0,
+    storage_fees_to_farmers=0.0,
+    storage_fees_to_fund=0.0,
+    target_block_delta=0.0,
+    targeted_adjustment_parameter=0.0,
+    tx_compute_weight=0.0,
 )
