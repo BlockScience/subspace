@@ -431,10 +431,6 @@ def p_compute_fees(
     eff_compute_fee_volume = min(compute_fee_volume, state["holders_balance"])
     eff_scale = eff_compute_fee_volume / compute_fee_volume
 
-    # (Deprecated.) Compute Fees
-    # fees_to_farmers = eff_priority_fees * params["compute_fees_to_farmers"]
-    # fees_to_distribute = eff_base_fees + (eff_priority_fees - fees_to_farmers)
-
     rewards_to_distribute = compute_fee_volume
 
     # Bundle relevant rewards go to operators rather than farmers
@@ -445,26 +441,6 @@ def p_compute_fees(
 
     # Fee volume for farmers
     rewards_to_farmers = rewards_to_distribute - rewards_from_bundles
-
-    # (Deprecated. Bundle rewards will go straight to operators rather than proposing farmers. )
-    # # Safety division to compute nominators pool share percentage
-    # denominator = state["operator_pool_shares"] + state["nominator_pool_shares"]
-    # if denominator == 0:
-    #     denominator = 1 / 2
-    # nominators_share = state["nominator_pool_shares"] / denominator
-    #
-    # # Calculate the rewards to nominators as the nominators share of the bundle rewards minus the operators tax
-    # rewards_to_nominators = (
-    #     rewards_from_bundles
-    #     * nominators_share
-    #     * (1 - params["compute_fees_tax_to_operators"])
-    # )
-    #
-    # # Calculate the rewards to operators
-    # rewards_to_operators = rewards_from_bundles - rewards_to_nominators
-    #
-    # # Calculate total rewards
-    # total_rewards = rewards_to_farmers + rewards_to_nominators + rewards_to_operators
 
     # # Calculate the rewards to operators
     rewards_to_operators = rewards_from_bundles
@@ -485,10 +461,9 @@ def p_compute_fees(
         "priority_fee_volume": priority_fee_volume,
         # Fees and rewards distribution
         "farmers_balance": rewards_to_farmers,
-        "nominators_balance": rewards_to_nominators,
         "operators_balance": rewards_to_operators,
-        "holders_balance": -eff_total_fees,
-        "rewards_to_nominators": rewards_to_nominators,
+        "holders_balance": -eff_compute_fee_volume,
+        "rewards_to_operators": rewards_to_operators,
     }
 
 
