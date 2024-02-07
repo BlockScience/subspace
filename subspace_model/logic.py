@@ -176,23 +176,6 @@ def p_archive(
     }
 
 
-# def s_average_base_fee(
-#     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-# ) -> StateUpdateFunction:
-#     """
-#     Simulate the ts-average base fee during an timestep through
-#     a Gaussian process.
-#     XXX: depends on an stochastic process assumption.
-#     """
-#     return (
-#         "average_base_fee",
-#         max(
-#             params["base_fee_function"](params, state),
-#             params["min_base_fee"],
-#         ),
-#     )
-
-
 def s_average_priority_fee(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> StateUpdateFunction:
