@@ -14,6 +14,9 @@ from subspace_model.experiments.logic import (
     NORMAL_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
+    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
+    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
     SUPPLY_EARNED,
     SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
@@ -21,9 +24,6 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     SubsidyComponent,
-    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
 )
 from subspace_model.params import (
     DEFAULT_PARAMS,
@@ -115,7 +115,6 @@ def issuance_sweep(
     """
 
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
-
 
     # Get the sweep params in the form of single length arrays
     param_set_1 = DEFAULT_PARAMS
@@ -333,20 +332,21 @@ def sweep_credit_supply(
 
 
 def sweep_over_single_component_and_credit_supply(
-    SIMULATION_DAYS: int = 183,
+    SIMULATION_DAYS: int = 183/2,
     TIMESTEP_IN_DAYS: int = 1,
-    SAMPLES: int = 30,
+    SAMPLES: int = 1,
+    N_PARAM_SWEEP: int = 1
 ) -> DataFrame:
     """ """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    c_params = np.linspace(start=0.1, stop=10, num=3)
-    credit_supply_definition_params = [SUPPLY_ISSUED, SUPPLY_TOTAL]
+    c_params = np.linspace(start=0.1, stop=10, num=N_PARAM_SWEEP)
+    credit_supply_definition_params = [SUPPLY_TOTAL]
     reference_subsidy_x_1_params = np.linspace(
-        start=1 * BLOCKS_PER_MONTH, stop=2 * BLOCKS_PER_MONTH, num=3
+        start=1 * BLOCKS_PER_MONTH, stop=2 * BLOCKS_PER_MONTH, num=N_PARAM_SWEEP
     )
     reference_subsidy_x_2_params = np.linspace(
-        start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=3
+        start=0.1 * MAX_CREDIT_ISSUANCE, stop=0.2 * MAX_CREDIT_ISSUANCE, num=N_PARAM_SWEEP
     )
 
     sweep_params = {
@@ -445,6 +445,7 @@ def sweep_over_single_component_and_credit_supply(
     )
     return sim_df
 
+
 def initial_conditions(
     SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 30
 ) -> DataFrame:
@@ -483,7 +484,7 @@ def initial_conditions(
 
 
 def reference_subsidy_sweep(
-    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 360, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
 ) -> DataFrame:
     """Sweeps issuance functions.
 
@@ -500,15 +501,21 @@ def reference_subsidy_sweep(
     # Get the sweep params in the form of single length arrays
     param_set_1 = deepcopy(DEFAULT_PARAMS)
     param_set_1['label'] = 'constant-single-component'
-    param_set_1['reference_subsidy_components'] = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
+    param_set_1[
+        'reference_subsidy_components'
+    ] = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
 
     param_set_2 = deepcopy(DEFAULT_PARAMS)
     param_set_2['label'] = 'hybrid-single-component'
-    param_set_2['reference_subsidy_components'] = REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT
+    param_set_2[
+        'reference_subsidy_components'
+    ] = REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT
 
     param_set_3 = deepcopy(DEFAULT_PARAMS)
     param_set_3['label'] = 'hybrid-two-components'
-    param_set_3['reference_subsidy_components'] = REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS
+    param_set_3[
+        'reference_subsidy_components'
+    ] = REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS
     param_sets = [param_set_1, param_set_2, param_set_3]
 
     sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
@@ -533,4 +540,3 @@ def reference_subsidy_sweep(
         deepcopy_off=True,
     )
     return sim_df
-
