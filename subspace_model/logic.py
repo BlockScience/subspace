@@ -405,7 +405,7 @@ def p_compute_fees(
     # Calculate compute fee volume
     compute_fee_volume = max(
         (
-            compute_fee_multiplier * weight_to_fee * bundles_compute_weight
+            compute_fee_multiplier * weight_to_fee * total_compute_weights
             + priority_fee_volume
         ),
         1,
