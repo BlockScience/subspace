@@ -338,6 +338,7 @@ def p_storage_fees(
     storage_fee_volume = transaction_byte_fee * extrinsic_length_in_bytes
 
     # HACK : Constrain total_storage_fees to 1/2 all holders balance
+    # TODO : Add comment as to why this is needed.
     eff_storage_fee_volume = min(storage_fee_volume, state["holders_balance"] / 2)
 
     # Storage Fees
@@ -414,24 +415,24 @@ def p_compute_fees(
     eff_compute_fee_volume = min(compute_fee_volume, state["holders_balance"])
     eff_scale = eff_compute_fee_volume / compute_fee_volume
 
-    rewards_to_distribute = compute_fee_volume
+    fees_to_distribute = compute_fee_volume
 
-    # Bundle relevant rewards go to operators rather than farmers
+    # Bundle relevant fees go to operators rather than farmers
     bundle_share_of_weight = bundles_compute_weight / total_compute_weights
 
     # Fee volume to be from bundles
-    rewards_from_bundles = rewards_to_distribute * bundle_share_of_weight
+    fees_from_bundles = fees_to_distribute * bundle_share_of_weight
 
     # Fee volume for farmers
-    rewards_to_farmers = rewards_to_distribute - rewards_from_bundles
+    fees_to_farmers = fees_to_distribute - fees_from_bundles
 
-    # # Calculate the rewards to operators
-    rewards_to_operators = rewards_from_bundles
+    # # Calculate the fees to operators
+    fees_to_operators = fees_from_bundles
 
-    # Calculate total rewards
-    total_rewards = rewards_to_farmers + rewards_to_operators
+    # Calculate total fees
+    total_fees = fees_to_farmers + fees_to_operators
 
-    # TODO: check if rewards goes to the farmers/nominators balance
+    # TODO: check if fees goes to the farmers/nominators balance
     # or if is auto-staked
 
     return {
@@ -442,11 +443,11 @@ def p_compute_fees(
         "tx_compute_weight": tx_compute_weight,
         "compute_fee_volume": eff_compute_fee_volume,
         "priority_fee_volume": priority_fee_volume,
-        # Fees and rewards distribution
-        "farmers_balance": rewards_to_farmers,
-        "operators_balance": rewards_to_operators,
+        # Taking and distributing fees
+        "farmers_balance": fees_to_farmers,
+        "operators_balance": fees_to_operators,
         "holders_balance": -eff_compute_fee_volume,
-        "rewards_to_operators": rewards_to_operators,
+        "fees_to_operators": fees_to_operators,
     }
 
 
