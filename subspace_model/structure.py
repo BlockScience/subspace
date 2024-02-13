@@ -34,12 +34,12 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "ignore": False,
         "policies": {"sector_onboarding": p_pledge_sectors},
         "variables": {
-            "average_base_fee": s_average_base_fee,
+            # "average_base_fee": s_average_base_fee,
             "average_priority_fee": s_average_priority_fee,
             "average_compute_weight_per_tx": s_average_compute_weight_per_tx,
             "transaction_count": s_transaction_count,
             "average_transaction_size": s_average_transaction_size,
-            "space_pledged": add_suf,
+            "total_space_pledged": add_suf,
             "average_compute_weight_per_bundle": s_average_compute_weight_per_bundle,
             "bundle_count": s_bundle_count,
         },
@@ -48,7 +48,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "label": "Archival Process and Compute Block Utilization",
         "policies": {"archival": p_archive},
         "variables": {
-            "history_size": add_suf,
+            "blockchain_history_size": add_suf,
             "buffer_size": add_suf,
             "block_utilization": s_block_utilization,
         },
@@ -83,10 +83,17 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "ignore": False,
         "policies": {"storage_fees": p_storage_fees},
         "variables": {
-            "holders_balance": add_suf,
-            "farmers_balance": add_suf,
-            "fund_balance": add_suf,
+            # Fee Calculation
+            "free_space": replace_suf,
+            "transaction_byte_fee": replace_suf,
+            "extrinsic_length_in_bytes": replace_suf,
             "storage_fee_volume": replace_suf,
+            # Reward Distribution
+            "farmers_balance": add_suf,
+            "storage_fees_to_farmers": replace_suf,
+            "fund_balance": add_suf,
+            "storage_fees_to_fund": replace_suf,
+            "holders_balance": add_suf,
         },
     },
     {
@@ -94,12 +101,19 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "ignore": False,
         "policies": {"compute_fees": p_compute_fees},
         "variables": {
-            "farmers_balance": add_suf,
-            "operators_balance": add_suf,
-            "nominators_balance": add_suf,
-            "holders_balance": add_suf,
+            # Compute fee calculations
+            "target_block_delta": replace_suf,
+            "targeted_adjustment_parameter": replace_suf,
+            "compute_fee_multiplier": replace_suf,
+            "tx_compute_weight": replace_suf,
             "compute_fee_volume": replace_suf,
-            "rewards_to_nominators": replace_suf,
+            "priority_fee_volume": replace_suf,
+            # Fees and rewards distribution
+            "farmers_balance": add_suf,
+            "nominators_balance": add_suf,
+            "operators_balance": add_suf,
+            "holders_balance": add_suf,
+            "rewards_to_nominators": add_suf,
         },
     },
     {
