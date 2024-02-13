@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from numpy import nan
 
 from subspace_model.const import *
@@ -9,66 +11,11 @@ from subspace_model.experiments.logic import (
     NORMAL_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
-    SUPPLY_EARNED,
-    SUPPLY_EARNED_MINUS_BURNED,
     SUPPLY_ISSUED,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     WEEKLY_VARYING,
 )
-from subspace_model.types import *
-
-ISSUANCE_FOR_FARMERS = MAX_CREDIT_ISSUANCE * 0.44
-
-INITIAL_STATE = SubspaceModelState(
-    days_passed=0,
-    blocks_passed=0,
-    # Metrics
-    circulating_supply=0.0,
-    user_supply=0.0,
-    earned_supply=0.0,
-    issued_supply=0.0,
-    earned_minus_burned_supply=0.0,
-    total_supply=0.0,
-    sum_of_stocks=0.0,
-    storage_fee_per_rewards=0.0,
-    block_utilization=0.0,
-    # Governance Variables
-    dsf_relative_disbursal_per_day=0.0,  # How much %/day of DSF's goes to farmers
-    # Stock Balances
-    reward_issuance_balance=ISSUANCE_FOR_FARMERS,
-    other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
-    operators_balance=0.0,
-    nominators_balance=0.0,
-    holders_balance=0.0,
-    farmers_balance=0.0,
-    staking_pool_balance=0.0,
-    fund_balance=0.0,
-    burnt_balance=0.0,
-    # Staking Pool Shares
-    nominator_pool_shares=0.0,
-    operator_pool_shares=0.0,
-    # Variables
-    block_reward=None,
-    history_size=0,
-    space_pledged=0,
-    allocated_tokens=0.0,
-    buffer_size=0,
-    reference_subsidy=0.0,
-    # Environmental Variables
-    average_base_fee=0.0,
-    average_priority_fee=0.0,
-    average_compute_weight_per_tx=0.0,
-    average_transaction_size=256,
-    transaction_count=0.0,
-    average_compute_weight_per_bundle=0.0,
-    average_bundle_size=0.0,
-    bundle_count=0.0,
-    compute_fee_volume=0.0,
-    storage_fee_volume=0.0,
-    rewards_to_nominators=0.0,
-)
-
 
 DEFAULT_PARAMS = SubspaceModelParams(
     label="standard",
@@ -85,9 +32,9 @@ DEFAULT_PARAMS = SubspaceModelParams(
     archival_depth=ARCHIVAL_DEPTH,
     archival_buffer_segment_size=SEGMENT_SIZE,
     header_size=6_500,  # how much data does every block contain on top of txs: signature, solution, consensus logs, etc. + votes + PoT
-    replication_factor=10,
+    min_replication_factor=50,
     max_block_size=int(3.75 * MIB_IN_BYTES),  # 3.75 MiB
-    min_base_fee=1,
+    weight_to_fee=1 * SHANNON_IN_CREDITS,
     min_compute_weights_per_tx=6_000_000,  # TODO
     min_compute_weights_per_bundle=2_000_000_000,  # TODO
     min_transaction_size=100,  # TODO
@@ -112,8 +59,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     transfer_holder_to_nominator_per_day_function=lambda p, s: 0.01,
     transfer_holder_to_operator_per_day_function=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
-    base_fee_function=lambda p, s: 1,
-    priority_fee_function=lambda p, s: 3,
+    priority_fee_function=lambda p, s: 0,
     compute_weights_per_tx_function=lambda p, s: 60_000_000,
     compute_weight_per_bundle_function=lambda p, s: 10_000_000_000,
     transaction_size_function=lambda p, s: 256,
@@ -143,8 +89,7 @@ ENVIRONMENTAL_SCENARIOS = {
         ),
         # Environmental Parameters (Integer positive in [0,inf])
         "environmental_label": "stochastic",
-        "base_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1, 1)),
-        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(3, 5)),
+        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(0, 0.001)),
         "compute_weights_per_tx_function": POSITIVE_INTEGER(
             NORMAL_GENERATOR(60_000_000, 15_000_000)
         ),
@@ -160,7 +105,6 @@ ENVIRONMENTAL_SCENARIOS = {
     },
     "weekly-varying": {
         "environmental_label": "weekly-varying",
-        "base_fee_function": WEEKLY_VARYING,
         "priority_fee_function": WEEKLY_VARYING,
     },
     "constant-utilization": {
