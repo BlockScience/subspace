@@ -95,6 +95,13 @@ class SubspaceModelState(TypedDict):
     storage_fee_volume: Credits
     rewards_to_nominators: Credits
 
+    # max_normal_weight:
+    # max_bundle_weight:
+    # target_block_fullness:
+    # block_weight_utilization:
+    # adjustment_variable:
+    # priority_fee_volume:
+
 
 class SubspaceModelParams(TypedDict):
     label: str
@@ -111,6 +118,7 @@ class SubspaceModelParams(TypedDict):
     header_size: Bytes
     min_replication_factor: float
     max_block_size: Bytes
+    weight_to_fee: Credits
 
     # Economic Parameters
     reward_proposer_share: Percentage
