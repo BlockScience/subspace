@@ -401,14 +401,15 @@ def p_compute_fees(
     )
 
     total_compute_weights: ComputeWeights = tx_compute_weight + bundles_compute_weight
+    eff_minimum_fee: Credits = 1 * SHANNON_IN_CREDITS
 
     # Calculate compute fee volume
-    compute_fee_volume = max(
+    compute_fee_volume: Credits = max(
         (
             compute_fee_multiplier * weight_to_fee * total_compute_weights
             + priority_fee_volume
         ),
-        1,
+        eff_minimum_fee,
     )
 
     # Constrain compute fee volume to be less than holders balance
