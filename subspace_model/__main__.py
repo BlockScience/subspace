@@ -294,16 +294,16 @@ def process_experiment(
 
 def generate_notebooks_from_templates(experiment: str):
     logger.info(f"Generating notebooks for {experiment}")
-    id = experiment_ids[experiment]
-    template_names = [f"{id}-{experiment}"].append(
-        experiment_additional_notebook_templates[experiment]
-    )
+    id = "{:02d}".format(experiment_ids[experiment])
+    template_names = [f"{id}-{experiment}"]
+    # template_names.append(experiment_additional_notebook_templates[experiment])
     for template_name in template_names:
-        notebook = f"../notebooks/{template_name}.ipynb"
-        template = f"notebooks/{template_name}.py"
+        notebook = f"./notebooks/{template_name}.ipynb"
+        template = f"./notebook_templates/{template_name}.py"
         CMD = f"""cat {template} |
         jupytext --from py:percent --to ipynb --set-kernel - |
         papermill - {notebook} --cwd notebooks/"""
+        logger.info(CMD)
         os.system(CMD)
 
 
