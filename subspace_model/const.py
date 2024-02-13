@@ -6,7 +6,7 @@ MIB_IN_BYTES = 1048576
 DAY_TO_SECONDS = 24 * 60 * 60
 
 # Subspace Constants
-MAX_CREDIT_ISSUANCE: Credits = 3_000_000_000  # TODO: check if true
+MAX_CREDIT_ISSUANCE: Credits = 3_000_000_000  # TODO: Migrate to 1_000_000_000
 ISSUANCE_FOR_FARMERS: Credits = MAX_CREDIT_ISSUANCE * 0.3782
 KZG_COMMITMENT: Bytes = 32  # As per Subnomicon
 WITNESS: Bytes = 48  # As per Subnomicon
