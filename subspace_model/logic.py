@@ -319,37 +319,45 @@ def p_storage_fees(
     - https://github.com/subspace/subspace/blob/53dca169379e65b4fb97b5c7753f5d00bded2ef2/crates/pallet-transaction-fees/src/lib.rs#L271
     """
     # Input
-    total_credit_supply = params["credit_supply_definition"](state)
-    total_space_pledged = state["total_space_pledged"]
-    blockchain_history_size = state["blockchain_history_size"]
-    min_replication_factor = params["min_replication_factor"]
+    total_credit_supply: Credits = params["credit_supply_definition"](state)
+    total_space_pledged: Bytes = state["total_space_pledged"]
+    blockchain_history_size: Bytes = state["blockchain_history_size"]
+    min_replication_factor: float = params["min_replication_factor"]
 
-    free_space = max(
+    free_space: Bytes = max(
         total_space_pledged / min_replication_factor - blockchain_history_size, 1
     )
 
-    transaction_byte_fee = total_credit_supply / free_space
+    storage_fee_in_credits_per_bytes = (
+        total_credit_supply / free_space
+    )  # Credits / Bytes
 
-    extrinsic_length_in_bytes = (
+    extrinsic_length_in_bytes: Bytes = (
         state["transaction_count"] * state["average_transaction_size"]
     )
 
     # storage_fee(tx) as per spec
-    storage_fee_volume = transaction_byte_fee * extrinsic_length_in_bytes
+    storage_fee_volume: Credits = (
+        storage_fee_in_credits_per_bytes * extrinsic_length_in_bytes
+    )
 
     # HACK : Constrain total_storage_fees to 1/2 all holders balance
     # TODO : Add comment as to why this is needed.
-    eff_storage_fee_volume = min(storage_fee_volume, state["holders_balance"] / 2)
+    eff_storage_fee_volume: Credits = min(
+        storage_fee_volume, state["holders_balance"] / 2
+    )
 
     # Storage Fees
     # Fee distribution
-    storage_fees_to_fund = params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
-    storage_fees_to_farmers = eff_storage_fee_volume - storage_fees_to_fund
+    storage_fees_to_fund: Credits = (
+        params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
+    )
+    storage_fees_to_farmers: Credits = eff_storage_fee_volume - storage_fees_to_fund
 
     return {
         # Fee Calculation
         "free_space": free_space,
-        "transaction_byte_fee": transaction_byte_fee,
+        "storage_fee_in_credits_per_bytes": storage_fee_in_credits_per_bytes,
         "extrinsic_length_in_bytes": extrinsic_length_in_bytes,
         "storage_fee_volume": eff_storage_fee_volume,
         # Reward Distribution
@@ -373,30 +381,32 @@ def p_compute_fees(
     Reference: https://subspacelabs.notion.site/Fees-Rewards-Specification-WIP-1b835c7684a940f188920802ca6791f2#4d2c4f4b69a94fcca49a7fcaca7563cc
     """
 
-    weight_to_fee = params["weight_to_fee"]
-    max_normal_weight = 0.75 * BLOCK_WEIGHT_FOR_2_SEC
-    max_bundle_weight = state["max_bundle_weight"]
-    target_block_fullness = state["target_block_fullness"]
-    block_weight_utilization = state["block_utilization"]
-    adjustment_variable = state["adjustment_variable"]
-    priority_fee_volume = state["average_priority_fee"]
+    weight_to_fee: Credits = params["weight_to_fee"]
+    max_normal_weight: Picoseconds = 0.75 * BLOCK_WEIGHT_FOR_2_SEC
+    max_bundle_weight = state["max_bundle_weight"]  # TODO: type
+    target_block_fullness = state["target_block_fullness"]  # TODO: type
+    block_weight_utilization = state["block_utilization"]  # TODO: type
+    adjustment_variable = state["adjustment_variable"]  # TODO: type
+    priority_fee_volume = state["average_priority_fee"]  # TODO: type
 
-    target_block_delta = target_block_fullness - block_weight_utilization
+    target_block_delta = target_block_fullness - block_weight_utilization  # TODO: type
 
-    targeted_adjustment_parameter = (
+    targeted_adjustment_parameter = (  # TODO: type
         1
         + adjustment_variable * target_block_delta
         + adjustment_variable**2 * target_block_delta**2 / 2
     )
 
-    prev_compute_fee_multiplier = state["compute_fee_multiplier"]
-    compute_fee_multiplier = targeted_adjustment_parameter * prev_compute_fee_multiplier
+    prev_compute_fee_multiplier = state["compute_fee_multiplier"]  # TODO: type
+    compute_fee_multiplier = (
+        targeted_adjustment_parameter * prev_compute_fee_multiplier
+    )  # TODO: type
 
     # Caculate compute weight
     tx_compute_weight: ComputeWeights = (
         state["average_compute_weight_per_tx"] * state["transaction_count"]
     )
-    bundles_compute_weight = (
+    bundles_compute_weight: ComputeWeights = (
         state["average_compute_weight_per_bundle"] * state["bundle_count"]
     )
 
@@ -413,25 +423,25 @@ def p_compute_fees(
     )
 
     # Constrain compute fee volume to be less than holders balance
-    eff_compute_fee_volume = min(compute_fee_volume, state["holders_balance"])
-    eff_scale = eff_compute_fee_volume / compute_fee_volume
+    eff_compute_fee_volume: Credits = min(compute_fee_volume, state["holders_balance"])
+    eff_scale: float = eff_compute_fee_volume / compute_fee_volume
 
-    fees_to_distribute = compute_fee_volume
+    fees_to_distribute: Credits = compute_fee_volume
 
     # Bundle relevant fees go to operators rather than farmers
     bundle_share_of_weight = bundles_compute_weight / total_compute_weights
 
     # Fee volume to be from bundles
-    fees_from_bundles = fees_to_distribute * bundle_share_of_weight
+    fees_from_bundles: Credits = fees_to_distribute * bundle_share_of_weight
 
     # Fee volume for farmers
-    fees_to_farmers = fees_to_distribute - fees_from_bundles
+    fees_to_farmers: Credits = fees_to_distribute - fees_from_bundles
 
     # # Calculate the fees to operators
-    fees_to_operators = fees_from_bundles
+    fees_to_operators: Credits = fees_from_bundles
 
     # Calculate total fees
-    total_fees = fees_to_farmers + fees_to_operators
+    total_fees: Credits = fees_to_farmers + fees_to_operators
 
     # TODO: check if fees goes to the farmers/nominators balance
     # or if is auto-staked
