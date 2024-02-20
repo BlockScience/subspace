@@ -128,54 +128,6 @@ def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
 ## Environmental processes
 
 
-def p_pledge_sectors(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> PolicyOutput:
-    """
-    Decide amount of commited bytes to be added based on an
-    gaussian process.
-
-    XXX: depends on an stochastic process assumption.
-    """
-    new_sectors = int(
-        max(
-            params["new_sectors_per_day_function"](params, state),
-            0,
-        )
-    )
-    new_bytes = new_sectors * SECTOR_SIZE
-    return {"total_space_pledged": new_bytes}
-
-
-def p_archive(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> PolicyOutput:
-    """
-    TODO: check if underlying assumptions / terminology are valid.
-    TODO: revisit assumption on the supply & demand matching.
-    FIXME: homogenize terminology
-    """
-    # how much data does every block contain aside from tx data
-    header_volume = state["delta_blocks"] * params["header_size"]
-
-    tx_volume = state["transaction_count"] * state["average_transaction_size"]
-    new_buffer_bytes = tx_volume + header_volume
-    current_buffer = new_buffer_bytes + state["buffer_size"]
-    segments_being_archived = int(
-        floor(current_buffer / params["archival_buffer_segment_size"])
-    )
-
-    new_history_bytes = 0
-    if segments_being_archived > 0:
-        new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
-        new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
-
-    return {
-        "blockchain_history_size": new_history_bytes,
-        "buffer_size": new_buffer_bytes,
-    }
-
-
 def s_average_priority_fee(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> StateUpdateFunction:
@@ -305,6 +257,73 @@ def s_bundle_count(
     return ("bundle_count", bundle_count)
 
 
+def p_archive(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
+    """
+    TODO: check if underlying assumptions / terminology are valid.
+    TODO: revisit assumption on the supply & demand matching.
+    FIXME: homogenize terminology
+    """
+    # how much data does every block contain aside from tx data
+    header_volume = state["delta_blocks"] * params["header_size"]
+
+    tx_volume = state["transaction_count"] * state["average_transaction_size"]
+    new_buffer_bytes = tx_volume + header_volume
+    current_buffer = new_buffer_bytes + state["buffer_size"]
+    segments_being_archived = int(
+        floor(current_buffer / params["archival_buffer_segment_size"])
+    )
+
+    new_history_bytes = 0
+    if segments_being_archived > 0:
+        new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
+        new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
+
+    return {
+        "blockchain_history_size": new_history_bytes,
+        "buffer_size": new_buffer_bytes,
+    }
+
+
+def p_pledge_sectors(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
+    """
+    Decide amount of commited bytes to be added based on an
+    gaussian process.
+
+    XXX: depends on an stochastic process assumption.
+    """
+
+    blockchain_history_size: Bytes = state["blockchain_history_size"]
+    min_replication_factor: float = params["min_replication_factor"]
+    total_space_pledged: Bytes = state["total_space_pledged"]
+
+    required_space_pledged: Bytes = blockchain_history_size * min_replication_factor
+
+    new_pledge_due_to_requirements: Bytes = max(
+        required_space_pledged - total_space_pledged, 0
+    )
+
+    new_pledge_due_to_random: Bytes = (
+        int(
+            max(
+                params["new_sectors_per_day_function"](params, state),
+                0,
+            )
+        )
+        * SECTOR_SIZE
+    )
+
+    new_space_pledged = max(
+        new_pledge_due_to_requirements + new_pledge_due_to_random,
+        new_pledge_due_to_requirements,
+    )
+
+    return {"total_space_pledged": new_space_pledged}
+
+
 ## Compute & Operator Fees
 def p_storage_fees(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
@@ -323,10 +342,6 @@ def p_storage_fees(
     total_space_pledged: Bytes = state["total_space_pledged"]
     blockchain_history_size: Bytes = state["blockchain_history_size"]
     min_replication_factor: float = params["min_replication_factor"]
-
-    # print(f"{total_space_pledged=:.2e}")
-    # print(f"{blockchain_history_size=:.2e}")
-    # print(f"{min_replication_factor=:.2e}")
 
     if total_space_pledged <= blockchain_history_size * min_replication_factor:
         raise ValueError(
