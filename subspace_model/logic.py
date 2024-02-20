@@ -324,9 +324,13 @@ def p_storage_fees(
     blockchain_history_size: Bytes = state["blockchain_history_size"]
     min_replication_factor: float = params["min_replication_factor"]
 
-    if total_space_pledged > blockchain_history_size * min_replication_factor:
+    # print(f"{total_space_pledged=:.2e}")
+    # print(f"{blockchain_history_size=:.2e}")
+    # print(f"{min_replication_factor=:.2e}")
+
+    if total_space_pledged <= blockchain_history_size * min_replication_factor:
         raise ValueError(
-            "total_space_pledged > blockchain_history_size * min_replication_factor"
+            "total_space_pledged <= blockchain_history_size * min_replication_factor"
         )
 
     free_space: Bytes = max(
