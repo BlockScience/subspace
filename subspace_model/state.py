@@ -32,7 +32,7 @@ INITIAL_STATE = SubspaceModelState(
     nominator_pool_shares=0.0,
     operator_pool_shares=0.0,
     # Variables
-    block_reward=None,
+    block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
     allocated_tokens=0.0,
@@ -51,6 +51,7 @@ INITIAL_STATE = SubspaceModelState(
     free_space=0.0,
     extrinsic_length_in_bytes=0.0,
     storage_fee_in_credits_per_bytes=0.0,
+    transaction_byte_fee=0.0,
     storage_fee_volume=0.0,
     priority_fee_volume=0.0,
     consensus_extrinsic_fee_volume=0.0,

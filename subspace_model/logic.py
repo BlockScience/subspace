@@ -352,9 +352,7 @@ def p_storage_fees(
         (total_space_pledged / min_replication_factor) - blockchain_history_size, 1
     )
 
-    storage_fee_in_credits_per_bytes = (
-        total_credit_supply / free_space
-    )  # Credits / Bytes
+    storage_fee_in_credits_per_byte: CreditsPerByte = total_credit_supply / free_space
 
     extrinsic_length_in_bytes: Bytes = (
         state["transaction_count"] * state["average_transaction_size"]
@@ -362,7 +360,7 @@ def p_storage_fees(
 
     # storage_fee(tx) as per spec
     storage_fee_volume: Credits = (
-        storage_fee_in_credits_per_bytes * extrinsic_length_in_bytes
+        storage_fee_in_credits_per_byte * extrinsic_length_in_bytes
     )
 
     # HACK : Constrain total_storage_fees to 1/2 all holders balance
@@ -381,7 +379,7 @@ def p_storage_fees(
     return {
         # Fee Calculation
         "free_space": free_space,
-        "storage_fee_in_credits_per_bytes": storage_fee_in_credits_per_bytes,
+        "storage_fee_in_credits_per_byte": storage_fee_in_credits_per_byte,
         "extrinsic_length_in_bytes": extrinsic_length_in_bytes,
         "storage_fee_volume": eff_storage_fee_volume,
         # Reward Distribution

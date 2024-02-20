@@ -91,6 +91,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             # Fee Calculation
             "free_space": replace_suf,
+            "transaction_byte_fee": replace_suf,
             "storage_fee_in_credits_per_bytes": replace_suf,
             "extrinsic_length_in_bytes": replace_suf,
             "storage_fee_volume": replace_suf,

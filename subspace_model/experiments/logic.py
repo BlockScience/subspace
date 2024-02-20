@@ -16,17 +16,27 @@ from subspace_model.types import (
 
 
 def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
+
+    # Calculate block rewards per timestep
+    blocks_per_timestep = (
+        params["timestep_in_days"] * params["block_time_in_seconds"] * (24 * 60 * 60)
+    )
+    rewards_during_timestep = state["block_reward"] * blocks_per_timestep
+
     # Extract necessary values from the state
-    a = state["reference_subsidy"]
-    F = state["storage_fee_volume"]
+    F_bar = params["max_block_size"] * state["storage_fee_in_credits_per_bytes"]
+    S_r = state["reference_subsidy"]
+    c = params["issuance_function_constant"]
     g = state["block_utilization"]
 
-    # Fixed parameters. These can be tuned as needed.
-    c = params["issuance_function_constant"]
+    # Currently fixed at 1
     d = 1
 
     # Calculate b
-    b = (a - max(a - F, 0)) / math.tanh(c)
+    b = S_r - max(S_r - F_bar, 0) / math.tanh(c)
+
+    # Calculate a
+    a = S_r - b * math.tanh(c * d)
 
     # Calculate s(g)
     s_g = a + b * math.tanh(-c * (g - d))

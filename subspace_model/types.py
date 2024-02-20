@@ -15,6 +15,7 @@ CreditsPerDay = Annotated[float, "SSC/day"]
 ComputeWeights = Annotated[float, "CW"]
 Shannon = Annotated[float, "Shannon"]  # 1e-18 SSC
 ShannonPerComputeWeights = Annotated[float, "Shannon/CW"]
+CreditsPerByte = Annotated[float, "SSC/byte"]
 
 # Storage
 Bytes = Annotated[int, "bytes"]
@@ -93,6 +94,7 @@ class SubspaceModelState(TypedDict):
     # Metrics
     compute_fee_volume: Credits
     storage_fee_volume: Credits
+    transaction_byte_fee: CreditsPerByte
     rewards_to_nominators: Credits
 
     # max_normal_weight:
