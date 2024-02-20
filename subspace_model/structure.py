@@ -32,14 +32,13 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         "label": "Environmental Processes",
         "ignore": False,
-        "policies": {"sector_onboarding": p_pledge_sectors},
+        "policies": {},
         "variables": {
             # "average_base_fee": s_average_base_fee,
             "average_priority_fee": s_average_priority_fee,
             "average_compute_weight_per_tx": s_average_compute_weight_per_tx,
             "transaction_count": s_transaction_count,
             "average_transaction_size": s_average_transaction_size,
-            "total_space_pledged": add_suf,
             "average_compute_weight_per_bundle": s_average_compute_weight_per_bundle,
             "bundle_count": s_bundle_count,
         },
@@ -51,6 +50,13 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "blockchain_history_size": add_suf,
             "buffer_size": add_suf,
             "block_utilization": s_block_utilization,
+        },
+    },
+    {
+        "label": "Sector Onboarding",
+        "policies": {"sector_onboarding": p_pledge_sectors},
+        "variables": {
+            "total_space_pledged": add_suf,
         },
     },
     {
@@ -85,7 +91,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             # Fee Calculation
             "free_space": replace_suf,
-            "transaction_byte_fee": replace_suf,
+            "storage_fee_in_credits_per_bytes": replace_suf,
             "extrinsic_length_in_bytes": replace_suf,
             "storage_fee_volume": replace_suf,
             # Reward Distribution
