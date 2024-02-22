@@ -265,21 +265,30 @@ def p_archive(
     TODO: revisit assumption on the supply & demand matching.
     FIXME: homogenize terminology
     """
-    # how much data does every block contain aside from tx data
-    header_volume = state["delta_blocks"] * params["header_size"]
+    # The header volume. The bytes stored in the chain for each transaction header.
+    header_volume: Bytes = state["delta_blocks"] * params["header_size"]
 
-    tx_volume = state["transaction_count"] * state["average_transaction_size"]
-    new_buffer_bytes = tx_volume + header_volume
-    current_buffer = new_buffer_bytes + state["buffer_size"]
-    segments_being_archived = int(
+    # Transaction volume in bytes. This is the driver of blockchain history storage growth.
+    tx_volume: Bytes = state["transaction_count"] * state["average_transaction_size"]
+
+    # New buffer bytes are transaction volume plus header
+    new_buffer_bytes: Bytes = tx_volume + header_volume
+
+    # The new size of the buffer
+    current_buffer: Bytes = new_buffer_bytes + state["buffer_size"]
+
+    # Number of segments needed for the current buffer
+    segments_being_archived: int = int(
         floor(current_buffer / params["archival_buffer_segment_size"])
     )
 
-    new_history_bytes = 0
+    # Remove the segments from the buffer and place them in the history
+    new_history_bytes: Bytes = 0
     if segments_being_archived > 0:
         new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
         new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
 
+    # Update the blockchain history size and the current buffer size
     return {
         "blockchain_history_size": new_history_bytes,
         "buffer_size": new_buffer_bytes,
@@ -290,22 +299,30 @@ def p_pledge_sectors(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
     """
-    Decide amount of commited bytes to be added based on an
-    gaussian process.
+    Decide amount of pledged bytes to be added.
 
     XXX: depends on an stochastic process assumption.
+    XXX: emits a minimum required space to keep  up with the blockchain history size.
     """
 
+    # Size of history in bytes
     blockchain_history_size: Bytes = state["blockchain_history_size"]
+
+    # Minimum replication factor
     min_replication_factor: float = params["min_replication_factor"]
+
+    # Previous total_space_pledged
     total_space_pledged: Bytes = state["total_space_pledged"]
 
+    # Required total space to be pledged
     required_space_pledged: Bytes = blockchain_history_size * min_replication_factor
 
+    # Required new space to be pledged
     new_pledge_due_to_requirements: Bytes = max(
         required_space_pledged - total_space_pledged, 0
     )
 
+    # New pledge random parameter function
     new_pledge_due_to_random: Bytes = (
         int(
             max(
@@ -316,11 +333,14 @@ def p_pledge_sectors(
         * SECTOR_SIZE
     )
 
+    # Add the random process amount to the minimum amount.
+    # Take at least the minimum.
     new_space_pledged = max(
         new_pledge_due_to_requirements + new_pledge_due_to_random,
         new_pledge_due_to_requirements,
     )
 
+    # Update the total space pledged.
     return {"total_space_pledged": new_space_pledged}
 
 
