@@ -17,8 +17,8 @@ from subspace_model.types import (
 
 def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
     # Extract necessary values from the state
-    a = state["reference_subsidy"]
-    F = state["storage_fee_volume"]
+    S_r = state["reference_subsidy"]
+    F_bar = params["max_block_size"] * state["storage_fee_in_credits_per_bytes"]
     g = state["block_utilization"]
 
     # Fixed parameters. These can be tuned as needed.
@@ -26,7 +26,8 @@ def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelS
     d = 1
 
     # Calculate b
-    b = (a - max(a - F, 0)) / math.tanh(c)
+    a = S_r - b * tanh(c * d)
+    b = S_r - max(S_r - F_bar, 0) / tanh(c)
 
     # Calculate s(g)
     s_g = a + b * math.tanh(-c * (g - d))
@@ -34,6 +35,7 @@ def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelS
     # Ensure block_reward is non-negative
     block_reward = max(s_g, 0)
 
+    # return block_reward
     return block_reward
 
 
