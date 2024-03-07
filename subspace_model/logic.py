@@ -363,6 +363,14 @@ def p_storage_fees(
     blockchain_history_size: Bytes = state["blockchain_history_size"]
     min_replication_factor: float = params["min_replication_factor"]
 
+    # Add bundle storage
+    average_bundle_size: Bytes = max(
+        params["bundle_size_function"](params, state), params["min_bundle_size"]
+    )
+    bundle_storage: Bytes = average_bundle_size * state[
+        "bundle_count_per_day_function"
+    ](params, state)
+
     if total_space_pledged <= blockchain_history_size * min_replication_factor:
         raise ValueError(
             "total_space_pledged <= blockchain_history_size * min_replication_factor"
