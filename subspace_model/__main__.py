@@ -313,8 +313,9 @@ def generate_template_from_notebook(experiment: str):
     template_name = f"{id}-{experiment}"
     notebook = f"notebooks/{template_name}.ipynb"
     template = f"notebook_templates/{template_name}.py"
-    CMD = f"""cat {notebook} | papermill - {notebook} --cwd notebooks/ && cat {notebook} |
+    CMD = f"""cat {notebook} | papermill - {notebook} --cwd notebooks/ -p nb_name {template_name} && cat {notebook} |
     jupytext --from ipynb --to py:percent --set-kernel - > {template}"""
+    print(CMD)
     os.system(CMD)
 
 
