@@ -40,6 +40,16 @@ def get_hex_colors_from_matplotlib_cmap(n, cmap_name):
     return hex_colors
 
 
+import ipynbname
+
+
+def hv_save(plot, plot_name: str):
+    nb_name = ipynbname.name()
+    plot_file = f"images/{nb_name}-{plot_name}.png"
+    print(f"Saving plot to {plot_file}...")
+    hv.save(plot, plot_file, fmt="png")
+
+
 if __name__ == "__main__":
     # Example usage
     df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
