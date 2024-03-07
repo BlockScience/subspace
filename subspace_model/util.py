@@ -43,8 +43,7 @@ def get_hex_colors_from_matplotlib_cmap(n, cmap_name):
 import ipynbname
 
 
-def hv_save(plot, plot_name: str):
-    nb_name = ipynbname.name()
+def hv_save(plot, plot_name: str, nb_name: str):
     plot_file = f"images/{nb_name}-{plot_name}.png"
     print(f"Saving plot to {plot_file}...")
     hv.save(plot, plot_file, fmt="png")
