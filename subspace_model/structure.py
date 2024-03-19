@@ -50,6 +50,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "blockchain_history_size": add_suf,
             "buffer_size": add_suf,
             "block_utilization": s_block_utilization,
+            "avg_blockspace_usage": s_avg_blockspace_usage
         },
     },
     {

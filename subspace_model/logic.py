@@ -367,9 +367,7 @@ def p_storage_fees(
     average_bundle_size: Bytes = max(
         params["bundle_size_function"](params, state), params["min_bundle_size"]
     )
-    bundle_storage: Bytes = average_bundle_size * state[
-        "bundle_count_per_day_function"
-    ](params, state)
+    bundle_storage: Bytes = average_bundle_size * state["bundle_count"]
 
     if total_space_pledged <= blockchain_history_size * min_replication_factor:
         raise ValueError(
@@ -723,12 +721,44 @@ def s_block_utilization(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> StateUpdateFunction:
     """ """
-    size = state["transaction_count"] * state["average_transaction_size"]
-    max_size = (
+    used_blockspace = state["transaction_count"] * state["average_transaction_size"]
+    max_normal_block_length = (
         params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
     )
-    value = size / max_size
-    return ("block_utilization", value)
+
+    # Compute Block Utilization
+    block_utilization = used_blockspace / max_normal_block_length
+
+
+    return ("block_utilization", block_utilization,)
+
+def s_avg_blockspace_usage(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
+) -> StateUpdateFunction:
+    """ """
+    used_blockspace = state["transaction_count"] * state["average_transaction_size"]
+
+    # Compute Average Blockspace Usage
+    blocks_passed = state["blocks_passed"]
+    delta_blocks = state["delta_blocks"]
+    num_blocks = params["num_blocks"]
+    avg_blockspace_usage = state["avg_blockspace_usage"]
+
+    if num_blocks == 0:
+        avg_blockspace_usage = used_blockspace
+    elif blocks_passed <= num_blocks:
+        avg_blockspace_usage = (avg_blockspace_usage + used_blockspace) / 2
+    else:
+        multiplier = 2 / (num_blocks + 1)
+
+        # This is according to the spec (if delta_blocks == 1)
+        # avg_blockspace_usage = multiplier * used_blockspace + (1 - multiplier) * avg_blockspace_usage
+
+        # This incorporates the exponential decay of delta_blocks
+        avg_blockspace_usage = avg_blockspace_usage + (used_blockspace - avg_blockspace_usage) * (1 - (1-multiplier)**(delta_blocks))
+
+    return ("avg_blockspace_usage", state["avg_blockspace_usage"],)
+
 
 
 def p_reference_subsidy(
