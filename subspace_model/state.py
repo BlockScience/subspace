@@ -16,6 +16,7 @@ INITIAL_STATE = SubspaceModelState(
     sum_of_stocks=0.0,
     storage_fee_per_rewards=0.0,
     block_utilization=0.0,
+    avg_blockspace_usage=0.0,
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0,  # How much %/day of DSF's goes to farmers
     # Stock Balances

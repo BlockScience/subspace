@@ -26,7 +26,8 @@ DEFAULT_PARAMS = SubspaceModelParams(
     reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     issuance_function=DEFAULT_ISSUANCE_FUNCTION,
     issuance_function_constant=1,
-    slash_function=DEFAULT_SLASH_FUNCTION,  # TODO
+    slash_function=DEFAULT_SLASH_FUNCTION, 
+    num_blocks=100,
     # Implementation params
     block_time_in_seconds=BLOCK_TIME,
     archival_depth=ARCHIVAL_DEPTH,
