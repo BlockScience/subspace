@@ -25,7 +25,7 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     SubsidyComponent,
 )
-from subspace_model.params import DEFAULT_PARAMS, ENVIRONMENTAL_SCENARIOS
+from subspace_model.params import DEFAULT_PARAMS, ENVIRONMENTAL_SCENARIOS, GOVERNANCE_SURFACES
 from subspace_model.state import INITIAL_STATE, ISSUANCE_FOR_FARMERS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 from subspace_model.types import SubspaceModelParams
@@ -347,65 +347,65 @@ def sweep_over_single_component_and_credit_supply(
         num=N_PARAM_SWEEP,
     )
 
-    sweep_params = {
+    governance_surface = {
         "issuance_function_constant": c_params,
         "credit_supply_definition": credit_supply_definition_params,
         "reference_subsidy_x_1": reference_subsidy_x_1_params,
         "reference_subsidy_x_2": reference_subsidy_x_2_params,
     }
 
-    sweep_params = sweep_cartesian_product(sweep_params)
-    cardinality = max([len(v) for v in sweep_params.values()])
+    controllable_params = sweep_cartesian_product(governance_surface)
+    governance_cardinality = max([len(v) for v in controllable_params.values()])
 
     # Prepare for x_3 expansion
-    sweep_params = {k: v * 3 for k, v in sweep_params.items()}
+    controllable_params = {k: v * 3 for k, v in controllable_params.items()}
 
     # Generate x_3
-    sweep_params["reference_subsidy_x_3"] = [
+    controllable_params["reference_subsidy_x_3"] = [
         x2 / x1
         for x1, x2 in zip(
-            sweep_params["reference_subsidy_x_1"], sweep_params["reference_subsidy_x_2"]
+            controllable_params["reference_subsidy_x_1"], controllable_params["reference_subsidy_x_2"]
         )
     ]
 
-    sweep_params["reference_subsidy_x_3"] = (
+    controllable_params["reference_subsidy_x_3"] = (
         cardinality * [0]
         + [
             x_3 / 2
-            for x_3 in sweep_params["reference_subsidy_x_3"][
+            for x_3 in controllable_params["reference_subsidy_x_3"][
                 cardinality : 2 * cardinality
             ]
         ]
-        + sweep_params["reference_subsidy_x_3"][2 * cardinality : 3 * cardinality]
+        + controllable_params["reference_subsidy_x_3"][2 * cardinality : 3 * cardinality]
     )
 
     # Generate reference_subsidy_components
-    sweep_params["reference_subsidy_components"] = [
+    controllable_params["reference_subsidy_components"] = [
         [
             SubsidyComponent(0, x1, x2, x3),
         ]
         for x1, x2, x3 in zip(
-            sweep_params["reference_subsidy_x_1"],
-            sweep_params["reference_subsidy_x_2"],
-            sweep_params["reference_subsidy_x_3"],
+            controllable_params["reference_subsidy_x_1"],
+            controllable_params["reference_subsidy_x_2"],
+            controllable_params["reference_subsidy_x_3"],
         )
     ]
 
     # Drop x_1, x_2, x_3
-    sweep_params.pop("reference_subsidy_x_1", None)
-    sweep_params.pop("reference_subsidy_x_2", None)
-    sweep_params.pop("reference_subsidy_x_3", None)
+    controllable_params.pop("reference_subsidy_x_1", None)
+    controllable_params.pop("reference_subsidy_x_2", None)
+    controllable_params.pop("reference_subsidy_x_3", None)
 
     # Used for adding environmental scenarios
-    cardinality = max([len(v) for v in sweep_params.values()])
+    governance_cardinality = max([len(v) for v in controllable_params.values()])
 
     # Environmental scenarios
-    environmental_param_sets = list(ENVIRONMENTAL_SCENARIOS.values())
+    environmental_scenarios = list(ENVIRONMENTAL_SCENARIOS.values())
 
     # Repeat control scenarios for each environmental scenario
     sweep_params = {
-        k: list(v * len(environmental_param_sets)) if len(v) == cardinality else v
-        for k, v in sweep_params.items()
+        k: list(v * len(environmental_scenarios)) if len(v) == governance_cardinality else v
+        for k, v in controllable_params.items()
     }
 
     sweep_params = {**{k: [] for k in DEFAULT_PARAMS.keys()}, **sweep_params}
@@ -414,10 +414,10 @@ def sweep_over_single_component_and_credit_supply(
         k,
         v,
     ) in DEFAULT_PARAMS.items():
-        for param_set in environmental_param_sets:
+        for param_set in environmental_scenarios:
             if k in param_set.keys():
                 sweep_params[k] += [param_set[k]] * cardinality
-            elif len(sweep_params[k]) != cardinality * len(environmental_param_sets):
+            elif len(sweep_params[k]) != cardinality * len(environmental_scenarios):
                 sweep_params[k] += [DEFAULT_PARAMS[k]] * cardinality
 
     sweep_params = {
@@ -521,6 +521,8 @@ def reference_subsidy_sweep(
         for k, v in param_set.items():
             sweep_params[k].append(v)
 
+    return sweep_params
+
     # Load simulation arguments
     sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
 
@@ -538,3 +540,67 @@ def reference_subsidy_sweep(
         deepcopy_off=True,
     )
     return sim_df
+
+def psuu(
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+) -> DataFrame:
+    """Function which runs the cadCAD simulations
+
+    Returns:
+        DataFrame: A dataframe of simulation data
+    """
+    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
+
+    # Get the sweep params in the form of single length arrays
+    default_params = deepcopy(DEFAULT_PARAMS)
+
+    # Controllable parameters
+    controllable_params = sweep_cartesian_product(GOVERNANCE_SURFACES['dariias_mainnet_proposal'])
+    governance_cardinality = max([len(v) for v in controllable_params.values()])
+
+    # Environmental scenarios
+    environmental_scenarios = list(ENVIRONMENTAL_SCENARIOS.values())
+    environmental_cardinality = len(environmental_scenarios)+1
+
+    # Repeat controllable params for each environmental scenario and initialize empty list for all non-controllable params
+    sweep_params = {
+            **{k: [v]*governance_cardinality for k,v in default_params.items()},
+            **{k: v*environmental_cardinality for k,v in controllable_params.items()},
+            }
+
+    # For each parameter
+    for k, v in default_params.items():
+        # If not a controllable param
+        if k not in controllable_params.keys():
+            # Set the parameter for each environmental scenario
+            for scenario in environmental_scenarios:
+                # Set according to the scenario
+                if k in scenario.keys():
+                    sweep_params[k] += [scenario[k]] * governance_cardinality
+                # Set according to the default
+                else:
+                    sweep_params[k] += [v] * governance_cardinality
+
+    sweep_params.pop('compute_weight_to_fee')
+    # return sweep_params
+
+    # Load simulation arguments
+    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+
+    # Run simulation
+    sim_df = easy_run(
+        *sim_args,
+        assign_params={
+            "label",
+            "environmental_label",
+            "timestep_in_days",
+            "block_time_in_seconds",
+            "max_credit_supply",
+        },
+        exec_mode="single",
+        deepcopy_off=True,
+    )
+    return sim_df
+
+
+
