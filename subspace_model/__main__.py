@@ -32,6 +32,7 @@ from subspace_model.experiments.experiment import (
     standard_stochastic_run,
     sweep_credit_supply,
     # sweep_over_single_component_and_credit_supply,
+    psuu,
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
@@ -58,7 +59,8 @@ experiments = {
     # "sweep_credit_supply": sweep_credit_supply,
     # "sweep_over_single_component_and_credit_supply": sweep_over_single_component_and_credit_supply,
     # "initial_conditions": initial_conditions,
-    "reference_subsidy_sweep": reference_subsidy_sweep,
+    # "reference_subsidy_sweep": reference_subsidy_sweep,
+    "psuu": psuu,
 }
 
 experiment_ids = {

@@ -72,12 +72,10 @@ DEFAULT_PARAMS = SubspaceModelParams(
     new_sectors_per_day_function=lambda p, s: 1000,
 )
 
-GOVERNANCE_SURFACES = {
-        "dariias_mainnet_proposal": {
-            "reference_subsidy_components": DARIIAS_MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
-            "reward_proposer_share": [1/10, 1/3],
-            "compute_weight_to_fee": [1, 100, 1_000, 10_000],
-            },
+GOVERNANCE_SURFACE = {
+        "reference_subsidy_components": DARIIAS_MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
+        "reward_proposer_share": [1/10, 1/3],
+        "compute_weight_to_fee": [1, 100, 1_000, 10_000],
         }
 
 ENVIRONMENTAL_SCENARIOS = {
