@@ -545,7 +545,7 @@ def reference_subsidy_sweep(
     return sim_df
 
 def psuu(
-        SIMULATION_DAYS: int = 30, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 5, N_SWEEP_SAMPLES: int = 200, SWEEPS_PER_PROCESS: int = 5, PROCESSES: int = 24, PARALLELIZE: bool = True, USE_JOBLIB: bool = True
+        SIMULATION_DAYS: int = 3*365, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 2, N_SWEEP_SAMPLES: int = 5, SWEEPS_PER_PROCESS: int = 2, PROCESSES: int = 24, PARALLELIZE: bool = True, USE_JOBLIB: bool = True
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
