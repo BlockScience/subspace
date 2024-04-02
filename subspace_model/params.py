@@ -6,7 +6,7 @@ from subspace_model.const import *
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
-    DARIIAS_MAINNET_REFERENCE_SUBSIDY_COMPONENTS,
+    MAINNET_REFERENCE_SUBSIDY_COMPONENTS,
     DEFAULT_SLASH_FUNCTION,
     MAGNITUDE,
     NORMAL_GENERATOR,
@@ -73,7 +73,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
 )
 
 GOVERNANCE_SURFACE = {
-        "reference_subsidy_components": DARIIAS_MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
+        "reference_subsidy_components": MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
         "reward_proposer_share": [1/10, 1/3],
         "compute_weight_to_fee": [1, 100, 1_000, 10_000],
         }
