@@ -565,24 +565,33 @@ def psuu(
     environmental_scenarios = list(ENVIRONMENTAL_SCENARIOS.values())
     environmental_cardinality = len(environmental_scenarios)+1
 
-    # Repeat controllable params for each environmental scenario and initialize empty list for all non-controllable params
+
+    # Create the default scenario for each point in the governance surface
+    default_params_repeated = {k: [v]*governance_cardinality for k,v in default_params.items()}
+
+    # Each value v in this case is a list of length governance_cardinality, repeat each one environmental_cardinality times
+    controllable_params_repeated = {k: v*environmental_cardinality for k,v in controllable_params.items()}
+
+    # Construct the params sweep space, but does not yet have the environmental scenarios
     sweep_params = {
-            **{k: [v]*governance_cardinality for k,v in default_params.items()},
-            **{k: v*environmental_cardinality for k,v in controllable_params.items()},
+            **default_params_repeated,
+            **controllable_params_repeated,
             }
 
-    # For each parameter
+    # Adding the environmental scenarios
     for k, v in default_params.items():
-        # If not a controllable param
+        # For each param, ff not a controllable param
         if k not in controllable_params.keys():
             # Set the parameter for each environmental scenario
             for scenario in environmental_scenarios:
                 # Set according to the scenario
                 if k in scenario.keys():
-                    sweep_params[k] += [scenario[k]] * governance_cardinality
+                    environmental_scenario_repeated = [scenario[k]] * governance_cardinality
+                    sweep_params[k] += environmental_scenario_repeated
                 # Set according to the default
                 else:
-                    sweep_params[k] += [v] * governance_cardinality
+                    default_scenario_repeated = [v] * governance_cardinality
+                    sweep_params[k] += default_scenario_repeated
 
     # Sample the sweep space
     sweep_params_samples = {k: sample(v, N_SWEEP_SAMPLES) if N_SWEEP_SAMPLES > 0 else v 
@@ -597,22 +606,14 @@ def psuu(
         "block_time_in_seconds",
         "max_credit_supply",
         *GOVERNANCE_SURFACE.keys()
-        # "reference_subsidy_components",
-        # "reward_proposer_share",
-        # "compute_weight_to_fee",
     }
-
-    # print(f"\n\n---------------")
-    # print(f"{assign_params=}")
-    # print(type(sweep_params['reference_subsidy_components'][0]))
-    # print(type(sweep_params['block_time_in_seconds'][0]))
 
     parallelize = PARALLELIZE
     use_joblib = USE_JOBLIB
     if parallelize is False:
         # Load simulation arguments
         sim_args = (INITIAL_STATE, sweep_params_samples, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
-        # Run simulation
+        # Run simulation and write results to disk
         sim_df = easy_run(*sim_args, exec_mode='single', assign_params=assign_params, deepcopy_off=True)
         return sim_df
     else:
@@ -631,6 +632,7 @@ def psuu(
             sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
             # Run simulationz
             sim_df = easy_run(*sim_args, exec_mode='single', assign_params=assign_params, deepcopy_off=True)
+            sim_df['subset'] = i_chunk*SWEEPS_PER_PROCESS + sim_df['subset']
             output_filename = output_path + f'-{i_chunk}.pkl.gz'
             sim_df.to_pickle(output_filename)
 
@@ -639,13 +641,10 @@ def psuu(
             Parallel(n_jobs=processes)(delayed(run_chunk)(i_chunk, sweep_params) for (i_chunk, sweep_params) in args)
         else: 
             for (i_chunk, sweep_params) in tqdm(args):
-                sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
-                # Run simulationz
-                sim_df = easy_run(*sim_args, exec_mode='single', assign_params=assign_params, deepcopy_off=True)
-                output_filename = output_path + f'-{i_chunk}.pkl.gz'
-                sim_df.to_pickle(output_filename)
+                run_chunk(i_chunk, sweep_params)
 
 
+        # Combine all of the chunks and write simulation results to disk
         latest = '-'.join(sorted(glob("./data/simulations/psuu_run*"))[-1].split('-')[:-1])
         parts = glob(f"{latest}*")
         sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1)))
