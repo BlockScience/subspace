@@ -1,13 +1,17 @@
 from dataclasses import dataclass
 
+<<<<<<< HEAD
 from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE
+=======
+from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE, ISSUED_AT_LAUNCH
+>>>>>>> 627f7a1378891b5b8aa7437902140bece268bccc
 from subspace_model.types import SubspaceModelState
 
 INITIAL_STATE = SubspaceModelState(
     days_passed=0,
     blocks_passed=0,
     # Metrics
-    circulating_supply=0.0,
+    circulating_supply=ISSUED_AT_LAUNCH,
     user_supply=0.0,
     earned_supply=0.0,
     issued_supply=0.0,
@@ -21,10 +25,10 @@ INITIAL_STATE = SubspaceModelState(
     dsf_relative_disbursal_per_day=0.0,  # How much %/day of DSF's goes to farmers
     # Stock Balances
     reward_issuance_balance=ISSUANCE_FOR_FARMERS,
-    other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
+    other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS - ISSUED_AT_LAUNCH,
     operators_balance=0.0,
     nominators_balance=0.0,
-    holders_balance=0.0,
+    holders_balance=ISSUED_AT_LAUNCH,
     farmers_balance=0.0,
     staking_pool_balance=0.0,
     fund_balance=0.0,
