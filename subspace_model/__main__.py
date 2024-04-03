@@ -31,7 +31,8 @@ from subspace_model.experiments.experiment import (
     sanity_check_run,
     standard_stochastic_run,
     sweep_credit_supply,
-    sweep_over_single_component_and_credit_supply,
+    # sweep_over_single_component_and_credit_supply,
+    psuu,
 )
 from subspace_model.experiments.metrics import (
     profit1_mean,
@@ -51,14 +52,15 @@ log_levels = {
 
 experiments = {
     "sanity_check_run": sanity_check_run,
-    "standard_stochastic_run": standard_stochastic_run,
-    "issuance_sweep": issuance_sweep,
-    "fund_inclusion": fund_inclusion,
-    "reward_split_sweep": reward_split_sweep,
-    "sweep_credit_supply": sweep_credit_supply,
-    "sweep_over_single_component_and_credit_supply": sweep_over_single_component_and_credit_supply,
-    "initial_conditions": initial_conditions,
-    "reference_subsidy_sweep": reference_subsidy_sweep,
+    # "standard_stochastic_run": standard_stochastic_run,
+    # "issuance_sweep": issuance_sweep,
+    # "fund_inclusion": fund_inclusion,
+    # "reward_split_sweep": reward_split_sweep,
+    # "sweep_credit_supply": sweep_credit_supply,
+    # "sweep_over_single_component_and_credit_supply": sweep_over_single_component_and_credit_supply,
+    # "initial_conditions": initial_conditions,
+    # "reference_subsidy_sweep": reference_subsidy_sweep,
+    "psuu": psuu,
 }
 
 experiment_ids = {
@@ -68,9 +70,9 @@ experiment_ids = {
     "reward_split_sweep": 4,
     "issuance_sweep": 5,
     "sweep_credit_supply": 6,
-    "sweep_over_single_component_and_credit_supply": 7,
+    # "sweep_over_single_component_and_credit_supply": 7,
     "initial_conditions": 8,
-    "sweep_over_single_component_and_credit_supply": 9,
+    # "sweep_over_single_component_and_credit_supply": 9,
     "reference_subsidy_sweep": 10,
 }
 
@@ -81,7 +83,7 @@ experiment_charts = {
     "fund_inclusion": [],
     "reward_split_sweep": [],
     "sweep_credit_supply": [ab_block_utilization],
-    "sweep_over_single_component_and_credit_supply": [],
+    # "sweep_over_single_component_and_credit_supply": [],
     "initial_conditions": [],
     "reference_subsidy_sweep": [],
 }
@@ -93,7 +95,7 @@ experiment_timestep_metrics = {
     "fund_inclusion": [],
     "reward_split_sweep": [],
     "sweep_credit_supply": [],
-    "sweep_over_single_component_and_credit_supply": [],
+    # "sweep_over_single_component_and_credit_supply": [],
     "initial_conditions": [],
     "reference_subsidy_sweep": [],
 }
@@ -105,7 +107,7 @@ experiment_trajectory_metrics = {
     "fund_inclusion": [],
     "reward_split_sweep": [],
     "sweep_credit_supply": [],
-    "sweep_over_single_component_and_credit_supply": [],
+    # "sweep_over_single_component_and_credit_supply": [],
     "initial_conditions": [],
     "reference_subsidy_sweep": [],
 }
@@ -117,7 +119,7 @@ experiment_additional_notebook_templates = {
     "fund_inclusion": [],
     "reward_split_sweep": [],
     "sweep_credit_supply": [],
-    "sweep_over_single_component_and_credit_supply": [],
+    # "sweep_over_single_component_and_credit_supply": [],
     "initial_conditions": [],
     "reference_subsidy_sweep": [],
 }

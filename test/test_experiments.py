@@ -5,7 +5,7 @@ from subspace_model.experiments.experiment import (
     sanity_check_run,
     standard_stochastic_run,
     sweep_credit_supply,
-    sweep_over_single_component_and_credit_supply,
+    # sweep_over_single_component_and_credit_supply,
     reference_subsidy_sweep,
 )
 
