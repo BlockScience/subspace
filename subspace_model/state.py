@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 
-<<<<<<< HEAD
-from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE
-=======
 from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE, ISSUED_AT_LAUNCH
->>>>>>> 627f7a1378891b5b8aa7437902140bece268bccc
 from subspace_model.types import SubspaceModelState
 
 INITIAL_STATE = SubspaceModelState(
