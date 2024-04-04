@@ -10,6 +10,8 @@ from datetime import datetime
 from joblib import Parallel, delayed
 from glob import glob
 import re
+from tqdm.auto import tqdm
+
 
 from subspace_model.const import *
 from subspace_model.experiments.logic import (
@@ -497,10 +499,6 @@ def reference_subsidy_sweep(
 
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
-
     # Get the sweep params in the form of single length arrays
     param_set_1 = deepcopy(DEFAULT_PARAMS)
     param_set_1["label"] = "constant-single-component"
@@ -647,7 +645,7 @@ def psuu(
         # Combine all of the chunks and write simulation results to disk
         latest = '-'.join(sorted(glob("./data/simulations/psuu_run*"))[-1].split('-')[:-1])
         parts = glob(f"{latest}*")
-        sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1)))
+        sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1))) # type: ignore
         sim_df = pd.concat([pd.read_pickle(part, compression='gzip') for part in sorted_parts])
         return sim_df
 
