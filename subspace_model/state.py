@@ -10,6 +10,7 @@ INITIAL_STATE = SubspaceModelState(
     days_passed=0.0,
     delta_days=0.0,
     delta_blocks=0,
+    blocks_passed=0,
 
     # Metrics
     ## Supply Related
