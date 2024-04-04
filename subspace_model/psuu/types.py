@@ -6,6 +6,9 @@ from typing import Callable, Type
  # A Tensor with (simulation, subset, run, timestep) dimensions
 TimestepTensor = pd.DataFrame
 
+# A subset of the TimestepTensor on which there's a single unique value for each of (simulation, subset, run) across the dataset.
+TrajectoryDataFrame = TimestepTensor
+
  # A Tensor with (simulation, subset, run) dimensions
 TrajectoryTensor = pd.DataFrame
 
@@ -17,9 +20,9 @@ KPIWeights = dict[str, float]
 GoalUtility = float
 GoalThreshold = Optional[bool]
 
-TrajectoryKPI = Callable[[TimestepTensor], KPI] # type: ignore
+TrajectoryKPI = Callable[[TrajectoryDataFrame], KPI] # type: ignore
 TrajectoryThreshold = Callable[[KPI, list[KPI]], SuccessThreshold]
-TrajectoryGoalUtility = Callable[[list[KPI]], GoalUtility]
+TrajectoryGoalUtility = Callable[[dict[str, KPI]], GoalUtility]
 TrajectoryGoalThreshold = Callable[[GoalThreshold, list[GoalThreshold]], GoalThreshold]
 
 class TrajectoryKPIandThreshold(NamedTuple):

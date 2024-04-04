@@ -106,20 +106,37 @@ class SubsidyComponent:
 
 class SubspaceModelState(TypedDict):
     # Time Variables
+    timestep: int
+    substep: int
     days_passed: Days
     delta_days: Days
     delta_blocks: Blocks
 
     # Metrics
+    ## Supply Related
     circulating_supply: Credits
     user_supply: Credits
     issued_supply: Credits
     sum_of_stocks: Credits
+    earned_supply: Credits
+    earned_minus_burned_supply: Credits
+    total_supply: Credits
+
+    ## Network Related
     block_utilization: Percentage
+    compute_fee_volume: Credits
+    storage_fee_volume: Credits
+
+    ##  Reward Related
+    rewards_to_nominators: Credits
+    per_recipient_reward: Credits
+    proposer_bonus_reward: Credits
+    reward_to_proposer: Credits
+    reward_to_voters: Credits
+
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
-    initial_community_owned_supply_pct_of_max_credits: Percentage
 
     # Stocks
     reward_issuance_balance: Credits
@@ -143,29 +160,39 @@ class SubspaceModelState(TypedDict):
     allocated_tokens: Credits
     buffer_size: Bytes
 
-    # Stochastic Variables
-    average_base_fee: Optional[ShannonPerComputeWeights]
+    # Environmental Variables
+
+    ## Fee Related
     average_priority_fee: Optional[ShannonPerComputeWeights]
 
+    ## Tx Related
     average_compute_weight_per_tx: ComputeWeights
     average_transaction_size: Bytes
     transaction_count: int
-
     average_compute_weight_per_bundle: ComputeWeights
     average_bundle_size: Bytes
     bundle_count: int
 
-    # Metrics
-    compute_fee_volume: Credits
-    storage_fee_volume: Credits
-    rewards_to_nominators: Credits
+    # Uncategorized Terms
+    storage_fee_per_rewards: float
+    avg_blockspace_usage: float
+    reference_subsidy: float
+    compute_fee_multiplier: float
+    free_space: float
+    extrinsic_length_in_bytes: float
+    storage_fee_in_credits_per_bytes: float
+    priority_fee_volume: float
+    consensus_extrinsic_fee_volume: float
+    max_normal_weight: float
+    max_bundle_weight: float
+    target_block_fullness: float
+    adjustment_variable: float
+    storage_fees_to_farmers: float
+    storage_fees_to_fund: float
+    target_block_delta: float
+    targeted_adjustment_parameter: float
+    tx_compute_weight: float
 
-    # max_normal_weight:
-    # max_bundle_weight:
-    # target_block_fullness:
-    # block_weight_utilization:
-    # adjustment_variable:
-    # priority_fee_volume:
 
 
 class SubspaceModelParams(TypedDict):
@@ -191,6 +218,7 @@ class SubspaceModelParams(TypedDict):
     weight_to_fee: Credits
 
     # Economic Parameters
+    reward_recipients: int
     reward_proposer_share: Percentage
     max_credit_supply: Credits
     credit_supply_definition: Callable[[SubspaceModelState], Credits]
@@ -205,6 +233,9 @@ class SubspaceModelParams(TypedDict):
     # Slash Parameters
     slash_to_fund: Percentage
     slash_to_holders: Percentage
+
+    # Other
+    initial_community_owned_supply_pct_of_max_credits: Percentage
 
     # Behavioral Parameters
     operator_stake_per_ts_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]

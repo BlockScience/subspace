@@ -5,28 +5,27 @@ import numpy as np
 
 ## KPIs
 
-def per_timestep_average_relative_community_owned_supply(df: TimestepTensor) -> KPI:
+def per_timestep_average_relative_community_owned_supply(df: TrajectoryDataFrame) -> KPI:
     pass
 
 
-def mean_farmer_subsidy_factor(df: TimestepTensor) -> KPI:
+def mean_farmer_subsidy_factor(df: TrajectoryDataFrame) -> KPI:
     pass
 
-def mean_proposing_rewards_per_newly_pledged_space(df: TimestepTensor) -> KPI:
+def mean_proposing_rewards_per_newly_pledged_space(df: TrajectoryDataFrame) -> KPI:
     pass
 
-def mean_proposer_reward_minus_voter_reward(df: TimestepTensor) -> KPI:
-    pass
+def mean_proposer_reward_minus_voter_reward(df: TrajectoryDataFrame) -> KPI:
+    return (df['reward_to_proposer'] - df['reward_to_voters']).mean()
 
-
-def cumm_rewards_before_1yr(df: TimestepTensor) -> KPI:
+def cumm_rewards_before_1yr(df: TrajectoryDataFrame) -> KPI:
     return df.query("days_passed < 366").block_reward.sum()
 
 
-def abs_sum_storage_fees_per_sum_compute_fees(df: TimestepTensor) -> KPI:
+def abs_sum_storage_fees_per_sum_compute_fees(df: TrajectoryDataFrame) -> KPI:
     pass
 
-def cumm_rewards(df: TimestepTensor) -> KPI:
+def cumm_rewards(df: TrajectoryDataFrame) -> KPI:
     return df.block_reward.sum()
 
 ## Thresholds

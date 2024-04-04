@@ -51,20 +51,25 @@ DEFAULT_PARAMS = SubspaceModelParams(
     weight_to_fee=1 * SHANNON_IN_CREDITS,
 
     # Economic Parameters
-    reward_proposer_share=0.0,  # TODO
-    max_credit_supply=3_000_000_000,  # TODO,
-    credit_supply_definition=SUPPLY_ISSUED,
+    reward_recipients=10,
+    reward_proposer_share=0.3,  # NOTE: to sweep
+    max_credit_supply=1_000_000_000, 
+    credit_supply_definition=SUPPLY_ISSUED, # TODO: Set in stone the def
     community_vested_supply_fraction=0.225,
 
     # Fees & Taxes
-    fund_tax_on_proposer_reward=0.0,  # TODO
-    fund_tax_on_storage_fees=1 / 10,
-    compute_fees_to_farmers=0.0,  # TODO
+    fund_tax_on_proposer_reward=0.0,  # TODO: assume
+    fund_tax_on_storage_fees=1 / 10, # TODO: assume
+    compute_fees_to_farmers=0.0,  # NOTE: to sweep
     compute_fees_tax_to_operators=0.05,  # or `nomination_tax`
 
     # Slash Parameters
     slash_to_fund=0.0,
     slash_to_holders=0.05,
+
+    # Other
+    initial_community_owned_supply_pct_of_max_credits=(1/33), # TODO
+
 
     # Behavioral Parameters Between 0 and 1
     operator_stake_per_ts_function=operator_stake_per_ts_function,
