@@ -3,11 +3,11 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 from cadCAD.tools import easy_run  # type: ignore
-from cadCAD.tools.preparation import sweep_cartesian_product
+from cadCAD.tools.preparation import sweep_cartesian_product # type: ignore
 from pandas import DataFrame
 from random import sample
 from datetime import datetime
-from joblib import Parallel, delayed
+from joblib import Parallel, delayed # type: ignore
 from glob import glob
 import re
 from tqdm.auto import tqdm
