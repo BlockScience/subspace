@@ -89,9 +89,13 @@ from dataclasses import dataclass
 @dataclass
 class SubsidyComponent:
     initial_period_start: float  # τ_{0, i}
-    initial_period_end: float  # τ_{1, i}
+    initial_period_duration: float  # τ_{1, i}
     max_cumulative_subsidy: float  # Ω_i
     max_reference_subsidy: float  # α_i
+
+    # Dataclass constructor method
+    def __post_init__(self):
+        self.initial_period_end = self.initial_period_start + self.initial_period_duration
 
     def __call__(self, t: float) -> float:
         """Allow the instance to be called as a function to calculate the subsidy."""
@@ -161,62 +165,50 @@ REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS = [
 DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
 
 def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
-    reference_subsidy_1_start_params = np.linspace(
-        start=0 * BLOCKS_PER_MONTH, stop=1 * BLOCKS_PER_MONTH, num=3
-    )
-    reference_subsidy_1_end_params = [0]
-    reference_subsidy_1_initial_subsidy_params = [1, 4, 7]
-    reference_subsidy_1_maximum_cumulative_subsidy_params = np.linspace(
-        start=0.1 * MAX_CREDIT_ISSUANCE,
-        stop=0.5 * MAX_CREDIT_ISSUANCE,
-        num=3,
-    )
-    reference_subsidy_2_start_params = reference_subsidy_1_start_params
-    reference_subsidy_2_end_params = [
-            6 * BLOCKS_PER_MONTH,
-            12 * BLOCKS_PER_MONTH,
-            24 * BLOCKS_PER_MONTH,
-            48 * BLOCKS_PER_MONTH,
-            ]
-    reference_subsidy_2_initial_subsidy_params = [1, 4, 7]
-    reference_subsidy_2_maximum_cumulative_subsidy_params = reference_subsidy_1_maximum_cumulative_subsidy_params
+    component_1_start_days = component_2_start_days = [0, 14, 30]
+
+    component_1_initial_subsidy_duration = [0]
+    component_1_initial_subsidies = [1, 4, 7]
+    component_1_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
+
+    component_2_initial_subsidy_duration = [6*BLOCKS_PER_MONTH, 12*BLOCKS_PER_MONTH, 24*BLOCKS_PER_MONTH, 48*BLOCKS_PER_MONTH]
+    component_2_initial_subsidies = [1, 4, 7]
+    component_2_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
 
     cartesian_product = sweep_cartesian_product({
-            'reference_subsidy_1_start_params': reference_subsidy_1_start_params,
-            'reference_subsidy_1_end_params': reference_subsidy_1_end_params,
-            'reference_subsidy_1_initial_subsidy_params': reference_subsidy_1_initial_subsidy_params,
-            'reference_subsidy_1_maximum_cumulative_subsidy_params': reference_subsidy_1_maximum_cumulative_subsidy_params,
-            'reference_subsidy_2_start_params': reference_subsidy_2_start_params,
-            'reference_subsidy_2_end_params': reference_subsidy_2_end_params,
-            'reference_subsidy_2_initial_subsidy_params': reference_subsidy_2_initial_subsidy_params,
-            'reference_subsidy_2_maximum_cumulative_subsidy_params': reference_subsidy_2_maximum_cumulative_subsidy_params,
+            'component_1_start_days': component_1_start_days,
+            'component_1_initial_subsidy_duration': component_1_initial_subsidy_duration,
+            'component_1_initial_subsidies': component_1_initial_subsidies,
+            'component_1_maximum_cumulative_subsidies': component_1_maximum_cumulative_subsidies,
+            'component_2_start_days': component_2_start_days,
+            'component_2_initial_subsidy_duration': component_2_initial_subsidy_duration,
+            'component_2_initial_subsidies': component_2_initial_subsidies,
+            'component_2_maximum_cumulative_subsidies': component_2_maximum_cumulative_subsidies
             })
-
-    cartesian_product['reference_subsidy_1_end_params'] = cartesian_product['reference_subsidy_1_start_params']
 
     components = [
             [
             SubsidyComponent(
                 start1,
-                end1,
+                duration1,
                 initial_subsidy1,
                 maximum_cumulative_subsidy1,
                 ), 
             SubsidyComponent(
                 start2,
-                end2,
+                duration2,
                 initial_subsidy2,
                 maximum_cumulative_subsidy2,)
             ]
-             for start1, end1, initial_subsidy1, maximum_cumulative_subsidy1, start2, end2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
-                    cartesian_product['reference_subsidy_1_start_params'],
-                    cartesian_product['reference_subsidy_1_end_params'],
-                    cartesian_product['reference_subsidy_1_initial_subsidy_params'],
-                    cartesian_product['reference_subsidy_1_maximum_cumulative_subsidy_params'],
-                    cartesian_product['reference_subsidy_2_start_params'],
-                    cartesian_product['reference_subsidy_2_end_params'],
-                    cartesian_product['reference_subsidy_2_initial_subsidy_params'],
-                    cartesian_product['reference_subsidy_2_maximum_cumulative_subsidy_params'],
+             for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
+                    cartesian_product['component_1_start_days'],
+                    cartesian_product['component_1_initial_subsidy_duration'],
+                    cartesian_product['component_1_initial_subsidies'],
+                    cartesian_product['component_1_maximum_cumulative_subsidies'],
+                    cartesian_product['component_2_start_days'],
+                    cartesian_product['component_2_initial_subsidy_duration'],
+                    cartesian_product['component_2_initial_subsidies'],
+                    cartesian_product['component_2_maximum_cumulative_subsidies'],
                     )]
 
     return components
