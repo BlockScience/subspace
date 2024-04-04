@@ -744,7 +744,7 @@ def s_avg_blockspace_usage(
     # Compute Average Blockspace Usage
     blocks_passed = state["blocks_passed"]
     delta_blocks = state["delta_blocks"]
-    num_blocks = params["num_blocks"]
+    num_blocks = params["utilization_ratio_smooth_num_blocks"]
     avg_blockspace_usage = state["avg_blockspace_usage"]
 
     if num_blocks == 0:

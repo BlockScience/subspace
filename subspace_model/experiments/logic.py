@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
-from cadCAD.tools.preparation import sweep_cartesian_product
-
+from cadCAD.tools.preparation import sweep_cartesian_product # type: ignore
 from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR, DAY_TO_SECONDS, MAX_CREDIT_ISSUANCE
 from subspace_model.metrics import (
     earned_minus_burned_supply,
@@ -13,6 +12,7 @@ from subspace_model.types import (
     StochasticFunction,
     SubspaceModelParams,
     SubspaceModelState,
+    SubsidyComponent
 )
 
 
@@ -84,65 +84,6 @@ SUPPLY_TOTAL = total_supply
 
 import math
 from dataclasses import dataclass
-
-
-@dataclass
-class SubsidyComponent:
-    initial_period_start: float  # τ_{0, i}
-    initial_period_end: float  # τ_{1, i}
-    max_cumulative_subsidy: float  # Ω_i
-    max_reference_subsidy: float  # α_i
-
-    def __call__(self, t: float) -> float:
-        """Allow the instance to be called as a function to calculate the subsidy."""
-        return self.calculate_subsidy(t)
-
-    def calculate_subsidy(self, t: float) -> float:
-        """Calculate S(t) the subsidy for a given time."""
-        if t < self.initial_period_start:
-            return 0
-        elif self.initial_period_start <= t <= self.initial_period_end:
-            return self.calculate_linear_subsidy(t)
-        else:
-            return self.calculate_exponential_subsidy(t)
-
-    def calculate_linear_subsidy(self, t: float) -> float:
-        """Calculate S_l(t) the linear subsidy for a given time."""
-        already_distributed = self.max_reference_subsidy * (
-            t - self.initial_period_start
-        )
-        if already_distributed >= self.max_cumulative_subsidy:
-            return 0
-        elif (
-            already_distributed + self.max_reference_subsidy
-            > self.max_cumulative_subsidy
-        ):
-            return self.max_cumulative_subsidy - already_distributed
-        else:
-            return self.max_reference_subsidy
-
-    def calculate_exponential_subsidy(self, t: float) -> float:
-        """Calculate S_e(t) the exponential subsidy for a given time."""
-        K = self.max_total_subsidy_during_exponential_period
-        if K > 0:
-            return self.max_reference_subsidy * math.exp(
-                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end))
-            )
-        else:
-            return 0
-
-    @property
-    def max_total_subsidy_during_exponential_period(self) -> float:
-        """Calculate K the maximum total subsidy during the exponential period."""
-        return self.max_cumulative_subsidy - self.max_reference_subsidy * (
-            self.initial_period_end - self.initial_period_start
-        )
-
-    @property
-    def halving_period(self) -> float:
-        """Calculate L the halving period for the component rewards."""
-        K = self.max_total_subsidy_during_exponential_period
-        return K * math.log(2) / self.max_reference_subsidy
 
 
 REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT = [
