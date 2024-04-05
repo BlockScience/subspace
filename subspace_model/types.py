@@ -310,6 +310,15 @@ state_tensor_type_hints = {'simulation': int,
                            **state_type_hints}
 
 state_tensor_type_hints_as_cols = {
-    k: pa.Column(v) for k, v in state_type_hints.items()}
+    k: pa.Column(v) for k, v in state_tensor_type_hints.items()}
 
 TimestepStateTensor = pa.DataFrameSchema(state_tensor_type_hints_as_cols)
+
+per_traj_state_tensor_type_hints_as_cols = state_tensor_type_hints_as_cols.copy()
+
+per_traj_state_tensor_type_hints_as_cols.pop('simulation')
+per_traj_state_tensor_type_hints_as_cols.pop('subset')
+per_traj_state_tensor_type_hints_as_cols.pop('run')
+
+PerTrajectoryTimestepStateTensor = pa.DataFrameSchema(per_traj_state_tensor_type_hints_as_cols)
+
