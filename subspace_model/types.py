@@ -1,46 +1,47 @@
-from typing import Annotated, Callable, NamedTuple, Optional, TypedDict, Union
+from typing import Callable, Optional, TypedDict, get_origin, Union, get_args
 import math
 from dataclasses import dataclass
+import pandera as pa
 
 # Time units
-Blocks = Annotated[float, "blocks"]  # 1 block ~ 6s. Or 1 day ~ 14400 blocks
-Days = Annotated[float, "days"]  # Number of days
-Seconds = Annotated[float, "s"]
-PerYear = Annotated[float, "1/year"]  # Yearly rate
-Year = Annotated[float, "year"]  # Number of years
-Picoseconds = Annotated[float, "ps"]  # Number of Picoseconds
+Blocks = float  # 1 block ~ 6s. Or 1 day ~ 14400 blocks
+Days = float  # Number of days
+Seconds = float
+PerYear = float  # Yearly rate
+Year = float  # Number of years
+Picoseconds = float  # Number of Picoseconds
 
 # Measurement units
-Credits = Annotated[float, "SSC"]
-CreditsPerComputeWeights = Annotated[float, "SSC/CW"]
-CreditsPerDay = Annotated[float, "SSC/day"]
-ComputeWeights = Annotated[float, "CW"]
-Shannon = Annotated[float, "Shannon"]  # 1e-18 SSC
-ShannonPerComputeWeights = Annotated[float, "Shannon/CW"]
+Credits = float
+CreditsPerComputeWeights = float
+CreditsPerDay = float
+ComputeWeights = float
+Shannon = float  # 1e-18 SSC
+ShannonPerComputeWeights = float
 
 # Storage
-Bytes = Annotated[int, "bytes"]
-Chunk = Annotated[int, "chunk"]  # As per Subnomicon: 1 chunk = 32 Bytes
-RawRecord = Annotated[Chunk, "raw_record"]  # As per Subnomicon: 2**15 Chunks (~1MB)
-Piece = Annotated[
-    int, "piece"
-]  # As per Subnomicon: 1 piece = 1 record + commitment + witness
-Record = Annotated[Piece, "record"]  # As per Subnomicon: a transformed raw record.
-Sector = Annotated[Piece, "sector"]  # As per Subnomicon: 1000 Pieces or ~ 1 GiB
+Bytes = int
+Chunk = int  # As per Subnomicon: 1 chunk = 32 Bytes
+# As per Subnomicon: 2**15 Chunks (~1MB)
+RawRecord = Chunk
+Piece = int  # As per Subnomicon: 1 piece = 1 record + commitment + witness
+# As per Subnomicon: a transformed raw record.
+Record = Piece
+# As per Subnomicon: 1000 Pieces or ~ 1 GiB
+Sector = Piece
 
 # As per Subnomicon: A collection of potential partial or full blocks.
 # Can be either a fixed-size portion of the Blockchain History
 # or a fixed-size portion of the Archived History
-Segment = Annotated[Bytes, "segment"]
-RecordedHistorySegment = Annotated[Record, "record_segment"]
-ArchivedHistorySegment = Annotated[Piece, "archive_segment"]
+Segment = Bytes
+RecordedHistorySegment = Record
+ArchivedHistorySegment = Piece
 
 # Taxonomy:
 # Chunk < Record/Piece < Sector < Plot < History
 
 # Misc units
-Percentage = Annotated[float, "%"]
-
+Percentage = float
 
 
 @dataclass
@@ -83,7 +84,8 @@ class SubsidyComponent:
         K = self.max_total_subsidy_during_exponential_period
         if K > 0:
             return self.max_reference_subsidy * math.exp(
-                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end))
+                -self.max_reference_subsidy /
+                max(1, K * (t - self.initial_period_end))
             )
         else:
             return 0
@@ -102,8 +104,6 @@ class SubsidyComponent:
         return K * math.log(2) / self.max_reference_subsidy
 
 
-
-
 class SubspaceModelState(TypedDict):
     # Time Variables
     timestep: int
@@ -111,9 +111,10 @@ class SubspaceModelState(TypedDict):
     days_passed: Days
     delta_days: Days
     delta_blocks: Blocks
+    blocks_passed: Blocks
 
     # Metrics
-    ## Supply Related
+    # Supply Related
     circulating_supply: Credits
     user_supply: Credits
     issued_supply: Credits
@@ -121,19 +122,19 @@ class SubspaceModelState(TypedDict):
     earned_supply: Credits
     earned_minus_burned_supply: Credits
     total_supply: Credits
+    community_owned_supply: Credits
 
-    ## Network Related
+    # Network Related
     block_utilization: Percentage
     compute_fee_volume: Credits
     storage_fee_volume: Credits
 
-    ##  Reward Related
+    # Reward Related
     rewards_to_nominators: Credits
     per_recipient_reward: Credits
     proposer_bonus_reward: Credits
     reward_to_proposer: Credits
     reward_to_voters: Credits
-
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
@@ -162,10 +163,10 @@ class SubspaceModelState(TypedDict):
 
     # Environmental Variables
 
-    ## Fee Related
+    # Fee Related
     average_priority_fee: Optional[ShannonPerComputeWeights]
 
-    ## Tx Related
+    # Tx Related
     average_compute_weight_per_tx: ComputeWeights
     average_transaction_size: Bytes
     transaction_count: int
@@ -194,7 +195,6 @@ class SubspaceModelState(TypedDict):
     tx_compute_weight: float
 
 
-
 class SubspaceModelParams(TypedDict):
     # Meta
     label: str
@@ -203,7 +203,8 @@ class SubspaceModelParams(TypedDict):
 
     # Mechanism Parameters
     issuance_function: Callable
-    slash_function: Callable[['SubspaceModelParams', SubspaceModelState], Credits]
+    slash_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Credits]
     reference_subsidy_components: list[SubsidyComponent]
     issuance_function_constant: float
     utilization_ratio_smooth_num_blocks: int
@@ -238,43 +239,77 @@ class SubspaceModelParams(TypedDict):
     initial_community_owned_supply_pct_of_max_credits: Percentage
 
     # Behavioral Parameters
-    operator_stake_per_ts_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
-    nominator_stake_per_ts_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_farmer_to_holder_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_operator_to_holder_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_nominator_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_operator_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
+    operator_stake_per_ts_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
+    nominator_stake_per_ts_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
+    transfer_farmer_to_holder_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
+    transfer_operator_to_holder_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
+    transfer_holder_to_nominator_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
+    transfer_holder_to_operator_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
 
     # Environmental Parameters
-    ## Environmental: Fees
-    #base_fee_function: Callable[[bool], Percentage]
-    #min_base_fee: Credits
-    priority_fee_function: Callable[['SubspaceModelParams', SubspaceModelState], Percentage]
+    # Environmental: Fees
+    # base_fee_function: Callable[[bool], Percentage]
+    # min_base_fee: Credits
+    priority_fee_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Percentage]
 
-    ## Enviromental: Compute Weights per Tx
-    compute_weights_per_tx_function: Callable[['SubspaceModelParams', SubspaceModelState], ComputeWeights]
+    # Enviromental: Compute Weights per Tx
+    compute_weights_per_tx_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], ComputeWeights]
     min_compute_weights_per_tx: ComputeWeights
-    compute_weight_per_bundle_function: Callable[['SubspaceModelParams', SubspaceModelState], ComputeWeights]
+    compute_weight_per_bundle_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], ComputeWeights]
     min_compute_weights_per_bundle: ComputeWeights
 
-    ## Environmental: Tx Sizes
-    transaction_size_function: Callable[['SubspaceModelParams', SubspaceModelState], Bytes]
+    # Environmental: Tx Sizes
+    transaction_size_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Bytes]
     min_transaction_size: Bytes
-    bundle_size_function: Callable[['SubspaceModelParams', SubspaceModelState], Bytes]
+    bundle_size_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Bytes]
     min_bundle_size: Bytes  # TODO: confirm
 
-    ## Environmental: Tx Count
-    transaction_count_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], float]
-    bundle_count_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], float]
+    # Environmental: Tx Count
+    transaction_count_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], float]
+    bundle_count_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], float]
 
-    ## Environmental: Slash Count
-    slash_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], float]
+    # Environmental: Slash Count
+    slash_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], float]
 
-    ## Environmental: Space Pledged per Time
-    new_sectors_per_day_function: Callable[['SubspaceModelParams', SubspaceModelState], float]
+    # Environmental: Space Pledged per Time
+    new_sectors_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], float]
 
 
 # Logic implementation types
 StochasticFunction = Callable[[SubspaceModelParams, SubspaceModelState], float]
 
 
+raw_state_type_hints = {k: v for k,
+                        v in SubspaceModelState.__annotations__.items()}
+
+
+state_type_hints = {k: v if get_origin(v) != Union
+                    else get_args(v)[0]
+                    for k, v in raw_state_type_hints.items()}
+
+state_tensor_type_hints = {'simulation': int,
+                           'subset': int,
+                           'run': int,
+                           'timestep': int,
+                           'substep': int,
+                           **state_type_hints}
+
+state_tensor_type_hints_as_cols = {
+    k: pa.Column(v) for k, v in state_type_hints.items()}
+
+TimestepStateTensor = pa.DataFrameSchema(state_tensor_type_hints_as_cols)
