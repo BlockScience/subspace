@@ -326,11 +326,10 @@ def p_pledge_sectors(
     new_pledge_due_to_random: Bytes = (
         int(
             max(
-                params["new_sectors_per_day_function"](params, state),
+                params["dao_newly_pledged_space_function"](params, state),
                 0,
             )
         )
-        * SECTOR_SIZE
     )
 
     # Add the random process amount to the minimum amount.
