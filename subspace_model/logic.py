@@ -2,7 +2,7 @@ from math import ceil, floor
 from random import randint
 from typing import Callable
 
-from cadCAD.types import PolicyOutput, StateUpdateFunction  # type: ignore
+from cadCAD.types import PolicyOutput, tuple[str, object]  # type: ignore
 
 from subspace_model.const import *
 from subspace_model.metrics import *
@@ -107,13 +107,14 @@ def p_split_reward(
     """ """
     reward = state["block_reward"]
     reward_to_fund = (
-        reward * params["reward_proposer_share"] * params["fund_tax_on_proposer_reward"]
+        reward * params["reward_proposer_share"] *
+        params["fund_tax_on_proposer_reward"]
     )
     reward_to_farmers = reward - reward_to_fund
     return {"farmers_balance": reward_to_farmers, "fund_balance": reward_to_fund}
 
 
-## Operator Rewards
+# Operator Rewards
 
 
 def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
@@ -125,29 +126,25 @@ def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
     return {"other_issuance_balance": -reward, "operators_balance": reward}
 
 
-## Environmental processes
+# Environmental processes
 
 
 def s_average_priority_fee(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the ts-average priority fee during an timestep through
     a Gaussian process.
     XXX: depends on an stochastic process assumption.
     """
-    return (
-        "average_priority_fee",
-        max(
-            params["priority_fee_function"](params, state),
-            0,
-        ),
-    )
+    value = max(params["priority_fee_function"](params, state),  0,)
+
+    return ("average_priority_fee",  value)
 
 
 def s_average_compute_weight_per_tx(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -163,27 +160,7 @@ def s_average_compute_weight_per_tx(
 
 def s_average_compute_weight_per_bundle(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
-    """
-    Simulate the ts-average compute weights per transaction through a Gaussian process.
-    XXX: depends on an stochastic process assumption.
-    """
-    # TODO: verify that is implemented correctly
-    return (
-        "average_compute_weight_per_budle",
-        max(
-            params["compute_weight_per_bundle_function"](
-                params,
-                state,
-            ),
-            params["min_compute_weights_per_bundle"],
-        ),
-    )
-
-
-def s_average_compute_weight_per_bundle(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -203,7 +180,7 @@ def s_average_compute_weight_per_bundle(
 
 def s_average_transaction_size(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the ts-average transaction size through a Gaussian process.
     XXX: depends on an stochastic process assumption.
@@ -222,7 +199,7 @@ def s_average_transaction_size(
 
 def s_transaction_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the ts-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
@@ -240,7 +217,7 @@ def s_transaction_count(
 
 def s_bundle_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """
     Simulate the bs-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
@@ -269,7 +246,8 @@ def p_archive(
     header_volume: Bytes = state["delta_blocks"] * params["header_size"]
 
     # Transaction volume in bytes. This is the driver of blockchain history storage growth.
-    tx_volume: Bytes = state["transaction_count"] * state["average_transaction_size"]
+    tx_volume: Bytes = state["transaction_count"] * \
+        state["average_transaction_size"]
 
     # New buffer bytes are transaction volume plus header
     new_buffer_bytes: Bytes = tx_volume + header_volume
@@ -344,7 +322,7 @@ def p_pledge_sectors(
     return {"total_space_pledged": new_space_pledged}
 
 
-## Compute & Operator Fees
+# Compute & Operator Fees
 def p_storage_fees(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
@@ -365,7 +343,8 @@ def p_storage_fees(
 
     # Add bundle storage
     average_bundle_size: Bytes = max(
-        params["bundle_size_function"](params, state), params["min_bundle_size"]
+        params["bundle_size_function"](
+            params, state), params["min_bundle_size"]
     )
     bundle_storage: Bytes = average_bundle_size * state["bundle_count"]
 
@@ -442,7 +421,8 @@ def p_compute_fees(
     adjustment_variable = state["adjustment_variable"]  # TODO: type
     priority_fee_volume = state["average_priority_fee"]  # TODO: type
 
-    target_block_delta = target_block_fullness - block_weight_utilization  # TODO: type
+    target_block_delta = target_block_fullness - \
+        block_weight_utilization  # TODO: type
 
     targeted_adjustment_parameter = (  # TODO: type
         1
@@ -467,16 +447,13 @@ def p_compute_fees(
     eff_minimum_fee: Credits = 1 * SHANNON_IN_CREDITS
 
     # Calculate compute fee volume
-    compute_fee_volume: Credits = max(
-        (
-            compute_fee_multiplier * weight_to_fee * total_compute_weights
-            + priority_fee_volume
-        ),
-        eff_minimum_fee,
-    )
+    raw_fee = (compute_fee_multiplier * weight_to_fee * total_compute_weights
+               + priority_fee_volume)
+    compute_fee_volume: Credits = max(raw_fee,  eff_minimum_fee, )
 
     # Constrain compute fee volume to be less than holders balance
-    eff_compute_fee_volume: Credits = min(compute_fee_volume, state["holders_balance"])
+    eff_compute_fee_volume: Credits = min(
+        compute_fee_volume, state["holders_balance"])
     eff_scale: float = eff_compute_fee_volume / compute_fee_volume
 
     fees_to_distribute: Credits = compute_fee_volume
@@ -578,7 +555,6 @@ def p_unvest(
     # TODO: what happens if there's less than 51% community owned?
     """
 
-
     # Vesting
     investors = state["allocated_tokens_investors"]
     founders = state["allocated_tokens_founders"]
@@ -606,8 +582,6 @@ def p_unvest(
         vendors += 0.02 * 1/48 * MAX_CREDIT_ISSUANCE
         ambassadors += 0.01 * 1/48 * MAX_CREDIT_ISSUANCE
 
-
-
     # Liquid at Launch
     testnets = state["allocated_tokens_testnets"]
     foundation = state["allocated_tokens_foundation"]
@@ -619,7 +593,9 @@ def p_unvest(
 
     farmers = ISSUANCE_FOR_FARMERS - state["reward_issuance_balance"] - farmers
 
-    tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale
+    tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + \
+        advisors + vendors + ambassadors + testnets + \
+        foundation + subspace_labs + ssl_priv_sale
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
 
@@ -638,7 +614,7 @@ def p_unvest(
     }
 
 
-### User Behavioral Processes
+# User Behavioral Processes
 
 
 def p_staking(
@@ -658,7 +634,7 @@ def p_staking(
     elif state["operator_pool_shares"] == 0 and state["nominator_pool_shares"] == 0:
         invariant = 1
     else:
-        invariant = None
+        invariant = float('nan')
 
     # Stake operation
     operator_stake_fraction = params["operator_stake_per_ts_function"](
@@ -681,10 +657,12 @@ def p_staking(
     )
 
     if nominator_stake_fraction > 0:
-        nominator_stake = state["nominators_balance"] * nominator_stake_fraction
+        nominator_stake = state["nominators_balance"] * \
+            nominator_stake_fraction
     elif invariant > 0:
         nominator_stake = (
-            state["nominator_pool_shares"] * nominator_stake_fraction * invariant
+            state["nominator_pool_shares"] *
+            nominator_stake_fraction * invariant
         )
     else:
         nominator_stake = 0.0
@@ -760,24 +738,27 @@ def p_transfers(
 
 def s_block_utilization(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """ """
-    used_blockspace = state["transaction_count"] * state["average_transaction_size"]
+    used_blockspace = state["transaction_count"] * \
+        state["average_transaction_size"]
     max_normal_block_length = (
-        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
+        params["max_block_size"] * DAY_TO_SECONDS *
+        params["block_time_in_seconds"]
     )
 
     # Compute Block Utilization
     block_utilization = used_blockspace / max_normal_block_length
 
-
     return ("block_utilization", block_utilization,)
+
 
 def s_avg_blockspace_usage(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> StateUpdateFunction:
+) -> tuple[str, object]:
     """ """
-    used_blockspace = state["transaction_count"] * state["average_transaction_size"]
+    used_blockspace = state["transaction_count"] * \
+        state["average_transaction_size"]
 
     # Compute Average Blockspace Usage
     blocks_passed = state["blocks_passed"]
@@ -796,10 +777,11 @@ def s_avg_blockspace_usage(
         # avg_blockspace_usage = multiplier * used_blockspace + (1 - multiplier) * avg_blockspace_usage
 
         # This incorporates the exponential decay of delta_blocks
-        avg_blockspace_usage = avg_blockspace_usage + (used_blockspace - avg_blockspace_usage) * (1 - (1-multiplier)**(delta_blocks))
+        avg_blockspace_usage = avg_blockspace_usage + \
+            (used_blockspace - avg_blockspace_usage) * \
+            (1 - (1-multiplier)**(delta_blocks))
 
     return ("avg_blockspace_usage", state["avg_blockspace_usage"],)
-
 
 
 def p_reference_subsidy(
@@ -811,7 +793,8 @@ def p_reference_subsidy(
     rewards_during_last_timestep = 0.0
     for t in range(int(previous_block_time), int(current_block_time)):
         rewards_during_last_timestep += sum(
-            [component(t) for component in params["reference_subsidy_components"]]
+            [component(t)
+             for component in params["reference_subsidy_components"]]
         )
     return {
         "reference_subsidy": rewards_during_last_timestep,
