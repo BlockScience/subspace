@@ -103,4 +103,9 @@ INITIAL_STATE = SubspaceModelState(
     allocated_tokens_subspace_labs = 0.07 * MAX_CREDIT_ISSUANCE,
     allocated_tokens_ssl_priv_sale = 0.019 * MAX_CREDIT_ISSUANCE,
     community_owned_supply = 0.0,
+
+    ## Cummulative Metrics
+    cumm_rewards=0.0,
+    cumm_storage_fees_to_farmers=0.0,
+    cumm_compute_fees_to_farmers=0.0,
 )

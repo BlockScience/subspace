@@ -1,4 +1,4 @@
-from typing import Callable, Optional, TypedDict, get_origin, Union, get_args
+from typing import Callable, TypedDict, get_origin, Union, get_args
 import math
 from dataclasses import dataclass
 import pandera as pa
@@ -20,7 +20,7 @@ Shannon = float  # 1e-18 SSC
 ShannonPerComputeWeights = float
 
 # Storage
-Bytes = int
+Bytes = float
 Chunk = int  # As per Subnomicon: 1 chunk = 32 Bytes
 # As per Subnomicon: 2**15 Chunks (~1MB)
 RawRecord = Chunk
@@ -181,7 +181,7 @@ class SubspaceModelState(TypedDict):
     # Environmental Variables
 
     # Fee Related
-    average_priority_fee: Optional[ShannonPerComputeWeights]
+    average_priority_fee: ShannonPerComputeWeights
 
     # Tx Related
     average_compute_weight_per_tx: ComputeWeights
@@ -210,6 +210,12 @@ class SubspaceModelState(TypedDict):
     target_block_delta: float
     targeted_adjustment_parameter: float
     tx_compute_weight: float
+
+
+    ## Cummulative Metrics
+    cumm_rewards: Credits # TODO: implement logic
+    cumm_storage_fees_to_farmers: Credits # TODO: implement logic
+    cumm_compute_fees_to_farmers: Credits # TODO: implement logic
 
 
 class SubspaceModelParams(TypedDict):
