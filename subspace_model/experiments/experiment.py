@@ -3,13 +3,15 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 from cadCAD.tools import easy_run  # type: ignore
-from cadCAD.tools.preparation import sweep_cartesian_product
+from cadCAD.tools.preparation import sweep_cartesian_product # type: ignore
 from pandas import DataFrame
 from random import sample
 from datetime import datetime
-from joblib import Parallel, delayed
+from joblib import Parallel, delayed # type: ignore
 from glob import glob
 import re
+from tqdm.auto import tqdm
+
 
 from subspace_model.const import *
 from subspace_model.experiments.logic import (
@@ -497,10 +499,6 @@ def reference_subsidy_sweep(
 
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT,
-    REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS,
-
     # Get the sweep params in the form of single length arrays
     param_set_1 = deepcopy(DEFAULT_PARAMS)
     param_set_1["label"] = "constant-single-component"
@@ -545,7 +543,7 @@ def reference_subsidy_sweep(
     return sim_df
 
 def psuu(
-        SIMULATION_DAYS: int = 3*365, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 2, N_SWEEP_SAMPLES: int = 5, SWEEPS_PER_PROCESS: int = 2, PROCESSES: int = 24, PARALLELIZE: bool = True, USE_JOBLIB: bool = True
+        SIMULATION_DAYS: int = 3*365, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1, N_SWEEP_SAMPLES: int = 10, SWEEPS_PER_PROCESS: int = 1, PROCESSES: int = 24, PARALLELIZE: bool = True, USE_JOBLIB: bool = True
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -647,7 +645,7 @@ def psuu(
         # Combine all of the chunks and write simulation results to disk
         latest = '-'.join(sorted(glob("./data/simulations/psuu_run*"))[-1].split('-')[:-1])
         parts = glob(f"{latest}*")
-        sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1)))
+        sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1))) # type: ignore
         sim_df = pd.concat([pd.read_pickle(part, compression='gzip') for part in sorted_parts])
         return sim_df
 

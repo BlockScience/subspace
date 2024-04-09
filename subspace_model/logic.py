@@ -576,26 +576,64 @@ def p_unvest(
     # TODO: parametrize / generalize the schedule
     # TODO: what happens if there's less than 51% community owned?
     """
-    if state["days_passed"] < 365:
-        allocated_tokens = 0.0
-    elif state["days_passed"] >= 365:
-        allocated_tokens = 0.30 * 0.25
-        allocated_tokens += (
-            0.22 * 0.75 * min((state["days_passed"] - 365) / (365 * 2), 1)
-        )  # Investors
-        allocated_tokens += (
-            0.08 * 0.75 * min((state["days_passed"] - 365) / (4 * 365), 1)
-        )  # Team
-        allocated_tokens *= params["max_credit_supply"]
 
-    tokens_to_allocate = allocated_tokens - state["allocated_tokens"]
+
+    # Vesting
+    investors = state["allocated_tokens_investors"]
+    founders = state["allocated_tokens_founders"]
+    team = state["allocated_tokens_team"]
+    advisors = state["allocated_tokens_advisors"]
+    vendors = state["allocated_tokens_vendors"]
+    ambassadors = state["allocated_tokens_ambassadors"]
+
+    if state["days_passed"] < 365:
+        pass
+
+    elif state["days_passed"] == 365:
+        investors += 0.2153 * 0.25 * MAX_CREDIT_ISSUANCE
+        founders += 0.02 * 0.25 * MAX_CREDIT_ISSUANCE
+        team += 0.05 * 0.25 * MAX_CREDIT_ISSUANCE
+        advisors += 0.015 * 0.25 * MAX_CREDIT_ISSUANCE
+        vendors += 0.02 * 0.25 * MAX_CREDIT_ISSUANCE
+        ambassadors += 0.01 * 0.25 * MAX_CREDIT_ISSUANCE
+
+    elif ((state["days_passed"]-365) % int(365/12) == 0) and ((state["days_passed"]-365) // int(365/12) <= 36):
+        investors += 0.2153 * 1/48 * MAX_CREDIT_ISSUANCE
+        founders += 0.02 * 1/48 * MAX_CREDIT_ISSUANCE
+        team += 0.05 * 1/48 * MAX_CREDIT_ISSUANCE
+        advisors += 0.015 * 1/48 * MAX_CREDIT_ISSUANCE
+        vendors += 0.02 * 1/48 * MAX_CREDIT_ISSUANCE
+        ambassadors += 0.01 * 1/48 * MAX_CREDIT_ISSUANCE
+
+
+
+    # Liquid at Launch
+    testnets = state["allocated_tokens_testnets"]
+    foundation = state["allocated_tokens_foundation"]
+    subspace_labs = state["allocated_tokens_subspace_labs"]
+    ssl_priv_sale = state["allocated_tokens_ssl_priv_sale"]
+
+    # Farmers
+    farmers = state["allocated_tokens_farmers"]
+
+    farmers = ISSUANCE_FOR_FARMERS - state["reward_issuance_balance"] - farmers
+
+    tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
 
     return {
         "other_issuance_balance": other_issuance_balance,
         "holders_balance": holders_balance,
-        "allocated_tokens": allocated_tokens,
+        "allocated_tokens": tokens_to_allocate,
+
+        "allocated_tokens_investors": investors,
+        "allocated_tokens_founders": founders,
+        "allocated_tokens_team": team,
+        "allocated_tokens_advisors": advisors,
+        "allocated_tokens_vendors": vendors,
+        "allocated_tokens_ambassadors": ambassadors,
+        "allocated_tokens_farmers": farmers,
     }
 
 
@@ -743,7 +781,7 @@ def s_avg_blockspace_usage(
     # Compute Average Blockspace Usage
     blocks_passed = state["blocks_passed"]
     delta_blocks = state["delta_blocks"]
-    num_blocks = params["num_blocks"]
+    num_blocks = params["utilization_ratio_smooth_num_blocks"]
     avg_blockspace_usage = state["avg_blockspace_usage"]
 
     if num_blocks == 0:
