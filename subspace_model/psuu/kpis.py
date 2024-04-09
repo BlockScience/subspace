@@ -3,7 +3,7 @@ from subspace_model.types import *
 import subspace_model.metrics as m
 import numpy as np
 from pandera.typing import DataFrame
-
+from typing import Optional
 ## KPIs
 
 def per_timestep_average_relative_community_owned_supply(df: DataFrame) -> KPI:

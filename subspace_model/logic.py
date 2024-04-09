@@ -1,9 +1,6 @@
-from math import ceil, floor
-from random import randint
+from math import floor
 from typing import Callable
-
-from cadCAD.types import PolicyOutput, tuple[str, object]  # type: ignore
-
+from cadCAD.types import PolicyOutput  # type: ignore
 from subspace_model.const import *
 from subspace_model.metrics import *
 from subspace_model.types import *
@@ -799,3 +796,23 @@ def p_reference_subsidy(
     return {
         "reference_subsidy": rewards_during_last_timestep,
     }
+
+
+
+def s_cumm_generic(source_col, target_col):
+    def suf(_1, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):# -> tuple[Any, Any]:
+        value = 0.0
+        for h in history:
+            value += h[-1][source_col]
+        value += state[source_col] # TODO: check if there's no double counting
+        return (target_col, value)
+    return suf
+
+
+def s_cumm_compute_fee_to_farmers(p: SubspaceModelParams, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):# -> tuple[Any, Any]:
+    value = 0.0
+    for h in history:
+        value += h[-1]['compute_fee_volume']
+    value += state['compute_fee_volume'] # TODO: check if there's no double counting
+    value *= p['compute_fees_to_farmers']
+    return ("cumm_compute_fees_to_farmers", value)
