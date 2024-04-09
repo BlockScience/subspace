@@ -1,10 +1,10 @@
+from subspace_model.logic import *
+from typing import Callable
+from copy import deepcopy
 import logging
 
 logger = logging.getLogger("subspace-digital-twin")
-from copy import deepcopy
-from typing import Callable
 
-from subspace_model.logic import *
 
 # Non processed blocks
 
@@ -138,7 +138,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "allocated_tokens_advisors": replace_suf,
             "allocated_tokens_vendors": replace_suf,
             "allocated_tokens_ambassadors": replace_suf,
-            "allocated_tokens_farmers": replace_suf,
 
         },
     },
@@ -219,6 +218,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 "community_owned_supply",
                 community_owned_supply(state, params),
             ),
+            "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards"),
+            "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fees_to_farmers", "cumm_storage_fees_to_farmers"),
+            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers
         },
     },
 ]
@@ -240,4 +242,5 @@ for block in [b for b in _SUBSPACE_MODEL_BLOCKS if b.get("ignore", False) != Tru
 
 SUBSPACE_MODEL_BLOCKS = deepcopy(blocks)
 
-logger.debug("SUBSPACE_MODEL_BLOCKS: \n%s", [b["label"] for b in SUBSPACE_MODEL_BLOCKS])
+logger.debug("SUBSPACE_MODEL_BLOCKS: \n%s", [
+             b["label"] for b in SUBSPACE_MODEL_BLOCKS])
