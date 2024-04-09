@@ -138,7 +138,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "allocated_tokens_advisors": replace_suf,
             "allocated_tokens_vendors": replace_suf,
             "allocated_tokens_ambassadors": replace_suf,
-            "allocated_tokens_farmers": replace_suf,
 
         },
     },
