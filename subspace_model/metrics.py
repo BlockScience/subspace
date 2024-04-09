@@ -53,8 +53,8 @@ def community_owned_supply(state: SubspaceModelState, params: SubspaceModelParam
     return issued_supply(state) + community_vested_supply(state, params) + params['initial_community_owned_supply_pct_of_max_credits'] * params['max_credit_supply']
 
 
-def community_owned_supply_fraction(state: SubspaceModelState, params: SubspaceModelParams, initial_supply: Credits):
-    return community_owned_supply(state, params, initial_supply) / total_supply(state)
+def community_owned_supply_fraction(state: SubspaceModelState, params: SubspaceModelParams):
+    return community_owned_supply(state, params) / total_supply(state)
 
 
 def per_recipient_reward(state: SubspaceModelState, params: SubspaceModelParams):

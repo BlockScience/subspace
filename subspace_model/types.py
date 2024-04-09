@@ -114,7 +114,9 @@ class SubspaceModelState(TypedDict):
     timestep: int
     substep: int
     days_passed: Days
+    delta_days: Days
     blocks_passed: Blocks
+    delta_blocks: Blocks
 
     # Metrics
     # Supply Related
@@ -161,9 +163,22 @@ class SubspaceModelState(TypedDict):
     block_reward: Credits
     blockchain_history_size: Bytes
     total_space_pledged: Bytes
-    allocated_tokens: Credits
     buffer_size: Bytes
 
+
+    # Token Vesting
+    allocated_tokens: Credits
+    allocated_tokens_investors: Credits
+    allocated_tokens_founders: Credits
+    allocated_tokens_team: Credits
+    allocated_tokens_advisors: Credits
+    allocated_tokens_vendors: Credits
+    allocated_tokens_ambassadors: Credits
+    allocated_tokens_testnets: Credits
+    allocated_tokens_foundation: Credits
+    allocated_tokens_subspace_labs: Credits
+    allocated_tokens_ssl_priv_sale: Credits
+    allocated_tokens_farmers: Credits
     # Environmental Variables
 
     # Fee Related
