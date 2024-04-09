@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from typing import Callable, Dict, List, Any
 from numpy import nan
 
 from subspace_model.const import *
@@ -110,61 +110,60 @@ DEFAULT_PARAMS = SubspaceModelParams(
     newly_pledged_space_per_day_function=lambda p, s: 1*PB_IN_BYTES,
 )
 
-GOVERNANCE_SURFACE = {
-        "reference_subsidy_components": MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
-        "reward_proposer_share": [1/10, 1/3],
-        "weight_to_fee": [1 * SHANNON_IN_CREDITS, 100 * SHANNON_IN_CREDITS, 1_000 * SHANNON_IN_CREDITS, 10_000 * SHANNON_IN_CREDITS],
-        }
 
-def predictable_trajectory(value, **params):
-    mu = value
-    sigma = 0.3 * mu
-    generator = NORMAL_GENERATOR(mu, sigma)
+GOVERNANCE_SURFACE: Dict[str, List] = {
+    "reference_subsidy_components": MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
+    "reward_proposer_share": [1/10, 1/3],
+    "weight_to_fee": [1 * SHANNON_IN_CREDITS, 100 * SHANNON_IN_CREDITS, 1_000 * SHANNON_IN_CREDITS, 10_000 * SHANNON_IN_CREDITS],
+}
+
+def predictable_trajectory(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_GENERATOR(mu, sigma)
     return generator
 
-def high_volatility_trajectory(value, **params):
-    mu = value
-    sigma = 5 * mu
-    generator = NORMAL_GENERATOR(mu, sigma)
+def high_volatility_trajectory(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 5 * mu
+    generator: Callable = NORMAL_GENERATOR(mu, sigma)
     return generator
 
-def predictable_trajectory_with_instantaneous_shocks(value, **params):
-    mu = value
-    sigma = 0.3 * mu
-    generator = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu, sigma, N=params.get("N",13))
+def predictable_trajectory_with_instantaneous_shocks(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu, sigma, N=params.get("N", 13))
     return generator
 
-def predictable_trajectory_with_sustained_shocks(value, **params):
-    mu = value
-    sigma = 0.3 * mu
-    generator = NORMAL_SUSTAINED_SHOCK_GENERATOR(mu, sigma, N=params.get("N",13), M=params.get("M",7))
+def predictable_trajectory_with_sustained_shocks(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_SUSTAINED_SHOCK_GENERATOR(mu, sigma, N=params.get("N", 13), M=params.get("M", 7))
     return generator
 
-
-def scenario_groups(values, N=13, M=7):
-    groups = [predictable_trajectory, high_volatility_trajectory, predictable_trajectory_with_instantaneous_shocks, predictable_trajectory_with_sustained_shocks]
-    results = []
-    for value in values:
-        if value != 0:
+def scenario_groups(means: List[float], N: int = 13, M: int = 7) -> List[Callable]:
+    groups: List[Callable] = [predictable_trajectory, high_volatility_trajectory, predictable_trajectory_with_instantaneous_shocks, predictable_trajectory_with_sustained_shocks]
+    results: List[Callable] = []
+    for mean in means:
+        if mean != 0:
             for group in groups:
-                results.append(group(value))
+                results.append(group(mean))
         else:
             results.append(lambda p, s: 0)
     return results
 
-ENVIRONMENTAL_SCENARIOS = {
-        "utilization_ratio_function": [MAGNITUDE(generator) for generator in scenario_groups([0.005, 0.01, 0.02])],
-        "newly_pledged_space_per_day_function": scenario_groups([0.25*PB_IN_BYTES, 1*PB_IN_BYTES, 5*PB_IN_BYTES]),
-        "priority_fee_function": scenario_groups([0]),
-        "slash_per_day_function": scenario_groups([0]),
-        "operator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
-        "nominator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
-        "transfer_farmer_to_holder_per_day_function": scenario_groups([1]),
-        "transfer_operator_to_holder_per_day_function": scenario_groups([0, 0.1, 1]),
-        "transfer_holder_to_nominator_per_day_function": scenario_groups([0, 0.05]),
-        "transfer_holder_to_operator_per_day_function": scenario_groups([0, 0.05]),
-        }
-
+ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
+    "utilization_ratio_function": [MAGNITUDE(generator) for generator in scenario_groups([0.005, 0.01, 0.02])],
+    "newly_pledged_space_per_day_function": scenario_groups([0.25*PB_IN_BYTES, 1*PB_IN_BYTES, 5*PB_IN_BYTES]),
+    "priority_fee_function": scenario_groups([0]),
+    "slash_per_day_function": scenario_groups([0]),
+    "operator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
+    "nominator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
+    "transfer_farmer_to_holder_per_day_function": scenario_groups([1]),
+    "transfer_operator_to_holder_per_day_function": scenario_groups([0, 0.1, 1]),
+    "transfer_holder_to_nominator_per_day_function": scenario_groups([0, 0.05]),
+    "transfer_holder_to_operator_per_day_function": scenario_groups([0, 0.05]),
+}
 # ENVIRONMENTAL_SCENARIOS = {
 #     "stochastic": {
 #         # Behavioral Parameters Between 0 and 1

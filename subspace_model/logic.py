@@ -326,7 +326,7 @@ def p_pledge_sectors(
     new_pledge_due_to_random: Bytes = (
         int(
             max(
-                params["dao_newly_pledged_space_function"](params, state),
+                params["newly_pledged_space_per_day_function"](params, state),
                 0,
             )
         )
@@ -481,7 +481,7 @@ def p_compute_fees(
     fees_to_distribute: Credits = compute_fee_volume
 
     # Bundle relevant fees go to operators rather than farmers
-    bundle_share_of_weight = bundles_compute_weight / total_compute_weights
+    bundle_share_of_weight = bundles_compute_weight / max(total_compute_weights, 1*SHANNON_IN_CREDITS)
 
     # Fee volume to be from bundles
     fees_from_bundles: Credits = fees_to_distribute * bundle_share_of_weight
