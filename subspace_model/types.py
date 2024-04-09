@@ -43,8 +43,7 @@ Percentage = Annotated[float, "%"]
 class SubspaceModelState(TypedDict):
     # Time Variables
     days_passed: Days
-    delta_days: Days
-    delta_blocks: Blocks
+    blocks_passed: Blocks
 
     # Metrics
     circulating_supply: Credits
@@ -79,7 +78,6 @@ class SubspaceModelState(TypedDict):
     buffer_size: Bytes
 
     # Stochastic Variables
-    average_base_fee: Optional[ShannonPerComputeWeights]
     average_priority_fee: Optional[ShannonPerComputeWeights]
 
     average_compute_weight_per_tx: ComputeWeights

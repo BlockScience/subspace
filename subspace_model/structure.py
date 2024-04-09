@@ -130,7 +130,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             "holders_balance": add_suf,
             "other_issuance_balance": add_suf,
-            "allocated_tokens": replace_suf,
+            "allocated_tokens": add_suf,
         },
     },
     {
@@ -205,6 +205,10 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "storage_fee_per_rewards": lambda _1, _2, _3, state, _5: (
                 "storage_fee_per_rewards",
                 storage_fee_per_rewards(state),
+            ),
+            "community_owned_supply": lambda _1, _2, _3, state, _5: (
+                "community_owned_supply",
+                community_owned_supply(state),
             ),
         },
     },

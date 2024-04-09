@@ -45,3 +45,7 @@ def sum_of_stocks(state: SubspaceModelState):
 
 def storage_fee_per_rewards(state: SubspaceModelState):
     return state["storage_fee_volume"] / max(1, state["block_reward"])
+
+def community_owned_supply(state: SubspaceModelState):
+    return state["community_owned_supply"] + state['allocated_tokens_ambassadors'] + state['allocated_tokens_testnets'] + state['allocated_tokens_foundation'] + state['allocated_tokens_farmers']
+

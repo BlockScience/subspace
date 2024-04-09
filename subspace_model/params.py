@@ -43,7 +43,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     min_bundle_size=250,  # TODO
     # Economic Parameters
     reward_proposer_share=0.0,  # TODO
-    max_credit_supply=3_000_000_000,  # TODO,
+    max_credit_supply=MAX_CREDIT_ISSUANCE,  # TODO,
     credit_supply_definition=SUPPLY_ISSUED,
     # Fees & Taxes
     fund_tax_on_proposer_reward=0.0,  # TODO
