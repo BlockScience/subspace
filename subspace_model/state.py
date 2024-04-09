@@ -90,5 +90,18 @@ INITIAL_STATE = SubspaceModelState(
     storage_fees_to_fund=0.0,
     target_block_delta=0.0,
     targeted_adjustment_parameter=0.0,
-    tx_compute_weight=0.0
+    tx_compute_weight=0.0,
+    # Allocations
+    allocated_tokens_investors = 0.0,
+    allocated_tokens_founders = 0.0,
+    allocated_tokens_team = 0.0,
+    allocated_tokens_advisors = 0.0,
+    allocated_tokens_vendors = 0.0,
+    allocated_tokens_ambassadors = 0.0,
+    allocated_tokens_testnets = 0.0525 * MAX_CREDIT_ISSUANCE,
+    allocated_tokens_foundation = 0.15 * MAX_CREDIT_ISSUANCE,
+    allocated_tokens_subspace_labs = 0.07 * MAX_CREDIT_ISSUANCE,
+    allocated_tokens_ssl_priv_sale = 0.019 * MAX_CREDIT_ISSUANCE,
+    allocated_tokens_farmers = 0.0,
+    community_owned_supply = 0.0,
 )

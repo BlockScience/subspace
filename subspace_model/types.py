@@ -47,9 +47,13 @@ Percentage = float
 @dataclass
 class SubsidyComponent:
     initial_period_start: float  # τ_{0, i}
-    initial_period_end: float  # τ_{1, i}
+    initial_period_duration: float  # τ_{1, i}
     max_cumulative_subsidy: float  # Ω_i
     max_reference_subsidy: float  # α_i
+
+    # Dataclass constructor method
+    def __post_init__(self):
+        self.initial_period_end = self.initial_period_start + self.initial_period_duration
 
     def __call__(self, t: float) -> float:
         """Allow the instance to be called as a function to calculate the subsidy."""
@@ -84,8 +88,7 @@ class SubsidyComponent:
         K = self.max_total_subsidy_during_exponential_period
         if K > 0:
             return self.max_reference_subsidy * math.exp(
-                -self.max_reference_subsidy /
-                max(1, K * (t - self.initial_period_end))
+                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end))
             )
         else:
             return 0
@@ -104,13 +107,13 @@ class SubsidyComponent:
         return K * math.log(2) / self.max_reference_subsidy
 
 
+
+
 class SubspaceModelState(TypedDict):
     # Time Variables
     timestep: int
     substep: int
     days_passed: Days
-    delta_days: Days
-    delta_blocks: Blocks
     blocks_passed: Blocks
 
     # Metrics

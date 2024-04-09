@@ -53,7 +53,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
     # Economic Parameters
     reward_recipients=10,
     reward_proposer_share=0.3,  # NOTE: to sweep
-    max_credit_supply=1_000_000_000, 
+    max_credit_supply=MAX_CREDIT_ISSUANCE,  # TODO:
     credit_supply_definition=SUPPLY_ISSUED, # TODO: Set in stone the def
     community_vested_supply_fraction=0.225,
 
@@ -109,7 +109,7 @@ DEFAULT_PARAMS = SubspaceModelParams(
 GOVERNANCE_SURFACE = {
         "reference_subsidy_components": MAINNET_REFERENCE_SUBSIDY_COMPONENTS(),
         "reward_proposer_share": [1/10, 1/3],
-        "compute_weight_to_fee": [1, 100, 1_000, 10_000],
+        "weight_to_fee": [1 * SHANNON_IN_CREDITS, 100 * SHANNON_IN_CREDITS, 1_000 * SHANNON_IN_CREDITS, 10_000 * SHANNON_IN_CREDITS],
         }
 
 ENVIRONMENTAL_SCENARIOS = {
