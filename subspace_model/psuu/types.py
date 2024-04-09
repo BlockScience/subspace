@@ -1,6 +1,6 @@
 from subspace_model.types import *
 import pandas as pd # type: ignore
-from typing import Callable, Type
+from typing import Callable, Optional, NamedTuple
 ## Types
 
  # A Tensor with (simulation, subset, run, timestep) dimensions

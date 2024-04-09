@@ -124,7 +124,7 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
             })
 
     components = [
-            [
+            (
             SubsidyComponent(
                 start1,
                 duration1,
@@ -136,7 +136,7 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
                 duration2,
                 initial_subsidy2,
                 maximum_cumulative_subsidy2,)
-            ]
+            )
              for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
                     cartesian_product['component_1_start_days'],
                     cartesian_product['component_1_initial_subsidy_duration'],
