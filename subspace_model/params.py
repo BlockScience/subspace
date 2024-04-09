@@ -10,11 +10,14 @@ from subspace_model.experiments.logic import (
     DEFAULT_SLASH_FUNCTION,
     MAGNITUDE,
     NORMAL_GENERATOR,
+    NORMAL_INSTANTANEOUS_SHOCK_GENERATOR,
+    NORMAL_SUSTAINED_SHOCK_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
     SUPPLY_ISSUED,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
+    TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
     WEEKLY_VARYING,
 )
 
@@ -96,14 +99,15 @@ DEFAULT_PARAMS = SubspaceModelParams(
     min_bundle_size=250,  # TODO
 
     ## Environmental: Tx Count
-    transaction_count_per_day_function=TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
     bundle_count_per_day_function=lambda p, s: 6 * BLOCKS_PER_DAY,
+    utilization_ratio_function=lambda p, s: 0.01,
+    transaction_count_per_day_function=TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
 
     ## Environmental: Slash Count
-    slash_per_day_function=lambda p, s: 0.1,
+    slash_per_day_function=lambda p, s: 0,
 
     ## Environmental: Space Pledged per Time
-    new_sectors_per_day_function=lambda p, s: 1000
+    newly_pledged_space_per_day_function=lambda p, s: 1*PB_IN_BYTES,
 )
 
 GOVERNANCE_SURFACE = {
@@ -112,98 +116,98 @@ GOVERNANCE_SURFACE = {
         "weight_to_fee": [1 * SHANNON_IN_CREDITS, 100 * SHANNON_IN_CREDITS, 1_000 * SHANNON_IN_CREDITS, 10_000 * SHANNON_IN_CREDITS],
         }
 
-def predictable_trajectory(value):
+def predictable_trajectory(value, **params):
     mu = value
     sigma = 0.3 * mu
     generator = NORMAL_GENERATOR(mu, sigma)
     return generator
 
-def high_volatility_trajectory(value):
+def high_volatility_trajectory(value, **params):
     mu = value
     sigma = 5 * mu
     generator = NORMAL_GENERATOR(mu, sigma)
     return generator
 
-def predictable_trajectory_with_instantaneous_shocks(value):
+def predictable_trajectory_with_instantaneous_shocks(value, **params):
     mu = value
     sigma = 0.3 * mu
-    generator = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu, sigma, N=N)
+    generator = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu, sigma, N=params.get("N",13))
     return generator
 
-def predictable_trajectory_with_instantaneous_shocks(value):
+def predictable_trajectory_with_sustained_shocks(value, **params):
     mu = value
     sigma = 0.3 * mu
-    generator = NORMAL_SUSTAINED_SHOCK_GENERATOR(mu, sigma, N=N, M=M)
+    generator = NORMAL_SUSTAINED_SHOCK_GENERATOR(mu, sigma, N=params.get("N",13), M=params.get("M",7))
     return generator
 
 
-
-def scenario_groups(values, N=13*BLOCKS_PER_WEEK, M=7*BLOCKS_PER_DAY):
+def scenario_groups(values, N=13, M=7):
     groups = [predictable_trajectory, high_volatility_trajectory, predictable_trajectory_with_instantaneous_shocks, predictable_trajectory_with_sustained_shocks]
     results = []
-    for group in groups:
-        for value in values:
-            results.append(group(value))
+    for value in values:
+        if value != 0:
+            for group in groups:
+                results.append(group(value))
+        else:
+            results.append(lambda p, s: 0)
     return results
 
 ENVIRONMENTAL_SCENARIOS = {
-        "SG1": {
-            "dao_utilization_ratio": scenario_groups([0.005, 0.01, 0.02]),
-            "dao_newly_pledged_space": scenario_groups([0.25*PB_IN_BYTES, 1*PB_IN_BYTES, 5*PB_IN_BYTES]),
-            "dao_priority_fee_per_time": scenario_groups([0]),
-            "dao_slash_per_day": scenario_groups([0]),
-            "operator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
-            "nominator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
-            "transfer_farmer_to_holder_per_day_function": scenario_groups([1]),
-            "transfer_operator_to_holder_per_day_function": scenario_groups([0, 0.1, 1]),
-            "transfer_holder_to_nominator_per_day_function": scenario_groups([0, 0.05]),
-            "transfer_holder_to_operator_per_day_function": scenario_groups([0, 0.05]),
-            }
+        "utilization_ratio_function": [MAGNITUDE(generator) for generator in scenario_groups([0.005, 0.01, 0.02])],
+        "newly_pledged_space_per_day_function": scenario_groups([0.25*PB_IN_BYTES, 1*PB_IN_BYTES, 5*PB_IN_BYTES]),
+        "priority_fee_function": scenario_groups([0]),
+        "slash_per_day_function": scenario_groups([0]),
+        "operator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
+        "nominator_stake_per_ts_function": scenario_groups([0, 0.1, 1]),
+        "transfer_farmer_to_holder_per_day_function": scenario_groups([1]),
+        "transfer_operator_to_holder_per_day_function": scenario_groups([0, 0.1, 1]),
+        "transfer_holder_to_nominator_per_day_function": scenario_groups([0, 0.05]),
+        "transfer_holder_to_operator_per_day_function": scenario_groups([0, 0.05]),
         }
 
-ENVIRONMENTAL_SCENARIOS = {
-    "stochastic": {
-        # Behavioral Parameters Between 0 and 1
-        "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "transfer_farmer_to_holder_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.05, 0.05)
-        ),
-        "transfer_operator_to_holder_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.05, 0.05)
-        ),
-        "transfer_holder_to_nominator_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.01, 0.02)
-        ),
-        "transfer_holder_to_operator_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.01, 0.02)
-        ),
-        # Environmental Parameters (Integer positive in [0,inf])
-        "environmental_label": "stochastic",
-        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(0, 0.001)),
-        "compute_weights_per_tx_function": POSITIVE_INTEGER(
-            NORMAL_GENERATOR(60_000_000, 15_000_000)
-        ),
-        "compute_weight_per_bundle_function": POSITIVE_INTEGER(
-            NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
-        ),
-        "transaction_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
-        "bundle_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
-        "transaction_count_per_day_function": POISSON_GENERATOR(1 * BLOCKS_PER_DAY),
-        "bundle_count_per_day_function": POISSON_GENERATOR(6 * BLOCKS_PER_DAY),
-        "slash_per_day_function": POISSON_GENERATOR(0.1),
-        "new_sectors_per_day_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
-    },
-    "weekly-varying": {
-        "environmental_label": "weekly-varying",
-        "priority_fee_function": WEEKLY_VARYING,
-    },
-    "constant-utilization": {
-        "environmental_label": "constant-utilization",
-        "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
-    },
-    "growing-utilization": {
-        "environmental_label": "growing-utilization",
-        "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
-    },
-}
+# ENVIRONMENTAL_SCENARIOS = {
+#     "stochastic": {
+#         # Behavioral Parameters Between 0 and 1
+#         "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
+#         "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
+#         "transfer_farmer_to_holder_per_day_function": MAGNITUDE(
+#             NORMAL_GENERATOR(0.05, 0.05)
+#         ),
+#         "transfer_operator_to_holder_per_day_function": MAGNITUDE(
+#             NORMAL_GENERATOR(0.05, 0.05)
+#         ),
+#         "transfer_holder_to_nominator_per_day_function": MAGNITUDE(
+#             NORMAL_GENERATOR(0.01, 0.02)
+#         ),
+#         "transfer_holder_to_operator_per_day_function": MAGNITUDE(
+#             NORMAL_GENERATOR(0.01, 0.02)
+#         ),
+#         # Environmental Parameters (Integer positive in [0,inf])
+#         "environmental_label": "stochastic",
+#         "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(0, 0.001)),
+#         "compute_weights_per_tx_function": POSITIVE_INTEGER(
+#             NORMAL_GENERATOR(60_000_000, 15_000_000)
+#         ),
+#         "compute_weight_per_bundle_function": POSITIVE_INTEGER(
+#             NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
+#         ),
+#         "transaction_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
+#         "bundle_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
+#         "transaction_count_per_day_function": POISSON_GENERATOR(1 * BLOCKS_PER_DAY),
+#         "bundle_count_per_day_function": POISSON_GENERATOR(6 * BLOCKS_PER_DAY),
+#         "slash_per_day_function": POISSON_GENERATOR(0.1),
+#         "new_sectors_per_day_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
+#     },
+#     "weekly-varying": {
+#         "environmental_label": "weekly-varying",
+#         "priority_fee_function": WEEKLY_VARYING,
+#     },
+#     "constant-utilization": {
+#         "environmental_label": "constant-utilization",
+#         "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
+#     },
+#     "growing-utilization": {
+#         "environmental_label": "growing-utilization",
+#         "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
+#     },
+# }

@@ -59,6 +59,30 @@ def NORMAL_GENERATOR(mu: float, sigma: float) -> StochasticFunction:
     np.random.seed()
     return lambda p, s: norm.rvs(mu, sigma, random_state=np.random.RandomState())
 
+def NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu: float, sigma: float, N: int) -> StochasticFunction:
+    np.random.seed()
+    def generator(p, s):
+        value = norm.rvs(mu, sigma, random_state=np.random.RandomState())
+        if s["days_passed"] % (N*7) == 0:
+            if np.random.choice([0,1]):
+                value *= 10
+            else:
+                value /= 10
+        return value
+    return generator
+
+def NORMAL_SUSTAINED_SHOCK_GENERATOR(mu: float, sigma: float, N: int, M: int) -> StochasticFunction:
+    np.random.seed()
+    def generator(p, s):
+        value = norm.rvs(mu, sigma, random_state=np.random.RandomState())
+        if s["days_passed"] % (N*7) < M:
+            if (N*7) % 2:
+                value *= 10
+            else:
+                value /= 10
+        return value
+    return generator
+
 
 def POISSON_GENERATOR(mu: float) -> StochasticFunction:
     np.random.seed()
@@ -179,6 +203,15 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     # Grow utilization rate from 0 to 1 over 2 years
     transaction_count = utilization * max_size / average_transaction_size
 
+    return transaction_count
+
+
+def TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS(params: SubspaceModelParams, state: SubspaceModelState) -> float:
+    max_size = (
+        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
+    )
+    transaction_volume = max_size * state["block_utilization"]
+    transaction_count = transaction_volume / state["average_transaction_size"]
     return transaction_count
 
 
