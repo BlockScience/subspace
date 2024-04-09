@@ -213,6 +213,12 @@ class SubspaceModelState(TypedDict):
     tx_compute_weight: float
 
 
+    ## Cummulative Metrics
+    cumm_rewards: Credits # TODO: implement logic
+    cumm_storage_fees_to_farmers: Credits # TODO: implement logic
+    cumm_compute_fees_to_farmers: Credits # TODO: implement logic
+
+
 class SubspaceModelParams(TypedDict):
     # Meta
     label: str

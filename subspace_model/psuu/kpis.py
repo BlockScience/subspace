@@ -11,10 +11,19 @@ def per_timestep_average_relative_community_owned_supply(df: DataFrame) -> KPI:
 
 
 def mean_farmer_subsidy_factor(df: DataFrame) -> KPI:
-    pass
+    """
+    Farmer Subsidy Factor = Cummulative Rewards / Cummulative Farmer Revenue
+    Where Revenue = Cummulative Farmer Inflows (Rewards + Storage Fees + Compute Fees)
+    """
+    farmer_revenue = (df.cumm_rewards + df.cumm_storage_fees_to_farmers + df.cumm_compute_fees_to_farmers)
+    farmer_subsidy_factor = df.cumm_rewards / farmer_revenue
+    return farmer_subsidy_factor.mean()
 
 def mean_proposing_rewards_per_newly_pledged_space(df: DataFrame) -> KPI:
-    pass
+    """
+    M(t) = Rewards to Proposers(t) / New Pledged Space(t)
+    """
+    return (df['reward_to_voters'] / df['total_space_pledged'].diff()).mean()
 
 def mean_proposer_reward_minus_voter_reward(df: DataFrame) -> KPI:
     return (df['reward_to_proposer'] - df['reward_to_voters']).mean()
@@ -24,7 +33,10 @@ def cumm_rewards_before_1yr(df: DataFrame) -> KPI:
 
 
 def abs_sum_storage_fees_per_sum_compute_fees(df: TrajectoryDataFrame) -> KPI:
-    pass
+    """
+    M(t) = Storage Fee Volume(t) / Compute Fee Volume(t)
+    """
+    return df.storage_fee_volume.sum() / (df.storage_fee_volume.sum() + df.compute_fee_volume.sum())
 
 def cumm_rewards(df: TrajectoryDataFrame) -> KPI:
     return df.block_reward.sum()
