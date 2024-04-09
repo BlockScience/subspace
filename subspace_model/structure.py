@@ -131,6 +131,15 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "holders_balance": add_suf,
             "other_issuance_balance": add_suf,
             "allocated_tokens": add_suf,
+
+            "allocated_tokens_investors": replace_suf,
+            "allocated_tokens_founders": replace_suf,
+            "allocated_tokens_team": replace_suf,
+            "allocated_tokens_advisors": replace_suf,
+            "allocated_tokens_vendors": replace_suf,
+            "allocated_tokens_ambassadors": replace_suf,
+            "allocated_tokens_farmers": replace_suf,
+
         },
     },
     {
@@ -206,9 +215,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 "storage_fee_per_rewards",
                 storage_fee_per_rewards(state),
             ),
-            "community_owned_supply": lambda _1, _2, _3, state, _5: (
+            "community_owned_supply": lambda params, _2, _3, state, _5: (
                 "community_owned_supply",
-                community_owned_supply(state),
+                community_owned_supply(state, params),
             ),
         },
     },

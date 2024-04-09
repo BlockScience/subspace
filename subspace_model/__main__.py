@@ -241,7 +241,6 @@ def run_experiment(
             df = experiment_run()
 
     logger.info(f"{experiment} executed.")
-    logger.info(df.columns)
 
     return df
 

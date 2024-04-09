@@ -614,18 +614,12 @@ def p_unvest(
     subspace_labs = state["allocated_tokens_subspace_labs"]
     ssl_priv_sale = state["allocated_tokens_ssl_priv_sale"]
 
-    if state["days_passed"] == 0:
-        testnets += 0.0525 * MAX_CREDIT_ISSUANCE
-        foundation += 0.15 * MAX_CREDIT_ISSUANCE
-        subspace_labs += 0.07 * MAX_CREDIT_ISSUANCE
-        ssl_priv_sale += 0.019 * MAX_CREDIT_ISSUANCE
-
     # Farmers
     farmers = state["allocated_tokens_farmers"]
 
     farmers = ISSUANCE_FOR_FARMERS - state["reward_issuance_balance"] - farmers
 
-    tokens_to_allocate = investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale
+    tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
 
@@ -640,10 +634,6 @@ def p_unvest(
         "allocated_tokens_advisors": advisors,
         "allocated_tokens_vendors": vendors,
         "allocated_tokens_ambassadors": ambassadors,
-        "allocated_tokens_testnets": testnets,
-        "allocated_tokens_foundation": foundation,
-        "allocated_tokens_subspace_labs": subspace_labs,
-        "allocated_tokens_ssl_priv_sale": ssl_priv_sale,
         "allocated_tokens_farmers": farmers,
     }
 
@@ -792,7 +782,7 @@ def s_avg_blockspace_usage(
     # Compute Average Blockspace Usage
     blocks_passed = state["blocks_passed"]
     delta_blocks = state["delta_blocks"]
-    num_blocks = params["num_blocks"]
+    num_blocks = params["utilization_ratio_smooth_num_blocks"]
     avg_blockspace_usage = state["avg_blockspace_usage"]
 
     if num_blocks == 0:
