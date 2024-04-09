@@ -178,7 +178,6 @@ class SubspaceModelState(TypedDict):
     allocated_tokens_foundation: Credits
     allocated_tokens_subspace_labs: Credits
     allocated_tokens_ssl_priv_sale: Credits
-    allocated_tokens_farmers: Credits
     # Environmental Variables
 
     # Fee Related

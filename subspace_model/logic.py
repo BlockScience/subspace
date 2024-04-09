@@ -614,11 +614,6 @@ def p_unvest(
     subspace_labs = state["allocated_tokens_subspace_labs"]
     ssl_priv_sale = state["allocated_tokens_ssl_priv_sale"]
 
-    # Farmers
-    farmers = state["allocated_tokens_farmers"]
-
-    farmers = ISSUANCE_FOR_FARMERS - state["reward_issuance_balance"] - farmers
-
     tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
@@ -634,7 +629,6 @@ def p_unvest(
         "allocated_tokens_advisors": advisors,
         "allocated_tokens_vendors": vendors,
         "allocated_tokens_ambassadors": ambassadors,
-        "allocated_tokens_farmers": farmers,
     }
 
 
