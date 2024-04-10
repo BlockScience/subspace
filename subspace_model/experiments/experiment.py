@@ -3,11 +3,11 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 from cadCAD.tools import easy_run  # type: ignore
-from cadCAD.tools.preparation import sweep_cartesian_product # type: ignore
+from cadCAD.tools.preparation import sweep_cartesian_product  # type: ignore
 from pandas import DataFrame
 from random import sample
 from datetime import datetime
-from joblib import Parallel, delayed # type: ignore
+from joblib import Parallel, delayed  # type: ignore
 from glob import glob
 import re
 from tqdm.auto import tqdm
@@ -32,7 +32,11 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     SubsidyComponent,
 )
-from subspace_model.params import DEFAULT_PARAMS, ENVIRONMENTAL_SCENARIOS, GOVERNANCE_SURFACE
+from subspace_model.params import (
+    DEFAULT_PARAMS,
+    ENVIRONMENTAL_SCENARIOS,
+    GOVERNANCE_SURFACE,
+)
 from subspace_model.state import INITIAL_STATE, ISSUANCE_FOR_FARMERS
 from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 from subspace_model.types import SubspaceModelParams
@@ -542,8 +546,16 @@ def reference_subsidy_sweep(
     )
     return sim_df
 
+
 def psuu(
-        SIMULATION_DAYS: int = 3*365, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1, N_SWEEP_SAMPLES: int = 10, SWEEPS_PER_PROCESS: int = 1, PROCESSES: int = 24, PARALLELIZE: bool = True, USE_JOBLIB: bool = True
+    SIMULATION_DAYS: int = 3 * 365,
+    TIMESTEP_IN_DAYS: int = 1,
+    SAMPLES: int = 2,
+    N_SWEEP_SAMPLES: int = 48,
+    SWEEPS_PER_PROCESS: int = 2,
+    PROCESSES: int = 24,
+    PARALLELIZE: bool = True,
+    USE_JOBLIB: bool = True,
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -552,67 +564,57 @@ def psuu(
     """
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
-    # Get the sweep params in the form of single length arrays
     default_params = deepcopy(DEFAULT_PARAMS)
 
-    # Controllable parameters
-    controllable_params = sweep_cartesian_product(GOVERNANCE_SURFACE)
-    governance_cardinality = max([len(v) for v in controllable_params.values()])
-
-    # Environmental scenarios
-    environmental_scenarios = list(ENVIRONMENTAL_SCENARIOS.values())
-    environmental_cardinality = len(environmental_scenarios)+1
-
-
-    # Create the default scenario for each point in the governance surface
-    default_params_repeated = {k: [v]*governance_cardinality for k,v in default_params.items()}
-
-    # Each value v in this case is a list of length governance_cardinality, repeat each one environmental_cardinality times
-    controllable_params_repeated = {k: v*environmental_cardinality for k,v in controllable_params.items()}
-
-    # Construct the params sweep space, but does not yet have the environmental scenarios
-    sweep_params = {
-            **default_params_repeated,
-            **controllable_params_repeated,
-            }
-
-    # Adding the environmental scenarios
-    for k, v in default_params.items():
-        # For each param, ff not a controllable param
-        if k not in controllable_params.keys():
-            # Set the parameter for each environmental scenario
-            for scenario in environmental_scenarios:
-                # Set according to the scenario
-                if k in scenario.keys():
-                    environmental_scenario_repeated = [scenario[k]] * governance_cardinality
-                    sweep_params[k] += environmental_scenario_repeated
-                # Set according to the default
-                else:
-                    default_scenario_repeated = [v] * governance_cardinality
-                    sweep_params[k] += default_scenario_repeated
+    sweep_params = sweep_cartesian_product(
+        {
+            **{k: [v] for k, v in default_params.items()},
+            **ENVIRONMENTAL_SCENARIOS,
+            **GOVERNANCE_SURFACE,
+        }
+    )
 
     # Sample the sweep space
-    sweep_params_samples = {k: sample(v, N_SWEEP_SAMPLES) if N_SWEEP_SAMPLES > 0 else v 
-                                                               for k, v in sweep_params.items()}
+    sweep_params_samples = {
+        k: sample(v, N_SWEEP_SAMPLES) if N_SWEEP_SAMPLES > 0 else v
+        for k, v in sweep_params.items()
+    }
 
     # Load simulation arguments
-    sim_args = (INITIAL_STATE, sweep_params_samples, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
-    assign_params={
+    sim_args = (
+        INITIAL_STATE,
+        sweep_params_samples,
+        SUBSPACE_MODEL_BLOCKS,
+        TIMESTEPS,
+        SAMPLES,
+    )
+    assign_params = {
         "label",
         "environmental_label",
         "timestep_in_days",
         "block_time_in_seconds",
         "max_credit_supply",
-        *GOVERNANCE_SURFACE.keys()
+        *GOVERNANCE_SURFACE.keys(),
     }
 
     parallelize = PARALLELIZE
     use_joblib = USE_JOBLIB
     if parallelize is False:
         # Load simulation arguments
-        sim_args = (INITIAL_STATE, sweep_params_samples, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+        sim_args = (
+            INITIAL_STATE,
+            sweep_params_samples,
+            SUBSPACE_MODEL_BLOCKS,
+            TIMESTEPS,
+            SAMPLES,
+        )
         # Run simulation and write results to disk
-        sim_df = easy_run(*sim_args, exec_mode='single', assign_params=assign_params, deepcopy_off=True)
+        sim_df = easy_run(
+            *sim_args,
+            exec_mode="single",
+            assign_params=assign_params,
+            deepcopy_off=True,
+        )
         return sim_df
     else:
         sweeps_per_process = SWEEPS_PER_PROCESS
@@ -620,34 +622,50 @@ def psuu(
 
         chunk_size = sweeps_per_process
         split_dicts = [
-            {k: v[i:i + chunk_size] for k, v in sweep_params_samples.items()}
+            {k: v[i : i + chunk_size] for k, v in sweep_params_samples.items()}
             for i in range(0, len(list(sweep_params_samples.values())[0]), chunk_size)
         ]
-        output_path = f"data/simulations/psuu_run_{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        output_path = (
+            f"data/simulations/psuu_run_{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
 
         def run_chunk(i_chunk, sweep_params):
             print(f"{i_chunk}, {datetime.now()}")
-            sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
+            sim_args = (
+                INITIAL_STATE,
+                sweep_params,
+                SUBSPACE_MODEL_BLOCKS,
+                TIMESTEPS,
+                SAMPLES,
+            )
             # Run simulationz
-            sim_df = easy_run(*sim_args, exec_mode='single', assign_params=assign_params, deepcopy_off=True)
-            sim_df['subset'] = i_chunk*SWEEPS_PER_PROCESS + sim_df['subset']
-            output_filename = output_path + f'-{i_chunk}.pkl.gz'
+            sim_df = easy_run(
+                *sim_args,
+                exec_mode="single",
+                assign_params=assign_params,
+                deepcopy_off=True,
+            )
+            sim_df["subset"] = i_chunk * SWEEPS_PER_PROCESS + sim_df["subset"]
+            output_filename = output_path + f"-{i_chunk}.pkl.gz"
             sim_df.to_pickle(output_filename)
 
         args = enumerate(split_dicts)
         if use_joblib:
-            Parallel(n_jobs=processes)(delayed(run_chunk)(i_chunk, sweep_params) for (i_chunk, sweep_params) in args)
-        else: 
-            for (i_chunk, sweep_params) in tqdm(args):
+            Parallel(n_jobs=processes)(
+                delayed(run_chunk)(i_chunk, sweep_params)
+                for (i_chunk, sweep_params) in args
+            )
+        else:
+            for i_chunk, sweep_params in tqdm(args):
                 run_chunk(i_chunk, sweep_params)
 
-
         # Combine all of the chunks and write simulation results to disk
-        latest = '-'.join(sorted(glob("./data/simulations/psuu_run*"))[-1].split('-')[:-1])
+        latest = "-".join(
+            sorted(glob("./data/simulations/psuu_run*"))[-1].split("-")[:-1]
+        )
         parts = glob(f"{latest}*")
-        sorted_parts = sorted(parts, key=lambda x: int(re.search(r'-([0-9]+)\.pkl\.gz$', x).group(1))) # type: ignore
-        sim_df = pd.concat([pd.read_pickle(part, compression='gzip') for part in sorted_parts])
+        sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))  # type: ignore
+        sim_df = pd.concat(
+            [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
+        )
         return sim_df
-
-
-

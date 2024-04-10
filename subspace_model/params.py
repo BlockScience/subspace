@@ -19,6 +19,7 @@ from subspace_model.experiments.logic import (
     TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
     TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
     WEEKLY_VARYING,
+    SCENARIO_GROUPS,
 )
 
 
@@ -112,88 +113,35 @@ GOVERNANCE_SURFACE: Dict[str, List] = {
 }
 
 
-def predictable_trajectory(mean: float, **params: Any) -> Callable:
-    mu: float = mean
-    sigma: float = 0.3 * mu
-    generator: Callable = NORMAL_GENERATOR(mu, sigma)
-    return generator
-
-
-def high_volatility_trajectory(mean: float, **params: Any) -> Callable:
-    mu: float = mean
-    sigma: float = 5 * mu
-    generator: Callable = NORMAL_GENERATOR(mu, sigma)
-    return generator
-
-
-def predictable_trajectory_with_instantaneous_shocks(
-    mean: float, **params: Any
-) -> Callable:
-    mu: float = mean
-    sigma: float = 0.3 * mu
-    generator: Callable = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(
-        mu, sigma, N=params.get("N", 13)
-    )
-    return generator
-
-
-def predictable_trajectory_with_sustained_shocks(
-    mean: float, **params: Any
-) -> Callable:
-    mu: float = mean
-    sigma: float = 0.3 * mu
-    generator: Callable = NORMAL_SUSTAINED_SHOCK_GENERATOR(
-        mu, sigma, N=params.get("N", 13), M=params.get("M", 7)
-    )
-    return generator
-
-
-def scenario_groups(means: List[float], N: int = 13, M: int = 7) -> List[Callable]:
-    groups: List[Callable] = [
-        predictable_trajectory,
-        high_volatility_trajectory,
-        predictable_trajectory_with_instantaneous_shocks,
-        predictable_trajectory_with_sustained_shocks,
-    ]
-    results: List[Callable] = []
-    for mean in means:
-        if mean != 0:
-            for group in groups:
-                results.append(group(mean))
-        else:
-            results.append(lambda p, s: 0)
-    return results
-
-
 ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
     "utilization_ratio_function": [
-        MAGNITUDE(generator) for generator in scenario_groups([0.005, 0.01, 0.02])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.005, 0.01, 0.02])
     ],
-    "newly_pledged_space_per_day_function": scenario_groups(
+    "newly_pledged_space_per_day_function": SCENARIO_GROUPS(
         [0.25 * PB_IN_BYTES, 1 * PB_IN_BYTES, 5 * PB_IN_BYTES]
     ),
     "priority_fee_function": [
-        Magnitude(generator) for generator in scenario_groups([0])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],
     "slash_per_day_function": [
-        Magnitude(generator) for generator in scenario_groups([0])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],
     "operator_stake_per_ts_function": [
-        Magnitude(generator) for generator in scenario_groups([0.1])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
     "nominator_stake_per_ts_function": [
-        Magnitude(generator) for generator in scenario_groups([0.1])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
     "transfer_farmer_to_holder_per_day_function": [
-        Magnitude(generator) for generator in scenario_groups([1])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([1])
     ],
     "transfer_operator_to_holder_per_day_function": [
-        Magnitude(generator) for generator in scenario_groups([0.1])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
     "transfer_holder_to_nominator_per_day_function": [
-        Magnitude(generator) for generator in scenario_groups([0.025])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
     "transfer_holder_to_operator_per_day_function": [
-        Magnitude(generator) for generator in scenario_groups([0.025])
+        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
 }

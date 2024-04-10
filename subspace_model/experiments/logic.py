@@ -1,3 +1,4 @@
+from typing import Callable, Dict, List, Any
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 from cadCAD.tools.preparation import sweep_cartesian_product  # type: ignore
@@ -110,6 +111,66 @@ def POSITIVE_INTEGER(generator: StochasticFunction) -> StochasticFunction:
 
 def MAGNITUDE(generator: StochasticFunction) -> StochasticFunction:
     return lambda p, s: min(1, max(0, generator(p, s)))
+
+
+def predictable_trajectory(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_GENERATOR(mu, sigma)
+    return generator
+
+
+def high_volatility_trajectory(mean: float, **params: Any) -> Callable:
+    mu: float = mean
+    sigma: float = 5 * mu
+    generator: Callable = NORMAL_GENERATOR(mu, sigma)
+    return generator
+
+
+def predictable_trajectory_with_instantaneous_shocks(
+    mean: float, **params: Any
+) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(
+        mu, sigma, N=params.get("N", 13)
+    )
+    return generator
+
+
+def predictable_trajectory_with_sustained_shocks(
+    mean: float, **params: Any
+) -> Callable:
+    mu: float = mean
+    sigma: float = 0.3 * mu
+    generator: Callable = NORMAL_SUSTAINED_SHOCK_GENERATOR(
+        mu, sigma, N=params.get("N", 13), M=params.get("M", 7)
+    )
+    return generator
+
+
+import random
+
+
+def SCENARIO_GROUPS(means: List[float], N: int = 13, M: int = 7) -> List[Callable]:
+    # Subsample battery to conserve cardinality of scenarios parameter space
+    groups: List[Callable] = random.sample(
+        [
+            predictable_trajectory,
+            high_volatility_trajectory,
+            predictable_trajectory_with_instantaneous_shocks,
+            predictable_trajectory_with_sustained_shocks,
+        ],
+        1,  # XXX This value can range from 1 to 4 to scale up the cardinality of scenarios
+    )
+    results: List[Callable] = []
+    for mean in means:
+        if mean != 0:
+            for group in groups:
+                results.append(group(mean))
+        else:
+            results.append(lambda p, s: 0)
+    return results
 
 
 SUPPLY_ISSUED = issued_supply
