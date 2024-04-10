@@ -1,7 +1,12 @@
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
-from cadCAD.tools.preparation import sweep_cartesian_product # type: ignore
-from subspace_model.const import BLOCKS_PER_MONTH, BLOCKS_PER_YEAR, DAY_TO_SECONDS, MAX_CREDIT_ISSUANCE
+from cadCAD.tools.preparation import sweep_cartesian_product  # type: ignore
+from subspace_model.const import (
+    BLOCKS_PER_MONTH,
+    BLOCKS_PER_YEAR,
+    DAY_TO_SECONDS,
+    MAX_CREDIT_ISSUANCE,
+)
 from subspace_model.metrics import (
     earned_minus_burned_supply,
     earned_supply,
@@ -12,7 +17,7 @@ from subspace_model.types import (
     StochasticFunction,
     SubspaceModelParams,
     SubspaceModelState,
-    SubsidyComponent
+    SubsidyComponent,
 )
 
 
@@ -59,28 +64,38 @@ def NORMAL_GENERATOR(mu: float, sigma: float) -> StochasticFunction:
     np.random.seed()
     return lambda p, s: norm.rvs(mu, sigma, random_state=np.random.RandomState())
 
-def NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(mu: float, sigma: float, N: int) -> StochasticFunction:
+
+def NORMAL_INSTANTANEOUS_SHOCK_GENERATOR(
+    mu: float, sigma: float, N: int
+) -> StochasticFunction:
     np.random.seed()
+
     def generator(p, s):
         value = norm.rvs(mu, sigma, random_state=np.random.RandomState())
-        if s["days_passed"] % (N*7) == 0:
-            if np.random.choice([0,1]):
+        if s["days_passed"] % (N * 7) == 0:
+            if np.random.choice([0, 1]):
                 value *= 10
             else:
                 value /= 10
         return value
+
     return generator
 
-def NORMAL_SUSTAINED_SHOCK_GENERATOR(mu: float, sigma: float, N: int, M: int) -> StochasticFunction:
+
+def NORMAL_SUSTAINED_SHOCK_GENERATOR(
+    mu: float, sigma: float, N: int, M: int
+) -> StochasticFunction:
     np.random.seed()
+
     def generator(p, s):
         value = norm.rvs(mu, sigma, random_state=np.random.RandomState())
-        if s["days_passed"] % (N*7) < M:
-            if (N*7) % 2:
+        if s["days_passed"] % (N * 7) < M:
+            if (N * 7) % 2:
                 value *= 10
             else:
                 value /= 10
         return value
+
     return generator
 
 
@@ -125,6 +140,7 @@ REFERENCE_SUBSIDY_HYBRID_TWO_COMPONENTS = [
 
 DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT
 
+
 def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
     component_1_start_days = component_2_start_days = [0, 14, 30]
 
@@ -132,47 +148,57 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
     component_1_initial_subsidies = [1, 4, 7]
     component_1_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
 
-    component_2_initial_subsidy_duration = [6*BLOCKS_PER_MONTH, 12*BLOCKS_PER_MONTH, 24*BLOCKS_PER_MONTH, 48*BLOCKS_PER_MONTH]
+    component_2_initial_subsidy_duration = [
+        6 * BLOCKS_PER_MONTH,
+        12 * BLOCKS_PER_MONTH,
+        24 * BLOCKS_PER_MONTH,
+        48 * BLOCKS_PER_MONTH,
+    ]
     component_2_initial_subsidies = [1, 4, 7]
     component_2_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
 
-    cartesian_product = sweep_cartesian_product({
-            'component_1_start_days': component_1_start_days,
-            'component_1_initial_subsidy_duration': component_1_initial_subsidy_duration,
-            'component_1_initial_subsidies': component_1_initial_subsidies,
-            'component_1_maximum_cumulative_subsidies': component_1_maximum_cumulative_subsidies,
-            'component_2_start_days': component_2_start_days,
-            'component_2_initial_subsidy_duration': component_2_initial_subsidy_duration,
-            'component_2_initial_subsidies': component_2_initial_subsidies,
-            'component_2_maximum_cumulative_subsidies': component_2_maximum_cumulative_subsidies
-            })
+    cartesian_product = sweep_cartesian_product(
+        {
+            "component_1_start_days": component_1_start_days,
+            "component_1_initial_subsidy_duration": component_1_initial_subsidy_duration,
+            "component_1_initial_subsidies": component_1_initial_subsidies,
+            "component_1_maximum_cumulative_subsidies": component_1_maximum_cumulative_subsidies,
+            "component_2_start_days": component_2_start_days,
+            "component_2_initial_subsidy_duration": component_2_initial_subsidy_duration,
+            "component_2_initial_subsidies": component_2_initial_subsidies,
+            "component_2_maximum_cumulative_subsidies": component_2_maximum_cumulative_subsidies,
+        }
+    )
 
     components = [
-            [
+        [
             SubsidyComponent(
                 start1,
                 duration1,
                 initial_subsidy1,
                 maximum_cumulative_subsidy1,
-                ), 
+            ),
             SubsidyComponent(
                 start2,
                 duration2,
                 initial_subsidy2,
-                maximum_cumulative_subsidy2,)
-            ]
-             for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
-                    cartesian_product['component_1_start_days'],
-                    cartesian_product['component_1_initial_subsidy_duration'],
-                    cartesian_product['component_1_initial_subsidies'],
-                    cartesian_product['component_1_maximum_cumulative_subsidies'],
-                    cartesian_product['component_2_start_days'],
-                    cartesian_product['component_2_initial_subsidy_duration'],
-                    cartesian_product['component_2_initial_subsidies'],
-                    cartesian_product['component_2_maximum_cumulative_subsidies'],
-                    )]
+                maximum_cumulative_subsidy2,
+            ),
+        ]
+        for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
+            cartesian_product["component_1_start_days"],
+            cartesian_product["component_1_initial_subsidy_duration"],
+            cartesian_product["component_1_initial_subsidies"],
+            cartesian_product["component_1_maximum_cumulative_subsidies"],
+            cartesian_product["component_2_start_days"],
+            cartesian_product["component_2_initial_subsidy_duration"],
+            cartesian_product["component_2_initial_subsidies"],
+            cartesian_product["component_2_maximum_cumulative_subsidies"],
+        )
+    ]
 
     return components
+
 
 def TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50(
     params: SubspaceModelParams, state: SubspaceModelState
@@ -192,7 +218,7 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
 
-    days_passed = state["days_passed"]
+    days_passed: Days = state["days_passed"]
     average_transaction_size = state["average_transaction_size"]
     max_size = (
         params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
@@ -206,7 +232,9 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     return transaction_count
 
 
-def TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS(params: SubspaceModelParams, state: SubspaceModelState) -> float:
+def TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS(
+    params: SubspaceModelParams, state: SubspaceModelState
+) -> float:
     max_size = (
         params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
     )
