@@ -145,3 +145,51 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
 }
+
+
+SPECIAL_ENVIRONMENTAL_SCENARIOS = {
+    "stochastic": {
+        # Behavioral Parameters Between 0 and 1
+        "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
+        "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
+        "transfer_farmer_to_holder_per_day_function": MAGNITUDE(
+            NORMAL_GENERATOR(0.05, 0.05)
+        ),
+        "transfer_operator_to_holder_per_day_function": MAGNITUDE(
+            NORMAL_GENERATOR(0.05, 0.05)
+        ),
+        "transfer_holder_to_nominator_per_day_function": MAGNITUDE(
+            NORMAL_GENERATOR(0.01, 0.02)
+        ),
+        "transfer_holder_to_operator_per_day_function": MAGNITUDE(
+            NORMAL_GENERATOR(0.01, 0.02)
+        ),
+        # Environmental Parameters (Integer positive in [0,inf])
+        "environmental_label": "stochastic",
+        "priority_fee_function": POSITIVE_INTEGER(NORMAL_GENERATOR(0, 0.001)),
+        "compute_weights_per_tx_function": POSITIVE_INTEGER(
+            NORMAL_GENERATOR(60_000_000, 15_000_000)
+        ),
+        "compute_weight_per_bundle_function": POSITIVE_INTEGER(
+            NORMAL_GENERATOR(10_000_000_000, 5_000_000_000)
+        ),
+        "transaction_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(256, 100)),
+        "bundle_size_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1500, 1000)),
+        "transaction_count_per_day_function": POISSON_GENERATOR(1 * BLOCKS_PER_DAY),
+        "bundle_count_per_day_function": POISSON_GENERATOR(6 * BLOCKS_PER_DAY),
+        "slash_per_day_function": POISSON_GENERATOR(0.1),
+        "new_sectors_per_day_function": POSITIVE_INTEGER(NORMAL_GENERATOR(1000, 500)),
+    },
+    "weekly-varying": {
+        "environmental_label": "weekly-varying",
+        "priority_fee_function": WEEKLY_VARYING,
+    },
+    "constant-utilization": {
+        "environmental_label": "constant-utilization",
+        "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50,
+    },
+    "growing-utilization": {
+        "environmental_label": "growing-utilization",
+        "transaction_count_per_day_function": TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS,
+    },
+}

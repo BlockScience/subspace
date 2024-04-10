@@ -35,6 +35,7 @@ from subspace_model.experiments.logic import (
 from subspace_model.params import (
     DEFAULT_PARAMS,
     ENVIRONMENTAL_SCENARIOS,
+    SPECIAL_ENVIRONMENTAL_SCENARIOS,
     GOVERNANCE_SURFACE,
 )
 from subspace_model.state import INITIAL_STATE, ISSUANCE_FOR_FARMERS
@@ -90,7 +91,7 @@ def standard_stochastic_run(
 
     sweep_params = {
         **{k: [v] for k, v in param_set.items()},
-        **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS["stochastic"].items()},
+        **{k: [v] for k, v in SPECIAL_ENVIRONMENTAL_SCENARIOS["stochastic"].items()},
     }
 
     # Load simulation arguments
@@ -411,7 +412,7 @@ def sweep_credit_supply(
 #     governance_cardinality = max([len(v) for v in controllable_params.values()])
 #
 #     # Environmental scenarios
-#     environmental_scenarios = list(ENVIRONMENTAL_SCENARIOS.values())
+#     environmental_scenarios = list(SPECIAL_ENVIRONMENTAL_SCENARIOS.values())
 #
 #     # Repeat control scenarios for each environmental scenario
 #     sweep_params = {
@@ -470,7 +471,7 @@ def initial_conditions(
 
     sweep_params = {
         **{k: [v] for k, v in param_set.items()},
-        **{k: [v] for k, v in ENVIRONMENTAL_SCENARIOS["stochastic"].items()},
+        **{k: [v] for k, v in SPECIAL_ENVIRONMENTAL_SCENARIOS["stochastic"].items()},
     }
 
     # Load simulation arguments
