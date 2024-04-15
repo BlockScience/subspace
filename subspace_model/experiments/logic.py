@@ -232,7 +232,7 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
     )
 
     components = [
-        [
+            (
             SubsidyComponent(
                 start1,
                 duration1,
@@ -243,20 +243,18 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
                 start2,
                 duration2,
                 initial_subsidy2,
-                maximum_cumulative_subsidy2,
-            ),
-        ]
-        for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
-            cartesian_product["component_1_start_days"],
-            cartesian_product["component_1_initial_subsidy_duration"],
-            cartesian_product["component_1_initial_subsidies"],
-            cartesian_product["component_1_maximum_cumulative_subsidies"],
-            cartesian_product["component_2_start_days"],
-            cartesian_product["component_2_initial_subsidy_duration"],
-            cartesian_product["component_2_initial_subsidies"],
-            cartesian_product["component_2_maximum_cumulative_subsidies"],
-        )
-    ]
+                maximum_cumulative_subsidy2,)
+            )
+             for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
+                    cartesian_product['component_1_start_days'],
+                    cartesian_product['component_1_initial_subsidy_duration'],
+                    cartesian_product['component_1_initial_subsidies'],
+                    cartesian_product['component_1_maximum_cumulative_subsidies'],
+                    cartesian_product['component_2_start_days'],
+                    cartesian_product['component_2_initial_subsidy_duration'],
+                    cartesian_product['component_2_initial_subsidies'],
+                    cartesian_product['component_2_maximum_cumulative_subsidies'],
+                    )]
 
     return components
 
