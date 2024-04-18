@@ -72,6 +72,7 @@ def sanity_check_run(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -109,6 +110,7 @@ def standard_stochastic_run(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -155,6 +157,7 @@ def issuance_sweep(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -199,6 +202,7 @@ def fund_inclusion(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
 
     # Return the simulation results dataframe
@@ -245,6 +249,7 @@ def reward_split_sweep(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -335,6 +340,7 @@ def sweep_credit_supply(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -452,6 +458,7 @@ def sweep_credit_supply(
 #         },
 #         exec_mode="single",
 #         deepcopy_off=True,
+#         supress_print=True
 #     )
 #     return sim_df
 
@@ -489,6 +496,7 @@ def initial_conditions(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -544,6 +552,7 @@ def reference_subsidy_sweep(
         },
         exec_mode="single",
         deepcopy_off=True,
+        supress_print=True
     )
     return sim_df
 
@@ -615,6 +624,7 @@ def psuu(
             exec_mode="single",
             assign_params=assign_params,
             deepcopy_off=True,
+            supress_print=True
         )
         return sim_df
     else:
@@ -645,6 +655,7 @@ def psuu(
                 exec_mode="single",
                 assign_params=assign_params,
                 deepcopy_off=True,
+                supress_print=True
             )
             sim_df["subset"] = i_chunk * SWEEPS_PER_PROCESS + sim_df["subset"]
             output_filename = output_path + f"-{i_chunk}.pkl.gz"
