@@ -56,3 +56,35 @@ KPI_functions: dict[str, TrajectoryKPIandThreshold] = {
 
 
 
+def check_median_across_trajectories(df: pd.DataFrame, 
+                                     column_name: str,
+                                      direction: str):
+    # Extract the specified column's values
+    column_values = df[column_name]
+    
+    # Calculate the median of the specified column
+    median_column_values = column_values.median()
+    
+    # Determine direction of comparison
+    if direction == 'larger_than_median':
+        return column_values > median_column_values
+    elif direction == 'smaller_than_median':
+        return column_values < median_column_values
+    else:
+        raise ValueError("The 'direction' parameter must be either 'larger_than_median' or 'smaller_than_median'.")
+
+def calculate_goal_score(grouped_df: pd.DataFrame, 
+                         group: list[tuple[str, str]],
+                         new_column_name: str) -> pd.DataFrame:
+    
+    scores_df = grouped_df.copy()
+    scores_df[new_column_name] = 0
+    
+    for column_name, direction in group:
+        # For each metric, add a new column to scores_df to store individual column scores
+        scores_df[f'score_{column_name}'] = check_median_across_trajectories(grouped_df,
+                                                    column_name, 
+                                                    direction).astype(int)        
+        scores_df[new_column_name] += scores_df[f'score_{column_name}']
+    
+    return scores_df
