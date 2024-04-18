@@ -10,7 +10,7 @@ from datetime import datetime
 from joblib import Parallel, delayed  # type: ignore
 from glob import glob
 import re
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm # type: ignore
 import logging
 
 logger = logging.getLogger('subspace-digital-twin')
