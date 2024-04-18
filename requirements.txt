@@ -10,7 +10,7 @@ Babel==2.14.0
 beautifulsoup4==4.12.3
 bleach==6.1.0
 bokeh==3.4.1
-cadCAD @ git+https://github.com/cadCAD-org/cadCAD@f17077f339eeefd063e28c38d96d5af2b5ee8314
+cadCAD @ git+https://github.com/danlessa/cadCAD@subspace
 certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
