@@ -222,23 +222,20 @@ def run_calculate_metrics(sim_df: pd.DataFrame, experiment: str):
 
 
 def run_experiment(
-    experiment: str, samples: int | None = None, days: int | None = None
+    experiment: str, samples: int | None = None, days: int | None = None, sweep_samples: int | None = None
 ):
     """
     Run an experiment with for a given number of days and samples.
     """
     logger.info(f"Executing experiment: {experiment}...")
     experiment_run = experiments[experiment]
-    if days is not None:
-        if samples is not None:
-            df = experiment_run(SAMPLES=samples, SIMULATION_DAYS=days)
-        else:
-            df = experiment_run(SIMULATION_DAYS=days)
-    else:
-        if samples is not None:
-            df = experiment_run(SAMPLES=samples)
-        else:
-            df = experiment_run()
+
+    kwargs = dict(SAMPLES=samples,
+                  SIMULATION_DAYS=days,
+                  N_SWEEP_SAMPLES=sweep_samples)
+    
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    df = experiment_run(**kwargs)
 
     logger.info(f"{experiment} executed.")
 
@@ -254,6 +251,7 @@ def process_experiment(
     generate_template: bool = False,
     samples: int | None = None,
     days: int | None = None,
+    sweep_samples: int | None = None
 ):
     if generate_notebooks:
         generate_notebooks_from_templates(experiment)
@@ -265,7 +263,7 @@ def process_experiment(
         save_charts(experiment)
         return
     else:
-        sim_df = run_experiment(experiment, samples, days)
+        sim_df = run_experiment(experiment, samples, days, sweep_samples)
         if calculate_metrics:
             timestep_metrics_df, trajectory_metrics_df = run_calculate_metrics(
                 sim_df,
@@ -409,6 +407,14 @@ def generate_template_from_notebook(experiment: str):
     is_flag=True,
     help="Generate template from notebook.",
 )
+@click.option(
+    "-sw",
+    "--sweep_samples",
+    "sweep_samples",
+    default=10,
+    type=int,
+    help="Number of sweep combinations to sample (if applicable for the experiment)",
+)
 def main(
     experiment: str,
     pickle: bool,
@@ -421,6 +427,7 @@ def main(
     calculate_metrics: bool,
     generate_notebooks: bool,
     generate_template: bool,
+    sweep_samples: int
 ) -> None:
     # Initialize logging
 
@@ -440,6 +447,7 @@ def main(
                 generate_template,
                 samples,
                 days,
+                sweep_samples
             )
 
     # Single experiment selected
@@ -453,6 +461,7 @@ def main(
             generate_template,
             samples,
             days,
+            sweep_samples
         )
 
     # Conditionally drop into an IPython shell

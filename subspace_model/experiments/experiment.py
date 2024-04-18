@@ -11,6 +11,9 @@ from joblib import Parallel, delayed  # type: ignore
 from glob import glob
 import re
 from tqdm.auto import tqdm
+import logging
+
+logger = logging.getLogger('subspace-digital-twin')
 
 
 from subspace_model.const import *
@@ -562,8 +565,8 @@ def psuu(
     TIMESTEP_IN_DAYS: int = 1,
     SAMPLES: int = 2,
     N_SWEEP_SAMPLES: int = 48,
-    SWEEPS_PER_PROCESS: int = 2,
-    PROCESSES: int = 24,
+    SWEEPS_PER_PROCESS: int = 20,
+    PROCESSES: int = 4,
     PARALLELIZE: bool = True,
     USE_JOBLIB: bool = True,
 ) -> DataFrame:
@@ -572,6 +575,10 @@ def psuu(
     Returns:
         DataFrame: A dataframe of simulation data
     """
+
+    invoke_time = datetime.now()
+    logger.info(f"PSuU Exploratory Run invoked at {invoke_time}")
+
     TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
 
     default_params = deepcopy(DEFAULT_PARAMS)
@@ -607,8 +614,25 @@ def psuu(
         *GOVERNANCE_SURFACE.keys(),
     }
 
+    sweep_combinations: int = 1
+    for v in sweep_params.values():
+        sweep_combinations *= len(v)
+
+    n_sweeps = N_SWEEP_SAMPLES if N_SWEEP_SAMPLES > 0 else sweep_combinations
+    N_measurements = n_sweeps * TIMESTEPS * SAMPLES
+
+
+    traj_combinations = n_sweeps * SAMPLES
+
+    logger.info(f"PSuU Exploratory Run Dimensions: N_jobs={PROCESSES=:,}, N_t={TIMESTEPS=:,}, N_sweeps={n_sweeps:,}, N_mc={SAMPLES:,}, N_trajectories={traj_combinations:,}, N_measurements={N_measurements:,}")
+
+
     parallelize = PARALLELIZE
     use_joblib = USE_JOBLIB
+
+
+    sim_start_time = datetime.now()
+    logger.info(f"PSuU Exploratory Run starting at {sim_start_time}, ({sim_start_time - invoke_time} since invoke)")
     if parallelize is False:
         # Load simulation arguments
         sim_args = (
@@ -641,7 +665,7 @@ def psuu(
         )
 
         def run_chunk(i_chunk, sweep_params):
-            print(f"{i_chunk}, {datetime.now()}")
+            logger.debug(f"{i_chunk}, {datetime.now()}")
             sim_args = (
                 INITIAL_STATE,
                 sweep_params,
@@ -665,7 +689,7 @@ def psuu(
         if use_joblib:
             Parallel(n_jobs=processes)(
                 delayed(run_chunk)(i_chunk, sweep_params)
-                for (i_chunk, sweep_params) in args
+                for (i_chunk, sweep_params) in tqdm(args, desc='Simulation Chunks', total=len(split_dicts))
             )
         else:
             for i_chunk, sweep_params in tqdm(args):
@@ -680,4 +704,8 @@ def psuu(
         sim_df = pd.concat(
             [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
         )
+        end_start_time = datetime.now()
+        duration: float = (end_start_time - sim_start_time).total_seconds()
+        logger.info(f"PSuU Exploratory Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
+        logger.info(f"PSuU Exploratory Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")
         return sim_df
