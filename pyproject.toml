@@ -2,7 +2,7 @@
 name = "subspace"
 version = "0.1.0"
 description = "cadCAD Design Digital Twin for simulating the Subspace Network economic dynamics."
-authors = ["Shawn Anderson <shawn@block.science>"]
+authors = ["BlockScience"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
