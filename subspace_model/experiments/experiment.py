@@ -569,6 +569,7 @@ def psuu(
     PROCESSES: int = 4,
     PARALLELIZE: bool = True,
     USE_JOBLIB: bool = True,
+    RETURN_SIM_DF: bool = True
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -650,7 +651,8 @@ def psuu(
             deepcopy_off=True,
             supress_print=True
         )
-        return sim_df
+        if RETURN_SIM_DF:
+            return sim_df
     else:
         sweeps_per_process = SWEEPS_PER_PROCESS
         processes = PROCESSES
@@ -701,11 +703,13 @@ def psuu(
         )
         parts = glob(f"{latest}*")
         sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))  # type: ignore
-        sim_df = pd.concat(
-            [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
-        )
-        end_start_time = datetime.now()
-        duration: float = (end_start_time - sim_start_time).total_seconds()
-        logger.info(f"PSuU Exploratory Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
-        logger.info(f"PSuU Exploratory Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")
-        return sim_df
+
+        if RETURN_SIM_DF:
+            sim_df = pd.concat(
+                [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
+            )
+            return sim_df
+    end_start_time = datetime.now()
+    duration: float = (end_start_time - sim_start_time).total_seconds()
+    logger.info(f"PSuU Exploratory Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
+    logger.info(f"PSuU Exploratory Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")

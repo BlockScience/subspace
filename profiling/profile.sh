@@ -1,6 +1,6 @@
 OUTPUT_FOLDER=output
 
-for LABEL in exp7_single_run_sweep
+for LABEL in psuu
 do
     python -m cProfile -o $OUTPUT_FOLDER/$LABEL.pstats run_$LABEL.py >> $OUTPUT_FOLDER/$LABEL.txt
     gprof2dot --colour-nodes-by-selftime -f pstats $OUTPUT_FOLDER/$LABEL.pstats | \

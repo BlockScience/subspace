@@ -6,4 +6,4 @@ sys.path.append("..")
 
 from subspace_model.__main__ import experiments
 
-experiments['psuu'](SAMPLES=1, N_PARAM_SWEEP=1)
+experiments['psuu'](SAMPLES=1, N_SWEEP_SAMPLES=1, SIMULATION_DAYS=365*3, PARALLELIZE=False, RETURN_SIM_DF=False)
