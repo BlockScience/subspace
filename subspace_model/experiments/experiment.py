@@ -615,9 +615,7 @@ def psuu(
         *GOVERNANCE_SURFACE.keys(),
     }
 
-    sweep_combinations: int = 1
-    for v in sweep_params.values():
-        sweep_combinations *= len(v)
+    sweep_combinations = len(sweep_params['label'])
 
     n_sweeps = N_SWEEP_SAMPLES if N_SWEEP_SAMPLES > 0 else sweep_combinations
     N_measurements = n_sweeps * TIMESTEPS * SAMPLES
@@ -651,8 +649,6 @@ def psuu(
             deepcopy_off=True,
             supress_print=True
         )
-        if RETURN_SIM_DF:
-            return sim_df
     else:
         sweeps_per_process = SWEEPS_PER_PROCESS
         processes = PROCESSES
@@ -708,8 +704,11 @@ def psuu(
             sim_df = pd.concat(
                 [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
             )
-            return sim_df
     end_start_time = datetime.now()
     duration: float = (end_start_time - sim_start_time).total_seconds()
-    logger.info(f"PSuU Exploratory Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
-    logger.info(f"PSuU Exploratory Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")
+    logger.info(f"PSuU Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
+    logger.info(f"PSuU Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")
+    if RETURN_SIM_DF == True:
+        return sim_df
+    else:
+        pass

@@ -203,7 +203,8 @@ DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONE
 
 
 def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
-    component_1_start_days = component_2_start_days = [0, 14, 30]
+    component_1_start_days = [0, 14, 30]
+    component_2_start_days = [0, 14, 30]
 
     component_1_initial_subsidy_duration = [0]
     component_1_initial_subsidies = [1, 4, 7]
