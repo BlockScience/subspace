@@ -27,4 +27,4 @@ TrajectoryGoalThreshold = Callable[[GoalThreshold, list[GoalThreshold]], GoalThr
 
 class TrajectoryKPIandThreshold(NamedTuple):
     kpi_function: TrajectoryKPI
-    threshold_function: TrajectoryThreshold
+    threshold_function: str
