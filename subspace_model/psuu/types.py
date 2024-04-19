@@ -20,11 +20,11 @@ KPIWeights = dict[str, float]
 GoalUtility = float
 GoalThreshold = Optional[bool]
 
-TrajectoryKPI = Callable[[TrajectoryDataFrame], KPI] # type: ignore
+TrajectoryKPIFunction = Callable[[TrajectoryDataFrame], KPI] # type: ignore
 TrajectoryThreshold = Callable[[KPI, list[KPI]], SuccessThreshold]
 TrajectoryGoalUtility = Callable[[dict[str, KPI]], GoalUtility]
 TrajectoryGoalThreshold = Callable[[GoalThreshold, list[GoalThreshold]], GoalThreshold]
 
 class TrajectoryKPIandThreshold(NamedTuple):
-    kpi_function: TrajectoryKPI
+    kpi_function: TrajectoryKPIFunction
     threshold_function: str

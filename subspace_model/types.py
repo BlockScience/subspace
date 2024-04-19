@@ -4,8 +4,8 @@ from dataclasses import dataclass
 import pandera as pa
 
 # Time units
+Days = float
 Blocks = float  # 1 block ~ 6s. Or 1 day ~ 14400 blocks
-Days = float  # Number of days
 Seconds = float
 PerYear = float  # Yearly rate
 Year = float  # Number of years

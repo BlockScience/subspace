@@ -92,12 +92,11 @@ DEFAULT_PARAMS = SubspaceModelParams(
     min_bundle_size=250,  # TODO
     ## Environmental: Tx Count
     bundle_count_per_day_function=lambda p, s: 6 * BLOCKS_PER_DAY,
-    utilization_ratio_function=lambda p, s: 0.01,
     transaction_count_per_day_function=TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
     ## Environmental: Slash Count
     slash_per_day_function=lambda p, s: 0,
     ## Environmental: Space Pledged per Time
-    newly_pledged_space_per_day_function=lambda p, s: 1 * PB_IN_BYTES,
+    new_sectors_per_day_function=lambda p, s: 100.0
 )
 
 
