@@ -2,6 +2,7 @@ from typing import Callable, TypedDict, get_origin, Union, get_args
 import math
 from dataclasses import dataclass
 import pandera as pa
+from const import BLOCKS_PER_DAY
 
 # Time units
 Days = float
@@ -15,6 +16,7 @@ Picoseconds = float  # Number of Picoseconds
 Credits = float
 CreditsPerComputeWeights = float
 CreditsPerDay = float
+CreditsPerBlock = float
 ComputeWeights = float
 Shannon = float  # 1e-18 SSC
 ShannonPerComputeWeights = float
@@ -46,33 +48,41 @@ Percentage = float
 
 @dataclass
 class SubsidyComponent:
-    initial_period_start: float  # τ_{0, i}
-    initial_period_duration: float  # τ_{1, i}
-    max_cumulative_subsidy: float  # Ω_i
-    max_reference_subsidy: float  # α_i
+    initial_period_start: Days  # τ_{0, i}
+    initial_period_duration: Days  # τ_{1, i}
+    max_cumulative_subsidy: Credits  # Ω_i
+    max_reference_subsidy: CreditsPerBlock  # α_i
+
+
+    def intial_period_start_in_blocks(self) -> Blocks:
+        return self.initial_period_start * BLOCKS_PER_DAY
+    
+    def initial_period_duration_in_blocks(self) -> Blocks:
+        return self.initial_period_duration * BLOCKS_PER_DAY
 
     # Dataclass constructor method
     def __post_init__(self):
         self.initial_period_end = self.initial_period_start + self.initial_period_duration
 
-    def __call__(self, t: float) -> float:
+    def __call__(self, t: Days) -> float:
         """Allow the instance to be called as a function to calculate the subsidy."""
         return self.calculate_subsidy(t)
 
-    def calculate_subsidy(self, t: float) -> float:
+    def calculate_subsidy(self, t: Days) -> CreditsPerBlock:
         """Calculate S(t) the subsidy for a given time."""
         if t < self.initial_period_start:
-            return 0
+            return 0.0
         elif self.initial_period_start <= t <= self.initial_period_end:
             return self.calculate_linear_subsidy(t)
         else:
             return self.calculate_exponential_subsidy(t)
 
-    def calculate_linear_subsidy(self, t: float) -> float:
+    def calculate_linear_subsidy(self, t: Days) -> CreditsPerBlock:
         """Calculate S_l(t) the linear subsidy for a given time."""
-        already_distributed = self.max_reference_subsidy * (
+        already_distributed: Credits = self.max_reference_subsidy * (
             t - self.initial_period_start
-        )
+        ) * BLOCKS_PER_DAY
+
         if already_distributed >= self.max_cumulative_subsidy:
             return 0
         elif (
@@ -83,25 +93,25 @@ class SubsidyComponent:
         else:
             return self.max_reference_subsidy
 
-    def calculate_exponential_subsidy(self, t: float) -> float:
+    def calculate_exponential_subsidy(self, t: float) -> CreditsPerBlock:
         """Calculate S_e(t) the exponential subsidy for a given time."""
         K = self.max_total_subsidy_during_exponential_period
         if K > 0:
             return self.max_reference_subsidy * math.exp(
-                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end))
+                -self.max_reference_subsidy / max(1, K * ((t - self.initial_period_end) * BLOCKS_PER_DAY))
             )
         else:
             return 0
 
     @property
-    def max_total_subsidy_during_exponential_period(self) -> float:
+    def max_total_subsidy_during_exponential_period(self) -> Credits:
         """Calculate K the maximum total subsidy during the exponential period."""
         return self.max_cumulative_subsidy - self.max_reference_subsidy * (
             self.initial_period_end - self.initial_period_start
-        )
+        ) * BLOCKS_PER_DAY
 
     @property
-    def halving_period(self) -> float:
+    def halving_period(self) -> Blocks:
         """Calculate L the halving period for the component rewards."""
         K = self.max_total_subsidy_during_exponential_period
         return K * math.log(2) / self.max_reference_subsidy
