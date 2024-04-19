@@ -1,8 +1,10 @@
-from dataclasses import dataclass
 from typing import Callable, Dict, List, Any
 from numpy import nan
 
 from subspace_model.const import *
+from subspace_model.types import SubspaceModelParams, SubspaceModelState
+
+
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,

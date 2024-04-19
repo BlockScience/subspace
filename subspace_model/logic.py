@@ -4,7 +4,7 @@ from cadCAD.types import PolicyOutput  # type: ignore
 from subspace_model.const import *
 from subspace_model.metrics import *
 from subspace_model.types import *
-
+from subspace_model.units import *
 
 def generic_policy(_1, _2, _3, _4) -> dict:
     """Function to generate pass through policy
@@ -779,15 +779,17 @@ def s_avg_blockspace_usage(
 def s_reference_subsidy(
     params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState, _5) -> tuple:
     """ """
-    previous_block_time = state_history[-1][-1]["blocks_passed"]
-    current_block_time = state["blocks_passed"]
-    rewards_during_last_timestep = 0.0
-    for t in range(int(previous_block_time), int(current_block_time)):
-        rewards_during_last_timestep += sum(
-            [component(t)
-             for component in params["reference_subsidy_components"]]
-        )
-    return ("reference_subsidy", rewards_during_last_timestep)
+    current_reference_subsidy = 0.0
+    for component in params['reference_subsidy_components']:
+        current_reference_subsidy += component(state['blocks_passed'])
+
+    if state['timestep'] > 1:
+        avg_ref_subsidy = (current_reference_subsidy + state['reference_subsidy']) / 2
+    else:
+        avg_ref_subsidy = current_reference_subsidy
+
+
+    return ("reference_subsidy", avg_ref_subsidy)
 
 
 def s_cumm_generic(source_col, target_col):
@@ -795,7 +797,7 @@ def s_cumm_generic(source_col, target_col):
     def suf(_1, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):
         value = 0.0
         for h in history:
-            value += h[-1][source_col]
+            value += h[-1][source_col] # type: ignore
         value += state[source_col]  # TODO: check if there's no double counting
         return (target_col, value)
     return suf
