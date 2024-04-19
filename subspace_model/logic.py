@@ -455,7 +455,8 @@ def p_compute_fees(
     fees_to_distribute: Credits = compute_fee_volume
 
     # Bundle relevant fees go to operators rather than farmers
-    bundle_share_of_weight = bundles_compute_weight / max(total_compute_weights, 1*SHANNON_IN_CREDITS)
+    bundle_share_of_weight = bundles_compute_weight / \
+        max(total_compute_weights, 1*SHANNON_IN_CREDITS)
 
     # Fee volume to be from bundles
     fees_from_bundles: Credits = fees_to_distribute * bundle_share_of_weight
@@ -775,9 +776,8 @@ def s_avg_blockspace_usage(
     return ("avg_blockspace_usage", state["avg_blockspace_usage"],)
 
 
-def p_reference_subsidy(
-    params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState
-) -> PolicyOutput:
+def s_reference_subsidy(
+    params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState, _5) -> tuple:
     """ """
     previous_block_time = state_history[-1][-1]["blocks_passed"]
     current_block_time = state["blocks_passed"]
@@ -787,26 +787,26 @@ def p_reference_subsidy(
             [component(t)
              for component in params["reference_subsidy_components"]]
         )
-    return {
-        "reference_subsidy": rewards_during_last_timestep,
-    }
-
+    return ("reference_subsidy", rewards_during_last_timestep)
 
 
 def s_cumm_generic(source_col, target_col):
-    def suf(_1, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):# -> tuple[Any, Any]:
+    # -> tuple[Any, Any]:
+    def suf(_1, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):
         value = 0.0
         for h in history:
             value += h[-1][source_col]
-        value += state[source_col] # TODO: check if there's no double counting
+        value += state[source_col]  # TODO: check if there's no double counting
         return (target_col, value)
     return suf
 
 
-def s_cumm_compute_fee_to_farmers(p: SubspaceModelParams, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):# -> tuple[Any, Any]:
+# -> tuple[Any, Any]:
+def s_cumm_compute_fee_to_farmers(p: SubspaceModelParams, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):
     value = 0.0
     for h in history:
         value += h[-1]['compute_fee_volume']
-    value += state['compute_fee_volume'] # TODO: check if there's no double counting
+    # TODO: check if there's no double counting
+    value += state['compute_fee_volume']
     value *= p['compute_fees_to_farmers']
     return ("cumm_compute_fees_to_farmers", value)

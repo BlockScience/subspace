@@ -96,7 +96,8 @@ DEFAULT_PARAMS = SubspaceModelParams(
     ## Environmental: Slash Count
     slash_per_day_function=lambda p, s: 0,
     ## Environmental: Space Pledged per Time
-    new_sectors_per_day_function=lambda p, s: 100.0
+    newly_pledged_space_per_day_function=lambda p, s: 100.0 * (2 ** 50),
+    utilization_ratio=0.01
 )
 
 
@@ -116,9 +117,6 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
     "utilization_ratio_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.005, 0.01, 0.02])
     ],
-    "newly_pledged_space_per_day_function": SCENARIO_GROUPS(
-        [0.25 * PB_IN_BYTES, 1 * PB_IN_BYTES, 5 * PB_IN_BYTES]
-    ),
     "priority_fee_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],

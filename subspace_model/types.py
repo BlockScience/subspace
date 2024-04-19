@@ -309,8 +309,10 @@ class SubspaceModelParams(TypedDict):
         'SubspaceModelParams', SubspaceModelState], float]
 
     # Environmental: Space Pledged per Time
-    new_sectors_per_day_function: Callable[[
-        'SubspaceModelParams', SubspaceModelState], float]
+    newly_pledged_space_per_day_function: Callable[[
+        'SubspaceModelParams', SubspaceModelState], Bytes]
+    utilization_ratio: Percentage
+    
 
 
 # Logic implementation types

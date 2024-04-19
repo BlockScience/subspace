@@ -24,9 +24,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         "label": "Reference Subsidy",
         "ignore": False,
-        "policies": {"reference_subsidy": p_reference_subsidy},
+        "policies": {},
         "variables": {
-            "reference_subsidy": replace_suf,
+            "reference_subsidy": s_reference_subsidy,
         },
     },
     {
