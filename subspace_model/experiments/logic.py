@@ -228,8 +228,8 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
             "component_2_initial_subsidy_duration": component_2_initial_subsidy_duration,
             "component_2_initial_subsidies": component_2_initial_subsidies,
             "component_2_maximum_cumulative_subsidies": component_2_maximum_cumulative_subsidies,
-        }
-    )
+        } # type: ignore
+    ) 
 
     components = [
             (

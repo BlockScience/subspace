@@ -1,4 +1,4 @@
-from subspace_model.types import *
+from subspace_model.units import *
 
 U32_RANGE = 2**32
 U128_RANGE = 2**128

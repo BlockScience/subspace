@@ -1,8 +1,10 @@
-from dataclasses import dataclass
 from typing import Callable, Dict, List, Any
 from numpy import nan
 
 from subspace_model.const import *
+from subspace_model.types import SubspaceModelParams, SubspaceModelState
+
+
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
@@ -92,12 +94,12 @@ DEFAULT_PARAMS = SubspaceModelParams(
     min_bundle_size=250,  # TODO
     ## Environmental: Tx Count
     bundle_count_per_day_function=lambda p, s: 6 * BLOCKS_PER_DAY,
-    utilization_ratio_function=lambda p, s: 0.01,
     transaction_count_per_day_function=TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
     ## Environmental: Slash Count
     slash_per_day_function=lambda p, s: 0,
     ## Environmental: Space Pledged per Time
-    newly_pledged_space_per_day_function=lambda p, s: 1 * PB_IN_BYTES,
+    newly_pledged_space_per_day_function=lambda p, s: 100.0 * (2 ** 50),
+    utilization_ratio=0.01
 )
 
 
@@ -117,9 +119,6 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
     "utilization_ratio_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.005, 0.01, 0.02])
     ],
-    "newly_pledged_space_per_day_function": SCENARIO_GROUPS(
-        [0.25 * PB_IN_BYTES, 1 * PB_IN_BYTES, 5 * PB_IN_BYTES]
-    ),
     "priority_fee_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],

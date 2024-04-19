@@ -1,16 +1,12 @@
 from subspace_model.psuu.types import *
 from subspace_model.types import *
-import subspace_model.metrics as m
-import numpy as np
-from pandera.typing import DataFrame
-from typing import Optional
 ## KPIs
 
-def per_timestep_average_relative_community_owned_supply(df: DataFrame) -> KPI:
+def per_timestep_average_relative_community_owned_supply(df: TrajectoryDataFrame) -> KPI:
     return (df.community_owned_supply / df.total_supply).mean()
 
 
-def mean_farmer_subsidy_factor(df: DataFrame) -> KPI:
+def mean_farmer_subsidy_factor(df: TrajectoryDataFrame) -> KPI:
     """
     Farmer Subsidy Factor = Cummulative Rewards / Cummulative Farmer Revenue
     Where Revenue = Cummulative Farmer Inflows (Rewards + Storage Fees + Compute Fees)
@@ -19,16 +15,16 @@ def mean_farmer_subsidy_factor(df: DataFrame) -> KPI:
     farmer_subsidy_factor = df.cumm_rewards / farmer_revenue
     return farmer_subsidy_factor.mean()
 
-def mean_proposing_rewards_per_newly_pledged_space(df: DataFrame) -> KPI:
+def mean_proposing_rewards_per_newly_pledged_space(df: TrajectoryDataFrame) -> KPI:
     """
     M(t) = Rewards to Proposers(t) / New Pledged Space(t)
     """
     return (df['reward_to_voters'] / df['total_space_pledged'].diff()).mean()
 
-def mean_proposer_reward_minus_voter_reward(df: DataFrame) -> KPI:
+def mean_proposer_reward_minus_voter_reward(df: TrajectoryDataFrame) -> KPI:
     return (df['reward_to_proposer'] - df['reward_to_voters']).mean()
 
-def cumm_rewards_before_1yr(df: DataFrame) -> KPI:
+def cumm_rewards_before_1yr(df: TrajectoryDataFrame) -> KPI:
     return df.query("days_passed < 366").block_reward.sum()
 
 
@@ -58,7 +54,7 @@ KPI_functions: dict[str, TrajectoryKPIandThreshold] = {
 
 def check_median_across_trajectories(df: pd.DataFrame, 
                                      column_name: str,
-                                      direction: str):
+                                      direction: str) -> pd.Series[bool]:
     # Extract the specified column's values
     column_values = df[column_name]
     
