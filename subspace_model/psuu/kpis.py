@@ -79,7 +79,7 @@ def calculate_goal_score(grouped_df: pd.DataFrame,
                          goal: str,
                          new_column_name: str) -> pd.DataFrame:
     scores_df = grouped_df.copy()
-    scores_df[new_column_name] = 0
+    scores_df[new_column_name] = 0.0
 
     kpis = GOAL_KPI_GROUPS.get(goal)
 
