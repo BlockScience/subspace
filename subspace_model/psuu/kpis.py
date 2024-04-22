@@ -54,7 +54,7 @@ KPI_functions: dict[str, TrajectoryKPIandThreshold] = {
 
 def check_median_across_trajectories(df: pd.DataFrame, 
                                      column_name: str,
-                                      direction: str) -> pd.Series[bool]:
+                                      direction: str) -> pd.Series:
     # Extract the specified column's values
     column_values = df[column_name]
     
