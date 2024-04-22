@@ -24,13 +24,20 @@
 | YGG     | 3*365     | 3                | 2300                | 23                           | 1096                  | 5                             | 3    | 6900           | 7,562,400      | 1,261.71    | 5,993.78 | 260.60   | 1.4GB              | 6.9GB             |
 |         |           |                  |                     |                              |                       |                               |      |                |                |             |          |          |                    |                   |
 
-
+What can be achieved in 4 hours of compute?
 - YGG is getting 6K measurements / second with 23 jobs.
 - How many samples can we sweep in 4 hours?
 - X * 1096 * 3 / 6000 = 4\*60\*60
 - X = 4\*60\*60 * 6000 / (1096 * 3) = 26277 sweep samples.
-- But consider memory constraints:
+
+What can be achieved constraining memory to 15GB?
 - Memory usage is 3MB / trajectory (6900/2300).
 - So 26277 * 3MB = 78.8GB.
 - Let's take memory constraint of 15GB.
 - Then sweeps is constrained by memory to 5000 sweeps.
+
+How long to execute 5000 sweeps with 3 monte carlo runs?
+- 5000 * 1096 * 3 / 6000 = X
+- X = 2740 = 45.66 Minutes
+
+
