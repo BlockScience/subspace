@@ -50,6 +50,12 @@ KPI_functions: dict[str, TrajectoryKPIandThreshold] = {
     'cumm_rewards': TrajectoryKPIandThreshold(cumm_rewards, "smaller_than_median")
 }
 
+GOAL_KPI_GROUPS = {
+    'G1_rational_economic_incentives': ['mean_proposing_rewards_per_newly_pledged_space', 'mean_proposer_reward_minus_voter_reward'],
+    'G2_community_incentives': ['mean_relative_community_owned_supply', 'cumm_rewards_before_1yr'],
+    'G3_supply_demand_equilibrium': ['mean_farmer_subsidy_factor', 'abs_sum_storage_fees_per_sum_compute_fees', 'cumm_rewards']
+}
+
 
 
 def check_median_across_trajectories(df: pd.DataFrame, 
@@ -70,17 +76,20 @@ def check_median_across_trajectories(df: pd.DataFrame,
         raise ValueError("The 'direction' parameter must be either 'larger_than_median' or 'smaller_than_median'.")
 
 def calculate_goal_score(grouped_df: pd.DataFrame, 
-                         group: list[tuple[str, str]],
+                         goal: str,
                          new_column_name: str) -> pd.DataFrame:
-    
     scores_df = grouped_df.copy()
     scores_df[new_column_name] = 0
-    
-    for column_name, direction in group:
+
+    kpis = GOAL_KPI_GROUPS.get(goal)
+
+    for kpi in kpis:
+        column_name = kpi
+        (_, direction) = KPI_functions.get(kpi)
         # For each metric, add a new column to scores_df to store individual column scores
-        scores_df[f'score_{column_name}'] = check_median_across_trajectories(grouped_df,
+        scores_df[f'label_{column_name}'] = check_median_across_trajectories(grouped_df,
                                                     column_name, 
                                                     direction).astype(int)        
-        scores_df[new_column_name] += scores_df[f'score_{column_name}']
+        scores_df[new_column_name] += scores_df[f'label_{column_name}'].astype(float)
     
     return scores_df
