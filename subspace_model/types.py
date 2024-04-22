@@ -282,7 +282,8 @@ class SubspaceModelParams(TypedDict):
         'SubspaceModelParams', SubspaceModelState], Bytes]
     utilization_ratio: Percentage
     
-
+    # Other
+    utilization_ratio_function: Callable[['SubspaceModelParams', SubspaceModelState], Callable]
 
 # Logic implementation types
 StochasticFunction = Callable[[SubspaceModelParams, SubspaceModelState], float]

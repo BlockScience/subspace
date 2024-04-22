@@ -278,7 +278,7 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
 
-    days_passed: Days = state["days_passed"]
+    days_passed = state["days_passed"]
     average_transaction_size = state["average_transaction_size"]
     max_size = (
         params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
