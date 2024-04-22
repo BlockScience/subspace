@@ -14,3 +14,23 @@
   - 295 M/(J*s)
   - Under the current numbers, the full simulation would take 162 hours to execute.
   - If executed with 100 Jobs, it would take 6.5 hours to execute.
+ 
+
+
+| Machine | -d (Days) | -s (Monte Carlo) | -sw (Sweep Samples) | N_jobs (number of processes) | N_t (total timesteps) | N_sweeps (sweeps per process) | N_mc | N_trajectories | N_measurements | Duration(s) | M/s      | M/(J\*S) | Dataset Compressed | Dataset in Memory |
+| ------- | --------- | ---------------- | ------------------- | ---------------------------- | --------------------- | ----------------------------- | ---- | -------------- | -------------- | ----------- | -------- | -------- | ------------------ | ----------------- |
+| Danilo  | 3*365     | 3                | 83                  | 4                            | 1096                  | 10                            | 3    | 250            | 274,000        | 232         | 1,181    | 295      | x                  | x                 |
+| YGG     | 3*365     | 3                | 230                 | 23                           | 1096                  | 5                             | 3    | 690            | 756,240        | 126         | 6,001.88 | 260.95   | 137MB              | 0.69GB            |
+| YGG     | 3*365     | 3                | 2300                | 23                           | 1096                  | 5                             | 3    | 6900           | 7,562,400      | 1,261.71    | 5,993.78 | 260.60   | 1.4GB              | 6.9GB             |
+|         |           |                  |                     |                              |                       |                               |      |                |                |             |          |          |                    |                   |
+
+
+- YGG is getting 6K measurements / second with 23 jobs.
+- How many samples can we sweep in 4 hours?
+- X * 1096 * 3 / 6000 = 4\*60\*60
+- X = 4\*60\*60 * 6000 / (1096 * 3) = 26277 sweep samples.
+- But consider memory constraints:
+- Memory usage is 3MB / trajectory (6900/2300).
+- So 26277 * 3MB = 78.8GB.
+- Let's take memory constraint of 15GB.
+- Then sweeps is constrained by memory to 5000 sweeps.
