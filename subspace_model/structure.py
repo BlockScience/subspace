@@ -32,25 +32,24 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
     {
         "label": "Environmental Processes",
         "ignore": False,
-        "policies": {},
+        "policies": {"block_utilization": p_block_utilization},
         "variables": {
-            # "average_base_fee": s_average_base_fee,
             "average_priority_fee": s_average_priority_fee,
             "average_compute_weight_per_tx": s_average_compute_weight_per_tx,
-            "transaction_count": s_transaction_count,
-            "average_transaction_size": s_average_transaction_size,
+            "transaction_count": replace_suf,
+            "average_transaction_size": replace_suf,
             "average_compute_weight_per_bundle": s_average_compute_weight_per_bundle,
             "bundle_count": s_bundle_count,
+            "block_utilization": replace_suf,
+            "avg_blockspace_usage": s_avg_blockspace_usage
         },
     },
     {
-        "label": "Archival Process and Compute Block Utilization",
+        "label": "Archival Process",
         "policies": {"archival": p_archive},
         "variables": {
             "blockchain_history_size": add_suf,
             "buffer_size": add_suf,
-            "block_utilization": s_block_utilization,
-            "avg_blockspace_usage": s_avg_blockspace_usage
         },
     },
     {

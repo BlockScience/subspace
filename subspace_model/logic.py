@@ -174,44 +174,6 @@ def s_average_compute_weight_per_bundle(
         ),
     )
 
-
-def s_average_transaction_size(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> tuple[str, object]:
-    """
-    Simulate the ts-average transaction size through a Gaussian process.
-    XXX: depends on an stochastic process assumption.
-    """
-    return (
-        "average_transaction_size",
-        max(
-            params["transaction_size_function"](
-                params,
-                state,
-            ),
-            params["min_transaction_size"],
-        ),
-    )
-
-
-def s_transaction_count(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> tuple[str, object]:
-    """
-    Simulate the ts-average transaction size through a Poisson process.
-    XXX: depends on an stochastic process assumption.
-    """
-    transaction_count = max(
-        params["transaction_count_per_day_function"](
-            params,
-            state,
-        ),
-        0,
-    )
-
-    return ("transaction_count", transaction_count)
-
-
 def s_bundle_count(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
 ) -> tuple[str, object]:
@@ -229,6 +191,24 @@ def s_bundle_count(
     )
 
     return ("bundle_count", bundle_count)
+
+def p_block_utilization(
+    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
+) -> PolicyOutput:
+    block_utilization = params["utilization_ratio_function"](params, state)
+    max_normal_block_length = (
+        params["max_block_size"] * DAY_TO_SECONDS *
+        params["block_time_in_seconds"]
+    )
+    transaction_volume = block_utilization * max_normal_block_length
+    average_transaction_size = state["average_transaction_size"]
+    transaction_count = transaction_volume / average_transaction_size
+
+    return {
+            "block_utilization": block_utilization,
+            "transaction_count": transaction_count,
+            "average_transaction_size": average_transaction_size,
+            }
 
 
 def p_archive(
@@ -726,23 +706,6 @@ def p_transfers(
         "nominators_balance": delta_nominators,
         "farmers_balance": delta_farmers,
     }
-
-
-def s_block_utilization(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> tuple[str, object]:
-    """ """
-    used_blockspace = state["transaction_count"] * \
-        state["average_transaction_size"]
-    max_normal_block_length = (
-        params["max_block_size"] * DAY_TO_SECONDS *
-        params["block_time_in_seconds"]
-    )
-
-    # Compute Block Utilization
-    block_utilization = used_blockspace / max_normal_block_length
-
-    return ("block_utilization", block_utilization,)
 
 
 def s_avg_blockspace_usage(
