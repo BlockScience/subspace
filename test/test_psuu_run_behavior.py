@@ -29,13 +29,13 @@ def test_kpi_values(sim_df):
 
     # Per-Trajectory Co-Domain Tests
     for i, row in agg_df.iterrows():
-        assert row['mean_relative_community_owned_supply'].mean() > 0.01
-        assert row['mean_farmer_subsidy_factor'].mean() > 0
-        assert row['mean_proposing_rewards_per_newly_pledged_space'].mean() > 0
-        assert row['mean_proposer_reward_minus_voter_reward'].mean() > 0
-        assert row['cumm_rewards_before_1yr'].mean() > 0
-        assert row['abs_sum_storage_fees_per_sum_compute_fees'].mean() > 0
-        assert row['cumm_rewards'].mean() > 0
+        assert row['mean_relative_community_owned_supply'] > 0.01
+        assert row['mean_farmer_subsidy_factor'] > 0
+        assert row['mean_proposing_rewards_per_newly_pledged_space'] > 0
+        assert row['mean_proposer_reward_minus_voter_reward'] > 0
+        assert row['cumm_rewards_before_1yr'] > 0
+        assert row['abs_sum_storage_fees_per_sum_compute_fees'] > 0
+        assert row['cumm_rewards'] >= row['cumm_rewards_before_1yr']
 
     # Aggregate Co-Domain Tests
     assert agg_df['mean_relative_community_owned_supply'].mean() > 0.01
@@ -44,6 +44,6 @@ def test_kpi_values(sim_df):
     assert agg_df['mean_proposer_reward_minus_voter_reward'].mean() > 0
     assert agg_df['cumm_rewards_before_1yr'].mean() > 0
     assert agg_df['abs_sum_storage_fees_per_sum_compute_fees'].mean() > 0
-    assert agg_df['cumm_rewards'].mean() > 0
+    assert agg_df['cumm_rewards'].mean() >= agg_df['cumm_rewards_before_1yr'].mean()
 
 
