@@ -68,3 +68,41 @@ def create_decision_tree_importances_plot(data: pd.DataFrame,
     plt.show()
 
     return fig, axes
+
+
+
+
+def create_impact_dist_plots_by_kpi(df_to_use: pd.DataFrame,
+                                          kpi_cols: list[str],
+                                          plot_height: float = 3.5,
+                                          plot_width: float = 3.5):
+    # Define the custom color palette
+    custom_palette = ["#000000", "#FF0000"]
+    sns.set_palette(custom_palette)
+
+    fig_width = plot_width * len(kpi_cols)
+    fig_height = plot_height
+
+    # Create a plot object with subplots.
+    fig, axs = plt.subplots(len(phase_cols), len(kpi_cols),
+                            figsize=(fig_width, fig_height),
+                            sharex='row', sharey='row',
+                            gridspec_kw={'hspace': 0.65, 'wspace': 0.65})
+    fig.subplots_adjust(top=0.89)
+    fig.suptitle("Phase Impact Plot", y = 1.0)
+
+    for row_num, param in enumerate(phase_cols):
+        for col_num, kpi in enumerate(kpi_cols):
+            sns.kdeplot(
+                data=df_to_use,
+                x=kpi,
+                hue=param,
+                ax=axs[row_num, col_num],
+                palette=custom_palette,
+#                common_norm = True
+            )
+            axs[row_num, col_num].set_title(f"Impact of \n {param} \n on {kpi}",
+                                            fontsize=10)
+
+    plt.show()
+    return fig, axs
