@@ -5,7 +5,7 @@ from subspace_model.experiments.experiment import psuu
 from subspace_model.psuu import timestep_tensor_to_trajectory_tensor
 
 
-@pt.fixture(scope="module", params=[(100, 3, 1)])
+@pt.fixture(scope="module", params=[(100, 50, 1), (1000, 2, 1)])
 def sim_df(request) -> pd.DataFrame:
     (SIMULATION_DAYS, N_SWEEP_SAMPLES, SAMPLES) = request.param
     return psuu(SIMULATION_DAYS=SIMULATION_DAYS, 
