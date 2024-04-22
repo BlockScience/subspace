@@ -19,7 +19,7 @@ def mean_proposing_rewards_per_newly_pledged_space(df: TrajectoryDataFrame) -> K
     """
     M(t) = Rewards to Proposers(t) / New Pledged Space(t)
     """
-    return (df['reward_to_voters'] / df['total_space_pledged'].diff()).mean()
+    return (df['reward_to_proposer'] / df['total_space_pledged'].diff()).mean()
 
 def mean_proposer_reward_minus_voter_reward(df: TrajectoryDataFrame) -> KPI:
     return (df['reward_to_proposer'] - df['reward_to_voters']).mean()
