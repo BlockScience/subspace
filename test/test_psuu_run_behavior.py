@@ -24,7 +24,6 @@ def test_run(sim_df):
     df = sim_df.query('timestep > 0')
     assert df.isnull().sum().sum() == 0
 
-
 def test_kpi_values(sim_df):
     agg_df = timestep_tensor_to_trajectory_tensor(sim_df)
 
