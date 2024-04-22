@@ -29,15 +29,7 @@ What can be achieved in 4 hours of compute?
 - How many samples can we sweep in 4 hours?
 - X * 1096 * 3 / 6000 = 4\*60\*60
 - X = 4\*60\*60 * 6000 / (1096 * 3) = 26277 sweep samples.
-
-What can be achieved constraining memory to 15GB?
-- Memory usage is 3MB / trajectory (6900/2300).
-- So 26277 * 3MB = 78.8GB.
-- Let's take memory constraint of 15GB.
-- Then sweeps is constrained by memory to 5000 sweeps.
-
-How long to execute 5000 sweeps with 3 monte carlo runs?
-- 5000 * 1096 * 3 / 6000 = X
-- X = 2740 = 45.66 Minutes
+- Running now with `RETURN_SIM_DF: bool = False` to eliminate memory constraint in combining the parts.
+- Calculating trajectory_tensor batch-wise 
 
 
