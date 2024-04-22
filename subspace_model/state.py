@@ -53,7 +53,7 @@ INITIAL_STATE = SubspaceModelState(
     operator_pool_shares=0.0,
     
     # Deterministic Variables
-    block_reward=float('nan'),
+    block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
     allocated_tokens=0.0,

@@ -20,7 +20,9 @@ def sim_df(request) -> pd.DataFrame:
 
 
 def test_run(sim_df):
-    pass
+    
+    df = sim_df.query('timestep > 0')
+    assert df.isnull().sum().sum() == 0
 
 
 def test_kpi_values(sim_df):
