@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+import math
+import random
 from typing import Callable, Dict, List, Any
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
@@ -7,6 +10,7 @@ from subspace_model.const import (
     BLOCKS_PER_YEAR,
     DAY_TO_SECONDS,
     MAX_CREDIT_ISSUANCE,
+    ISSUANCE_FOR_FARMERS
 )
 from subspace_model.metrics import (
     earned_minus_burned_supply,
@@ -25,7 +29,8 @@ from subspace_model.types import (
 def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
     # Extract necessary values from the state
     S_r = state["reference_subsidy"]
-    F_bar = params["max_block_size"] * state["storage_fee_in_credits_per_bytes"]
+    F_bar = params["max_block_size"] * \
+        state["storage_fee_in_credits_per_bytes"]
     g = state["block_utilization"]
 
     # Fixed parameters. These can be tuned as needed.
@@ -149,9 +154,6 @@ def predictable_trajectory_with_sustained_shocks(
     return generator
 
 
-import random
-
-
 def SCENARIO_GROUPS(means: List[float], N: int = 13, M: int = 7) -> List[Callable]:
     # Subsample battery to conserve cardinality of scenarios parameter space
     groups: List[Callable] = random.sample(
@@ -182,12 +184,9 @@ SUPPLY_EARNED_MINUS_BURNED = earned_minus_burned_supply
 SUPPLY_TOTAL = total_supply
 
 
-import math
-from dataclasses import dataclass
-
-
 REFERENCE_SUBSIDY_CONSTANT_SINGLE_COMPONENT = [
-    SubsidyComponent(0, 2 * BLOCKS_PER_YEAR, 10_000, 10_000 / (2 * BLOCKS_PER_YEAR)),
+    SubsidyComponent(0, 2 * BLOCKS_PER_YEAR, 10_000,
+                     10_000 / (2 * BLOCKS_PER_YEAR)),
 ]
 REFERENCE_SUBSIDY_HYBRID_SINGLE_COMPONENT = [
     SubsidyComponent(0, BLOCKS_PER_MONTH, 10_000, 1_000 / BLOCKS_PER_MONTH),
@@ -206,7 +205,10 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
 
     component_1_initial_subsidy_duration = [0]
     component_1_initial_subsidies = [1, 4, 7]
-    component_1_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
+    component_1_maximum_cumulative_subsidies = [
+        0.1 * ISSUANCE_FOR_FARMERS,
+        0.3 * ISSUANCE_FOR_FARMERS,
+        0.5 * ISSUANCE_FOR_FARMERS]
 
     component_2_initial_subsidy_duration = [
         6 * BLOCKS_PER_MONTH,
@@ -215,7 +217,9 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
         48 * BLOCKS_PER_MONTH,
     ]
     component_2_initial_subsidies = [1, 4, 7]
-    component_2_maximum_cumulative_subsidies = [0.1, 0.3, 0.5]
+    component_2_maximum_cumulative_subsidies = [0.1 * ISSUANCE_FOR_FARMERS,
+                                                0.3 * ISSUANCE_FOR_FARMERS,
+                                                0.5 * ISSUANCE_FOR_FARMERS]
 
     cartesian_product = sweep_cartesian_product(
         {
@@ -227,45 +231,48 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
             "component_2_initial_subsidy_duration": component_2_initial_subsidy_duration,
             "component_2_initial_subsidies": component_2_initial_subsidies,
             "component_2_maximum_cumulative_subsidies": component_2_maximum_cumulative_subsidies,
-        } # type: ignore
-    ) 
+        }  # type: ignore
+    )
 
     components = [
-            (
+        (
             SubsidyComponent(
                 start1,
                 duration1,
-                initial_subsidy1,
                 maximum_cumulative_subsidy1,
+                initial_subsidy1,
             ),
             SubsidyComponent(
                 start2,
                 duration2,
-                initial_subsidy2,
-                maximum_cumulative_subsidy2,)
-            )
-             for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
-                    cartesian_product['component_1_start_days'],
-                    cartesian_product['component_1_initial_subsidy_duration'],
-                    cartesian_product['component_1_initial_subsidies'],
-                    cartesian_product['component_1_maximum_cumulative_subsidies'],
-                    cartesian_product['component_2_start_days'],
-                    cartesian_product['component_2_initial_subsidy_duration'],
-                    cartesian_product['component_2_initial_subsidies'],
-                    cartesian_product['component_2_maximum_cumulative_subsidies'],
-                    )]
+                maximum_cumulative_subsidy2,
+                initial_subsidy2,)
+        )
+        for start1, duration1, initial_subsidy1, maximum_cumulative_subsidy1, start2, duration2, initial_subsidy2, maximum_cumulative_subsidy2 in zip(
+            cartesian_product['component_1_start_days'],
+            cartesian_product['component_1_initial_subsidy_duration'],
+            cartesian_product['component_1_initial_subsidies'],
+            cartesian_product['component_1_maximum_cumulative_subsidies'],
+            cartesian_product['component_2_start_days'],
+            cartesian_product['component_2_initial_subsidy_duration'],
+            cartesian_product['component_2_initial_subsidies'],
+            cartesian_product['component_2_maximum_cumulative_subsidies'],
+        )]
 
     return components
 
 
-DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = MAINNET_REFERENCE_SUBSIDY_COMPONENTS()[0]
+DEFAULT_REFERENCE_SUBSIDY_COMPONENTS = MAINNET_REFERENCE_SUBSIDY_COMPONENTS()[
+    -1]
+
 
 def TRANSACTION_COUNT_PER_DAY_FUNCTION_CONSTANT_UTILIZATION_50(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
     average_transaction_size = state["average_transaction_size"]
     max_size = (
-        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
+        params["max_block_size"] * DAY_TO_SECONDS *
+        params["block_time_in_seconds"]
     )
 
     # Hold a constant utilization rate of 0.5
@@ -281,7 +288,8 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_GROWING_UTILIZATION_TWO_YEARS(
     days_passed = state["days_passed"]
     average_transaction_size = state["average_transaction_size"]
     max_size = (
-        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
+        params["max_block_size"] * DAY_TO_SECONDS *
+        params["block_time_in_seconds"]
     )
 
     utilization = min(days_passed / (2 * 365), 1)
@@ -296,7 +304,8 @@ def TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS(
     params: SubspaceModelParams, state: SubspaceModelState
 ) -> float:
     max_size = (
-        params["max_block_size"] * DAY_TO_SECONDS * params["block_time_in_seconds"]
+        params["max_block_size"] * DAY_TO_SECONDS *
+        params["block_time_in_seconds"]
     )
     transaction_volume = max_size * state["block_utilization"]
     transaction_count = transaction_volume / state["average_transaction_size"]

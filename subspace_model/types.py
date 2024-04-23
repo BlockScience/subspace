@@ -9,8 +9,8 @@ from subspace_model.const import BLOCKS_PER_DAY
 class SubsidyComponent:
     initial_period_start: Days  # τ_{0, i}
     initial_period_duration: Days  # τ_{1, i}
-    max_cumulative_subsidy: Credits  # Ω_i
-    max_reference_subsidy: CreditsPerBlock  # α_i
+    max_cumulative_subsidy: Credits  # Ω_i. The max that can be disbursed globally
+    max_reference_subsidy: CreditsPerBlock  # α_i. The max that can be disbursed per block
 
 
     def intial_period_start_in_blocks(self) -> Blocks:
@@ -27,30 +27,19 @@ class SubsidyComponent:
         """Allow the instance to be called as a function to calculate the subsidy."""
         return self.calculate_subsidy(t)
 
-    def calculate_subsidy(self, t: Days) -> CreditsPerBlock:
+    def calculate_subsidy(self, t: Days) -> CreditsPerDay:
         """Calculate S(t) the subsidy for a given time."""
         if t < self.initial_period_start:
             return 0.0
-        elif self.initial_period_start <= t <= self.initial_period_end:
-            return self.calculate_linear_subsidy(t)
+        elif self.initial_period_start <= t < self.initial_period_end:
+            return self.calculate_linear_subsidy(t) * BLOCKS_PER_DAY
         else:
-            return self.calculate_exponential_subsidy(t)
+            return self.calculate_exponential_subsidy(t) * BLOCKS_PER_DAY
 
     def calculate_linear_subsidy(self, t: Days) -> CreditsPerBlock:
         """Calculate S_l(t) the linear subsidy for a given time."""
-        already_distributed: Credits = self.max_reference_subsidy * (
-            t - self.initial_period_start
-        ) * BLOCKS_PER_DAY
 
-        if already_distributed >= self.max_cumulative_subsidy:
-            return 0
-        elif (
-            already_distributed + self.max_reference_subsidy
-            > self.max_cumulative_subsidy
-        ):
-            return self.max_cumulative_subsidy - already_distributed
-        else:
-            return self.max_reference_subsidy
+        return self.max_reference_subsidy
 
     def calculate_exponential_subsidy(self, t: float) -> CreditsPerBlock:
         """Calculate S_e(t) the exponential subsidy for a given time."""
