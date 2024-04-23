@@ -96,12 +96,18 @@ def p_reward(
     voting_rewards = S_r
     total_reward = utilization_based_reward + voting_rewards
 
-    per_recipient_reward = voting_rewards * (1 / params['reward_recipients'])
+    if total_reward > state['reward_issuance_balance']:
+        reward = total_reward
+        per_recipient_reward = voting_rewards * (1 / params['reward_recipients'])
+        reward_to_proposer = utilization_based_reward + voting_rewards * (1 / params['reward_recipients'])
+        reward_to_voters = total_reward - reward_to_proposer
+    else:
+        reward = 0.0
+        per_recipient_reward = 0.0
+        reward_to_proposer = 0.0
+        reward_to_voters = 0.0
 
-    reward_to_proposer = utilization_based_reward + voting_rewards * (1 / params['reward_recipients'])
-    reward_to_voters = total_reward - reward_to_proposer
-
-    return {"block_reward": total_reward, 
+    return {"block_reward": reward, 
             "reward_issuance_balance": -total_reward,
             "reward_to_voters": reward_to_voters,
             "reward_to_proposer": reward_to_proposer,
