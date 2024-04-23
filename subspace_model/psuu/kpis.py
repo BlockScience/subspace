@@ -3,7 +3,7 @@ from subspace_model.types import *
 ## KPIs
 
 def per_timestep_average_relative_community_owned_supply(df: TrajectoryDataFrame) -> KPI:
-    return (df.community_owned_supply / df.total_supply).mean()
+    return (df.community_owned_supply / (df.allocated_tokens + df.issued_supply)).mean()
 
 
 def mean_farmer_subsidy_factor(df: TrajectoryDataFrame) -> KPI:

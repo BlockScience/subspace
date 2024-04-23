@@ -20,7 +20,6 @@ def sim_df(request) -> pd.DataFrame:
 
 
 def test_run(sim_df):
-    
     df = sim_df.query('timestep > 0')
     assert df.isnull().sum().sum() == 0
 
@@ -30,6 +29,7 @@ def test_kpi_values(sim_df):
     # Per-Trajectory Co-Domain Tests
     for i, row in agg_df.iterrows():
         assert row['mean_relative_community_owned_supply'] > 0.01
+        assert row['mean_relative_community_owned_supply'] < 1.0
         assert row['mean_farmer_subsidy_factor'] > 0
         assert row['mean_proposing_rewards_per_newly_pledged_space'] > 0
         assert row['mean_proposer_reward_minus_voter_reward'] > 0
@@ -39,6 +39,7 @@ def test_kpi_values(sim_df):
 
     # Aggregate Co-Domain Tests
     assert agg_df['mean_relative_community_owned_supply'].mean() > 0.01
+    assert agg_df['mean_relative_community_owned_supply'].mean() < 1.0
     assert agg_df['mean_farmer_subsidy_factor'].mean() > 0
     assert agg_df['mean_proposing_rewards_per_newly_pledged_space'].mean() > 0
     assert agg_df['mean_proposer_reward_minus_voter_reward'].mean() > 0
