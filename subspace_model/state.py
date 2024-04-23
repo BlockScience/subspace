@@ -74,7 +74,6 @@ INITIAL_STATE = SubspaceModelState(
 
     # Uncategorized Terms
     storage_fee_per_rewards=0.0,
-    avg_blockspace_usage=0.0,
     reference_subsidy=0.0,
     compute_fee_multiplier=1.0,
     free_space=0.0,
