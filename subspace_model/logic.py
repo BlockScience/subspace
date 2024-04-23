@@ -708,37 +708,6 @@ def p_transfers(
     }
 
 
-def s_avg_blockspace_usage(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState, _5
-) -> tuple[str, object]:
-    """ """
-    used_blockspace = state["transaction_count"] * \
-        state["average_transaction_size"]
-
-    # Compute Average Blockspace Usage
-    blocks_passed = state["blocks_passed"]
-    delta_blocks = state["delta_blocks"]
-    num_blocks = params["utilization_ratio_smooth_num_blocks"]
-    avg_blockspace_usage = state["avg_blockspace_usage"]
-
-    if num_blocks == 0:
-        avg_blockspace_usage = used_blockspace
-    elif blocks_passed <= num_blocks:
-        avg_blockspace_usage = (avg_blockspace_usage + used_blockspace) / 2
-    else:
-        multiplier = 2 / (num_blocks + 1)
-
-        # This is according to the spec (if delta_blocks == 1)
-        # avg_blockspace_usage = multiplier * used_blockspace + (1 - multiplier) * avg_blockspace_usage
-
-        # This incorporates the exponential decay of delta_blocks
-        avg_blockspace_usage = avg_blockspace_usage + \
-            (used_blockspace - avg_blockspace_usage) * \
-            (1 - (1-multiplier)**(delta_blocks))
-
-    return ("avg_blockspace_usage", state["avg_blockspace_usage"],)
-
-
 def s_reference_subsidy(
     params: SubspaceModelParams, _2, state_history: list, state: SubspaceModelState, _5) -> tuple:
     """ """

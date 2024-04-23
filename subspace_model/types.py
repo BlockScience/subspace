@@ -151,7 +151,6 @@ class SubspaceModelState(TypedDict):
 
     # Uncategorized Terms
     storage_fee_per_rewards: float
-    avg_blockspace_usage: float
     reference_subsidy: float
     compute_fee_multiplier: float
     free_space: float
