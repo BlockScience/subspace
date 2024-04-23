@@ -181,11 +181,11 @@ def p_block_utilization(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
     block_utilization = params["utilization_ratio_function"](params, state)
-    max_normal_block_length = (
+    max_normal_block_length: float = (
         params["max_block_size"] * DAY_TO_SECONDS *
         params["block_time_in_seconds"]
     )
-    transaction_volume = block_utilization * max_normal_block_length
+    transaction_volume = block_utilization * max_normal_block_length * BLOCKS_PER_DAY
     average_transaction_size = state["average_transaction_size"]
     transaction_count = transaction_volume / average_transaction_size
 
@@ -225,8 +225,9 @@ def p_archive(
     # Remove the segments from the buffer and place them in the history
     new_history_bytes: Bytes = 0
     if segments_being_archived > 0:
-        new_buffer_bytes += -1 * SEGMENT_SIZE * segments_being_archived
-        new_history_bytes += SEGMENT_HISTORY_SIZE * segments_being_archived
+        delta_buffer = SEGMENT_SIZE * segments_being_archived
+        new_buffer_bytes += -1 * delta_buffer
+        new_history_bytes += delta_buffer
 
     # Update the blockchain history size and the current buffer size
     return {
