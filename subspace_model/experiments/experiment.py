@@ -12,6 +12,7 @@ from glob import glob
 import re
 from tqdm.auto import tqdm # type: ignore
 import logging
+from pathlib import Path
 
 logger = logging.getLogger('subspace-digital-twin')
 
@@ -569,7 +570,7 @@ def psuu(
     PROCESSES: int = 4,
     PARALLELIZE: bool = True,
     USE_JOBLIB: bool = True,
-    RETURN_SIM_DF: bool = True
+    RETURN_SIM_DF: bool = False
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -658,9 +659,10 @@ def psuu(
             {k: v[i : i + chunk_size] for k, v in sweep_params_samples.items()}
             for i in range(0, len(list(sweep_params_samples.values())[0]), chunk_size)
         ]
-        output_path = (
-            f"data/simulations/psuu_run_{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}"
-        )
+        sim_folder_path = Path("data/simulations")
+        output_folder_path =sim_folder_path / f"psuu_run-{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        output_folder_path.mkdir(parents=True, exist_ok=True)
+        output_path = str(output_folder_path / "timestep_tensor")
 
         def run_chunk(i_chunk, sweep_params):
             logger.debug(f"{i_chunk}, {datetime.now()}")
@@ -693,14 +695,15 @@ def psuu(
             for i_chunk, sweep_params in tqdm(args):
                 run_chunk(i_chunk, sweep_params)
 
-        # Combine all of the chunks and write simulation results to disk
-        latest = "-".join(
-            sorted(glob("./data/simulations/psuu_run*"))[-1].split("-")[:-1]
-        )
-        parts = glob(f"{latest}*")
-        sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))  # type: ignore
 
         if RETURN_SIM_DF:
+            # TODO: this code needs to be checked.
+                        # Combine all of the chunks and write simulation results to disk
+            latest_folder = "-".join(
+                sorted(glob(f"./{str(sim_folder_path)}/psuu_run*"))[-1].split("-")[:-1]
+            )
+            parts = glob(f"{latest_folder}*")
+            sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))  # type: ignore
             sim_df = pd.concat(
                 [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
             )
