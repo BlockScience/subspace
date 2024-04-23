@@ -53,7 +53,7 @@ INITIAL_STATE = SubspaceModelState(
     operator_pool_shares=0.0,
     
     # Deterministic Variables
-    block_reward=float('nan'),
+    block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
     allocated_tokens=0.0,
@@ -76,7 +76,7 @@ INITIAL_STATE = SubspaceModelState(
     storage_fee_per_rewards=0.0,
     avg_blockspace_usage=0.0,
     reference_subsidy=0.0,
-    compute_fee_multiplier=0.0,
+    compute_fee_multiplier=1.0,
     free_space=0.0,
     extrinsic_length_in_bytes=0.0,
     storage_fee_in_credits_per_bytes=0.0,

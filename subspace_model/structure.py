@@ -217,9 +217,12 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 "community_owned_supply",
                 community_owned_supply(state, params),
             ),
-            "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards"),
+            "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards", nan_value=0.0),
             "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fees_to_farmers", "cumm_storage_fees_to_farmers"),
-            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers
+            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers,
+            'per_recipient_reward':lambda p, _2, _3, s, _5: ('reward_to_voters', per_recipient_reward(s, p)),
+            'reward_to_voters': lambda p, _2, _3, s, _5: ('reward_to_voters', reward_to_voters(s, p)),
+            'reward_to_proposer': lambda p, _2, _3, s, _5: ('reward_to_proposer', reward_to_proposer(s, p))
         },
     },
 ]

@@ -1,9 +1,11 @@
 from subspace_model.psuu.types import *
 from subspace_model.types import *
+from math import sqrt
+
 ## KPIs
 
 def per_timestep_average_relative_community_owned_supply(df: TrajectoryDataFrame) -> KPI:
-    return (df.community_owned_supply / df.total_supply).mean()
+    return (df.community_owned_supply / (df.allocated_tokens + df.issued_supply)).mean()
 
 
 def mean_farmer_subsidy_factor(df: TrajectoryDataFrame) -> KPI:
@@ -22,7 +24,7 @@ def mean_proposing_rewards_per_newly_pledged_space(df: TrajectoryDataFrame) -> K
     return (df['reward_to_voters'] / df['total_space_pledged'].diff()).mean()
 
 def mean_proposer_reward_minus_voter_reward(df: TrajectoryDataFrame) -> KPI:
-    return (df['reward_to_proposer'] - df['reward_to_voters']).mean()
+    return (df['reward_to_proposer'] - df['per_recipient_reward']).mean()
 
 def cumm_rewards_before_1yr(df: TrajectoryDataFrame) -> KPI:
     return df.query("days_passed < 366").block_reward.sum()
@@ -32,7 +34,7 @@ def abs_sum_storage_fees_per_sum_compute_fees(df: TrajectoryDataFrame) -> KPI:
     """
     M(t) = Storage Fee Volume(t) / Compute Fee Volume(t)
     """
-    return df.storage_fee_volume.sum() / (df.storage_fee_volume.sum() + df.compute_fee_volume.sum())
+    return sqrt(abs(df.storage_fee_volume.sum() ** 2 - df.compute_fee_volume.sum() ** 2))
 
 def cumm_rewards(df: TrajectoryDataFrame) -> KPI:
     return df.block_reward.sum()

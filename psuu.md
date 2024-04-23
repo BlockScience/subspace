@@ -9,13 +9,23 @@
 - Total State Measurements: 690,322,176
 
 ## Performance Measurements
+
+### Commit  ??? 
+
 - Execution Time on a Mac M1, 4 Jobs: 274,000 measurements on 250 trajectories in 232 seconds
   - 1,181 M/s
   - 295 M/(J*s)
   - Under the current numbers, the full simulation would take 162 hours to execute.
   - If executed with 100 Jobs, it would take 6.5 hours to execute.
  
+ ### Commit aa6bf6609d6
 
+ - Execution Time on a Mac M1, 4 Jobs: 438,400 measurements on 400 trajectories in 419 seconds
+  - 1,047 M/s
+  - 262 M/(J*s)
+
+
+#### Commit ???
 
 | Machine | -d (Days) | -s (Monte Carlo) | -sw (Sweep Samples) | N_jobs (number of processes) | N_t (total timesteps) | N_sweeps (sweeps per process) | N_mc | N_trajectories | N_measurements | Duration(s) | M/s      | M/(J\*S) | Dataset Compressed | Dataset in Memory |
 | ------- | --------- | ---------------- | ------------------- | ---------------------------- | --------------------- | ----------------------------- | ---- | -------------- | -------------- | ----------- | -------- | -------- | ------------------ | ----------------- |

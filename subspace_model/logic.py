@@ -1,4 +1,4 @@
-from math import floor
+from math import floor, isnan
 from typing import Callable
 from cadCAD.types import PolicyOutput  # type: ignore
 from subspace_model.const import *
@@ -755,12 +755,15 @@ def s_reference_subsidy(
     return ("reference_subsidy", avg_ref_subsidy)
 
 
-def s_cumm_generic(source_col, target_col):
+def s_cumm_generic(source_col, target_col, nan_value=0.0):
     # -> tuple[Any, Any]:
     def suf(_1, _2, history: list[list[SubspaceModelState]], state: SubspaceModelState, _5):
         value = 0.0
         for h in history:
-            value += h[-1][source_col] # type: ignore
+            past_value = h[-1][source_col] # type: ignore
+            if isnan(past_value):
+                past_value = nan_value
+            value += past_value
         value += state[source_col]  # TODO: check if there's no double counting
         return (target_col, value)
     return suf

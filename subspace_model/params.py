@@ -3,7 +3,7 @@ from numpy import nan
 
 from subspace_model.const import *
 from subspace_model.types import SubspaceModelParams, SubspaceModelState
-
+from subspace_model.experiments.logic import predictable_trajectory
 
 from subspace_model.experiments.logic import (
     DEFAULT_ISSUANCE_FUNCTION,
@@ -99,7 +99,8 @@ DEFAULT_PARAMS = SubspaceModelParams(
     slash_per_day_function=lambda p, s: 0,
     ## Environmental: Space Pledged per Time
     newly_pledged_space_per_day_function=lambda p, s: 100.0 * (2 ** 50),
-    utilization_ratio=0.01
+    utilization_ratio=0.01,
+    utilization_ratio_function=MAGNITUDE(SCENARIO_GROUPS([0.01])[0])
 )
 
 
