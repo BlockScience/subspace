@@ -96,7 +96,7 @@ def p_reward(
     voting_rewards = S_r
     total_reward = utilization_based_reward + voting_rewards
 
-    if total_reward > state['reward_issuance_balance']:
+    if  state['reward_issuance_balance'] > total_reward:
         reward = total_reward
         per_recipient_reward = voting_rewards * (1 / params['reward_recipients'])
         reward_to_proposer = utilization_based_reward + voting_rewards * (1 / params['reward_recipients'])
@@ -552,7 +552,7 @@ def p_unvest(
     """
 
     start_period_fraction = 0.25 * float(state['days_passed'] >= 365)
-    linear_period_fraction = 0.75 * min((state['days_passed'] - 365) / 3, 1.0)
+    linear_period_fraction = 0.75 * min(max((state['days_passed'] - 365), 0) / 3, 1.0)
 
     investors = 0.2153 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
     founders = 0.02 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
@@ -578,7 +578,7 @@ def p_unvest(
     return {
         "other_issuance_balance": other_issuance_balance,
         "holders_balance": holders_balance,
-        
+
         "allocated_tokens": allocated_tokens_new,
         "allocated_tokens_investors": investors,
         "allocated_tokens_founders": founders,

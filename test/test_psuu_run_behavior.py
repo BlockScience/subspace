@@ -31,7 +31,7 @@ def test_kpi_values(sim_df):
     for i, row in agg_df.iterrows():
         assert row['mean_relative_community_owned_supply'] > 0.01
         assert row['mean_relative_community_owned_supply'] < 1.0
-        assert row['mean_farmer_subsidy_factor'] >= 0
+        assert row['mean_farmer_subsidy_factor'] > 0
         assert row['mean_proposing_rewards_per_newly_pledged_space'] > 0
         assert row['mean_proposer_reward_minus_voter_reward'] > 0
         assert row['cumm_rewards_before_1yr'] > 0
