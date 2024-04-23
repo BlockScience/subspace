@@ -6,14 +6,11 @@ from subspace_model.types import SubspaceModelParams, SubspaceModelState
 from subspace_model.experiments.logic import predictable_trajectory
 
 from subspace_model.experiments.logic import (
-    DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     MAINNET_REFERENCE_SUBSIDY_COMPONENTS,
     DEFAULT_SLASH_FUNCTION,
     MAGNITUDE,
     NORMAL_GENERATOR,
-    NORMAL_INSTANTANEOUS_SHOCK_GENERATOR,
-    NORMAL_SUSTAINED_SHOCK_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
     SUPPLY_ISSUED,
@@ -45,7 +42,6 @@ DEFAULT_PARAMS = SubspaceModelParams(
     # Mechanism Parameters
     slash_function=DEFAULT_SLASH_FUNCTION,
     reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
-    issuance_function_constant=1,
     utilization_ratio_smooth_num_blocks=100,
     # Implementation parameters
     block_time_in_seconds=BLOCK_TIME,

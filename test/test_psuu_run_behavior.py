@@ -48,3 +48,4 @@ def test_kpi_values(sim_df):
     assert agg_df['cumm_rewards'].mean() >= agg_df['cumm_rewards_before_1yr'].mean()
 
 
+

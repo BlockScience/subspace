@@ -185,7 +185,6 @@ class SubspaceModelParams(TypedDict):
     slash_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Credits]
     reference_subsidy_components: list[SubsidyComponent]
-    issuance_function_constant: float
     utilization_ratio_smooth_num_blocks: int
 
     # Implementation parameters

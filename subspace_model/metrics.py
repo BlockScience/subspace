@@ -55,19 +55,3 @@ def community_owned_supply(state: SubspaceModelState, params: SubspaceModelParam
 
 def community_owned_supply_fraction(state: SubspaceModelState, params: SubspaceModelParams):
     return community_owned_supply(state, params) / total_supply(state)
-
-
-def per_recipient_reward(state: SubspaceModelState, params: SubspaceModelParams):
-    return state['block_reward'] * (1 - params['reward_proposer_share']) * (1 / params['reward_recipients'])
-
-
-def proposer_bonus_reward(state: SubspaceModelState, params: SubspaceModelParams):
-    return state['block_reward'] * params['reward_proposer_share']
-
-
-def reward_to_proposer(state: SubspaceModelState, params: SubspaceModelParams):
-    return per_recipient_reward(state, params) + proposer_bonus_reward(state, params)
-
-def reward_to_voters(state: SubspaceModelState, params: SubspaceModelParams):
-    # NOTE: assumes that the only other recipient is the block proposer
-    return per_recipient_reward(state, params) * (params['reward_recipients'] - 1)

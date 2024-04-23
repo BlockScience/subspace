@@ -59,16 +59,17 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         },
     },
     {
-        "label": "Farmer Rewards (Inflow)",
+        "label": "Issuance Rewards",
         "ignore": False,
         "policies": {
-            "fund_reward": p_fund_reward,
-            "issuance_reward": p_issuance_reward,
+            "issuance_reward": p_reward,
         },
         "variables": {
             "fund_balance": add_suf,
             "reward_issuance_balance": add_suf,
             "block_reward": replace_suf,
+            "reward_to_voters": replace_suf,
+            "reward_to_proposer": replace_suf
         },
     },
     {
@@ -218,10 +219,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             ),
             "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards", nan_value=0.0),
             "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fees_to_farmers", "cumm_storage_fees_to_farmers"),
-            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers,
-            'per_recipient_reward': lambda p, _2, _3, s, _5: ('reward_to_voters', per_recipient_reward(s, p)),
-            'reward_to_voters': lambda p, _2, _3, s, _5: ('reward_to_voters', reward_to_voters(s, p)),
-            'reward_to_proposer': lambda p, _2, _3, s, _5: ('reward_to_proposer', reward_to_proposer(s, p))
+            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers
         },
     },
 ]

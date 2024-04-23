@@ -79,7 +79,7 @@ def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> PolicyOutput:
     return {"block_reward": reward, "fund_balance": -reward}
 
 
-def p_issuance_reward(
+def p_reward(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
     """
@@ -92,30 +92,20 @@ def p_issuance_reward(
         state["storage_fee_in_credits_per_bytes"]
     g = state["block_utilization"]
 
-    # Fixed parameters. These can be tuned as needed.
-    c = params["issuance_function_constant"]
-    d = 1
+    utilization_based_reward = S_r - min(S_r, F_bar) * g
+    voting_rewards = S_r
+    total_reward = utilization_based_reward + voting_rewards
 
-    # Calculate b
-    b = S_r - max(S_r - F_bar, 0) / math.tanh(c)
+    per_recipient_reward = voting_rewards * (1 / params['reward_recipients'])
 
-    # Calculate a
-    a = S_r - b * math.tanh(c * d)
+    reward_to_proposer = utilization_based_reward + voting_rewards * (1 / params['reward_recipients'])
+    reward_to_voters = total_reward - reward_to_proposer
 
-    # Calculate s(g)
-    test = g - d
-    s_g = a + b * math.tanh(-c * (g - d))
-
-    # Ensure block_reward is non-negative
-    reward = max(s_g, 0)
-
-    # Make sure that the protocol has tokens to issue
-    if reward > state["reward_issuance_balance"]:
-        reward = state["reward_issuance_balance"]
-    else:
-        reward = max(state['reward_issuance_balance'], 0.0)
-
-    return {"block_reward": reward, "reward_issuance_balance": -reward}
+    return {"block_reward": total_reward, 
+            "reward_issuance_balance": -total_reward,
+            "reward_to_voters": reward_to_voters,
+            "reward_to_proposer": reward_to_proposer,
+            'per_recipient_reward': per_recipient_reward}
 
 
 def p_split_reward(
