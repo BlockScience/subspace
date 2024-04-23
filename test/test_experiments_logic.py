@@ -20,3 +20,6 @@ from subspace_model.experiments.logic import SubsidyComponent, NORMAL_GENERATOR,
 def test_generators():
     normal = MAGNITUDE(NORMAL_GENERATOR(0.1, 0.1))(0, 0)
     assert (normal >= 0) and (normal <= 1)
+
+
+

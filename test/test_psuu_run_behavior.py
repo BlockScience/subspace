@@ -8,7 +8,7 @@ from subspace_model.psuu import timestep_tensor_to_trajectory_tensor
 @pt.fixture(scope="module", params=[(100, 50, 1), (1000, 2, 1)])
 def sim_df(request) -> pd.DataFrame:
     (SIMULATION_DAYS, N_SWEEP_SAMPLES, SAMPLES) = request.param
-    return psuu(SIMULATION_DAYS=SIMULATION_DAYS, 
+    return psuu(SIMULATION_DAYS=SIMULATION_DAYS,
                 TIMESTEP_IN_DAYS=1,
                 SAMPLES=SAMPLES,
                 N_SWEEP_SAMPLES=N_SWEEP_SAMPLES,
@@ -22,6 +22,7 @@ def sim_df(request) -> pd.DataFrame:
 def test_run(sim_df):
     df = sim_df.query('timestep > 0')
     assert df.isnull().sum().sum() == 0
+
 
 def test_kpi_values(sim_df):
     agg_df = timestep_tensor_to_trajectory_tensor(sim_df)
@@ -45,7 +46,36 @@ def test_kpi_values(sim_df):
     assert agg_df['mean_proposer_reward_minus_voter_reward'].mean() > 0
     assert agg_df['cumm_rewards_before_1yr'].mean() > 0
     assert agg_df['abs_sum_storage_fees_per_sum_compute_fees'].mean() > 0
-    assert agg_df['cumm_rewards'].mean() >= agg_df['cumm_rewards_before_1yr'].mean()
+    assert agg_df['cumm_rewards'].mean(
+    ) >= agg_df['cumm_rewards_before_1yr'].mean()
 
 
+def test_state_variables(sim_df):
+    for i_traj, df in sim_df.groupby(['simulation', 'subset', 'run']):
+        for i_row, row in df.iterrows():
+            assert row['allocated_tokens'] == pt.approx(row['allocated_tokens_investors']
+                                                        + row['allocated_tokens_founders']
+                                                        + row['allocated_tokens_team']
+                                                        + row['allocated_tokens_advisors']
+                                                        + row['allocated_tokens_vendors']
+                                                        + row['allocated_tokens_ambassadors']
+                                                        + row['allocated_tokens_testnets']
+                                                        + row['allocated_tokens_foundation']
+                                                        + row['allocated_tokens_ssl_priv_sale']
+                                                        + row['allocated_tokens_subspace_labs'])
+            assert row['circulating_supply'] <= row['sum_of_stocks']
+            assert row['total_supply'] <= row['sum_of_stocks']
+            assert row['user_supply'] <= row['sum_of_stocks']
+            assert row['issued_supply'] <= row['sum_of_stocks']
+            assert row['earned_supply'] <= row['sum_of_stocks']
+            assert row['earned_minus_burned_supply'] <= row['sum_of_stocks']
+            assert row['circulating_supply'] <= row['user_supply']
+            assert row['earned_minus_burned_supply'] <= row['earned_supply']
+            for col in row:
+                if type(row[col]) == int or type(row[col]) == float:
+                    assert row[col] >= 0.0
+
+                    
+        assert df.sum_of_stocks.std() == pt.approx(0.0)
+                
 

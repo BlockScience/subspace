@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE, ISSUED_AT_LAUNCH
 from subspace_model.types import SubspaceModelState
+from subspace_model.metrics import sum_of_stocks
 
 INITIAL_STATE = SubspaceModelState(
     # Time Variables
@@ -17,7 +18,7 @@ INITIAL_STATE = SubspaceModelState(
     circulating_supply=ISSUED_AT_LAUNCH,
     user_supply=0.0,
     issued_supply=0.0,
-    sum_of_stocks=0.0,
+    sum_of_stocks=MAX_CREDIT_ISSUANCE,
     earned_supply=0.0,
     earned_minus_burned_supply=0.0,
     total_supply=0.0,
@@ -56,7 +57,7 @@ INITIAL_STATE = SubspaceModelState(
     block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
-    allocated_tokens=0.0,
+    allocated_tokens=(0.0525 + 0.15 + 0.07 + 0.019) * MAX_CREDIT_ISSUANCE,
     buffer_size=0,
 
     # Environmental Variables
@@ -108,3 +109,4 @@ INITIAL_STATE = SubspaceModelState(
     cumm_storage_fees_to_farmers=0.0,
     cumm_compute_fees_to_farmers=0.0,
 )
+
