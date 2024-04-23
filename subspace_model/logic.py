@@ -69,16 +69,6 @@ def p_evolve_time(params: SubspaceModelParams, _2, _3, _4) -> PolicyOutput:
 
 ## Farmer Rewards ##
 
-
-def p_fund_reward(_1, _2, _3, state: SubspaceModelState) -> PolicyOutput:
-    """
-    Farmer rewards that originates from the DSF.
-    """
-    dsf_share = state["dsf_relative_disbursal_per_day"] ** state["delta_days"]
-    reward = state["fund_balance"] * dsf_share
-    return {"block_reward": reward, "fund_balance": -reward}
-
-
 def p_reward(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
@@ -100,7 +90,7 @@ def p_reward(
         reward = total_reward
         per_recipient_reward = voting_rewards * (1 / params['reward_recipients'])
         reward_to_proposer = utilization_based_reward + voting_rewards * (1 / params['reward_recipients'])
-        reward_to_voters = total_reward - reward_to_proposer
+        reward_to_voters = reward - reward_to_proposer
     else:
         reward = 0.0
         per_recipient_reward = 0.0
@@ -109,36 +99,14 @@ def p_reward(
 
     return {"block_reward": reward, 
             "reward_issuance_balance": -reward,
+            'farmers_balance': reward,
+
             "reward_to_voters": reward_to_voters,
             "reward_to_proposer": reward_to_proposer,
-            'per_recipient_reward': per_recipient_reward,
-            'farmers_balance': reward}
-
-
-def p_split_reward(
-    params: SubspaceModelParams, _2, _3, state: SubspaceModelState
-) -> PolicyOutput:
-    """ """
-    reward = state["block_reward"]
-    reward_to_fund = (
-        reward * params["reward_proposer_share"] *
-        params["fund_tax_on_proposer_reward"]
-    )
-    reward_to_farmers = reward - reward_to_fund
-    return {"farmers_balance": reward_to_farmers, "fund_balance": reward_to_fund}
+            'per_recipient_reward': per_recipient_reward}
 
 
 # Operator Rewards
-
-
-def p_operator_reward(_1, _2, _3, _4) -> PolicyOutput:
-    """
-    Protocol issued rewards to Staked Operators.
-    XXX: Assumed to be zero
-    """
-    reward = 0.0
-    return {"other_issuance_balance": -reward, "operators_balance": reward}
-
 
 # Environmental processes
 
@@ -322,7 +290,7 @@ def p_storage_fees(
     """
     Calculate storage fees.
 
-    If holders balance is insufficient, then the amount of paid fees
+    If farmers balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
 
     References:
@@ -366,18 +334,15 @@ def p_storage_fees(
         storage_fee_in_credits_per_bytes * extrinsic_length_in_bytes
     )
 
-    # HACK : Constrain total_storage_fees to 1/2 all holders balance
+    # HACK : Constrain total_storage_fees to 1/2 all farmers balance
     # TODO : Add comment as to why this is needed.
     eff_storage_fee_volume: Credits = min(
-        storage_fee_volume, state["holders_balance"] / 2
+        storage_fee_volume, state["farmers_balance"] / 2
     )
 
     # Storage Fees
     # Fee distribution
-    storage_fees_to_fund: Credits = (
-        params["fund_tax_on_storage_fees"] * eff_storage_fee_volume
-    )
-    storage_fees_to_farmers: Credits = eff_storage_fee_volume - storage_fees_to_fund
+    storage_fees_to_farmers: Credits = 0.0
 
     return {
         # Fee Calculation
@@ -388,9 +353,6 @@ def p_storage_fees(
         # Reward Distribution
         "storage_fees_to_farmers": storage_fees_to_farmers,
         "farmers_balance": storage_fees_to_farmers,
-        "storage_fees_to_fund": storage_fees_to_fund,
-        "fund_balance": storage_fees_to_fund,
-        "holders_balance": -eff_storage_fee_volume,
     }
 
 
@@ -400,7 +362,7 @@ def p_compute_fees(
     """
     Calculate compute fees.
 
-    If holders balance is insufficient, then the amount of paid fees
+    If farmers balance is insufficient, then the amount of paid fees
     will be lower even though the transactions still go through.
 
     Reference: https://subspacelabs.notion.site/Fees-Rewards-Specification-WIP-1b835c7684a940f188920802ca6791f2#4d2c4f4b69a94fcca49a7fcaca7563cc
@@ -444,9 +406,9 @@ def p_compute_fees(
                + priority_fee_volume)
     compute_fee_volume: Credits = max(raw_fee,  eff_minimum_fee, )
 
-    # Constrain compute fee volume to be less than holders balance
+    # Constrain compute fee volume to be less than farmers balance
     eff_compute_fee_volume: Credits = min(
-        compute_fee_volume, state["holders_balance"])
+        compute_fee_volume, state["farmers_balance"])
     eff_scale: float = eff_compute_fee_volume / compute_fee_volume
 
     fees_to_distribute: Credits = eff_compute_fee_volume
@@ -467,6 +429,7 @@ def p_compute_fees(
     # Calculate total fees
     total_fees: Credits = fees_to_farmers + fees_to_operators
 
+
     # TODO: check if fees goes to the farmers/nominators balance
     # or if is auto-staked
 
@@ -481,9 +444,8 @@ def p_compute_fees(
         # Taking and distributing fees
 
         
-        "farmers_balance": fees_to_farmers,
+        "farmers_balance": fees_to_farmers - eff_compute_fee_volume,
         "operators_balance": fees_to_operators,
-        "holders_balance": -eff_compute_fee_volume,
         "fees_to_operators": fees_to_operators,
     }
 
@@ -496,8 +458,7 @@ def p_slash(
     TODO: validate if correct
     """
     slash_value = 0.0
-    slash_to_fund = 0.0
-    slash_to_holders = 0.0
+    slash_to_farmers = 0.0
     operator_shares_to_subtract = 0.0
     slash_to_burn = 0.0
 
@@ -512,9 +473,8 @@ def p_slash(
             slash_count * params["slash_function"](params, state), pool_balance
         )
         if slash_value > 0:
-            slash_to_fund = slash_value * params["slash_to_fund"]
-            slash_to_holders = slash_value * params["slash_to_holders"]
-            slash_to_burn = slash_value - (slash_to_fund + slash_to_holders)
+            slash_to_farmers = slash_value * params["slash_to_farmers"]
+            slash_to_burn = slash_value - slash_to_farmers
 
             # XXX: we assume that the slash is aplied on the staking pool
             # and that its effect is to reduce the operator shares
@@ -532,8 +492,7 @@ def p_slash(
 
     return {
         "staking_pool_balance": -slash_value,
-        "fund_balance": slash_to_fund,
-        "holders_balance": slash_to_holders,
+        "farmers_balance": slash_to_farmers,
         "operator_pool_shares": operator_shares_to_subtract,
         "burnt_balance": slash_to_burn,
     }
@@ -572,13 +531,12 @@ def p_unvest(
 
     tokens_to_allocate = allocated_tokens_new - state['allocated_tokens']
 
-    holders_balance = tokens_to_allocate
-    other_issuance_balance = -holders_balance
+    farmers_balance = tokens_to_allocate
+    other_issuance_balance = -farmers_balance
 
     return {
         "other_issuance_balance": other_issuance_balance,
-        "holders_balance": holders_balance,
-
+        "farmers_balance": farmers_balance,
         "allocated_tokens": allocated_tokens_new,
         "allocated_tokens_investors": investors,
         "allocated_tokens_founders": founders,
@@ -668,44 +626,34 @@ def p_transfers(
     XXX: stakeholders will always transfer a give % of their balance every ts
     """
     delta_nominators = 0.0
-    delta_holders = 0.0
     delta_farmers = 0.0
     delta_operators = 0.0
 
-    # Farmers to Holders
-    if state["farmers_balance"] > 0:
-        delta = state["farmers_balance"] * params[
-            "transfer_farmer_to_holder_per_day_function"
-        ](params, state)
-        delta_farmers -= delta
-        delta_holders += delta
-
-    # Operators to Holders
+    # Operators to Farmers
     if state["operators_balance"] > 0:
         delta = state["operators_balance"] * params[
-            "transfer_operator_to_holder_per_day_function"
+            "transfer_operator_to_farmer_per_day_function"
         ](params, state)
         delta_operators -= delta
-        delta_holders += delta
+        delta_farmers += delta
 
-    # Holder to Nominators
-    if state["holders_balance"] > 0:
-        delta = state["holders_balance"] * params[
-            "transfer_holder_to_nominator_per_day_function"
+    # Farmers to Nominators
+    if state["farmers_balance"] > 0:
+        delta = state["farmers_balance"] * params[
+            "transfer_farmer_to_nominator_per_day_function"
         ](params, state)
-        delta_holders -= delta
+        delta_farmers -= delta
         delta_nominators += delta
 
-        # Holder to Operators
-        delta = state["holders_balance"] * params[
-            "transfer_holder_to_operator_per_day_function"
+        # Farmers to Operators
+        delta = state["farmers_balance"] * params[
+            "transfer_farmer_to_operator_per_day_function"
         ](params, state)
-        delta_holders -= delta
+        delta_farmers -= delta
         delta_operators += delta
 
     return {
         "operators_balance": delta_operators,
-        "holders_balance": delta_holders,
         "nominators_balance": delta_nominators,
         "farmers_balance": delta_farmers,
     }

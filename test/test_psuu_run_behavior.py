@@ -3,7 +3,7 @@ import pytest as pt
 
 from subspace_model.experiments.experiment import psuu
 from subspace_model.psuu import timestep_tensor_to_trajectory_tensor
-
+from subspace_model.const import MAX_CREDIT_ISSUANCE
 
 @pt.fixture(scope="module", params=[(100, 50, 1), (1000, 2, 1)])
 def sim_df(request) -> pd.DataFrame:
@@ -69,10 +69,14 @@ def test_state_variables(sim_df):
             assert row['issued_supply'] <= row['sum_of_stocks']
             assert row['earned_supply'] <= row['sum_of_stocks']
             assert row['earned_minus_burned_supply'] <= row['sum_of_stocks']
+            assert row['community_owned_supply'] <= row['sum_of_stocks']
+
+
             assert row['circulating_supply'] <= row['user_supply']
             assert row['earned_minus_burned_supply'] <= row['earned_supply']
 
 
         assert df.sum_of_stocks.std() == pt.approx(0.0, abs=1e-4)
+        assert df.sum_of_stocks.max() == pt.approx(MAX_CREDIT_ISSUANCE)
                 
 

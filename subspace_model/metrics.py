@@ -7,7 +7,6 @@ def circulating_supply(state: SubspaceModelState) -> Credits:
     return (
         state["operators_balance"]
         + state["nominators_balance"]
-        + state["holders_balance"]
         + state["farmers_balance"]
     )
 
@@ -19,8 +18,7 @@ def user_supply(state: SubspaceModelState) -> Credits:
 
 def earned_supply(state: SubspaceModelState) -> Credits:
     "Should map back to All Issued (and active) Tokens so far"
-    return user_supply(state) + state["fund_balance"]
-
+    return user_supply(state)
 
 def issued_supply(state: SubspaceModelState) -> Credits:
     """

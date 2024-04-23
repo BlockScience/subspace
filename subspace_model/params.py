@@ -58,22 +58,18 @@ DEFAULT_PARAMS = SubspaceModelParams(
     credit_supply_definition=SUPPLY_ISSUED,  # TODO: Set in stone the def
     community_vested_supply_fraction=0.225,
     # Fees & Taxes
-    fund_tax_on_proposer_reward=0.0,  # TODO: assume
-    fund_tax_on_storage_fees=1 / 10,  # TODO: assume
     compute_fees_to_farmers=0.0,  # NOTE: to sweep
     compute_fees_tax_to_operators=0.05,  # or `nomination_tax`
     # Slash Parameters
-    slash_to_fund=0.0,
-    slash_to_holders=0.05,
+    slash_to_farmers=0.05,
     # Other
     initial_community_owned_supply_pct_of_max_credits=(1 / 33),  # TODO
     # Behavioral Parameters Between 0 and 1
     operator_stake_per_ts_function=operator_stake_per_ts_function,
     nominator_stake_per_ts_function=nominator_stake_per_ts_function,
-    transfer_farmer_to_holder_per_day_function=lambda p, s: 0.05,
-    transfer_operator_to_holder_per_day_function=lambda p, s: 0.05,
-    transfer_holder_to_nominator_per_day_function=lambda p, s: 0.01,
-    transfer_holder_to_operator_per_day_function=lambda p, s: 0.01,
+    transfer_operator_to_farmer_per_day_function=lambda p, s: 0.05,
+    transfer_farmer_to_nominator_per_day_function=lambda p, s: 0.01,
+    transfer_farmer_to_operator_per_day_function=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
     ## Environmental: Fees
     priority_fee_function=lambda p, s: 0,
@@ -127,16 +123,16 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
     "nominator_stake_per_ts_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
-    "transfer_farmer_to_holder_per_day_function": [
+    "transfer_farmer_to_farmer_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([1])
     ],
-    "transfer_operator_to_holder_per_day_function": [
+    "transfer_operator_to_farmer_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
-    "transfer_holder_to_nominator_per_day_function": [
+    "transfer_farmer_to_nominator_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
-    "transfer_holder_to_operator_per_day_function": [
+    "transfer_farmer_to_operator_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
 }
@@ -147,16 +143,13 @@ SPECIAL_ENVIRONMENTAL_SCENARIOS = {
         # Behavioral Parameters Between 0 and 1
         "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
         "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "transfer_farmer_to_holder_per_day_function": MAGNITUDE(
+        "transfer_operator_to_farmer_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.05, 0.05)
         ),
-        "transfer_operator_to_holder_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.05, 0.05)
-        ),
-        "transfer_holder_to_nominator_per_day_function": MAGNITUDE(
+        "transfer_farmer_to_nominator_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.01, 0.02)
         ),
-        "transfer_holder_to_operator_per_day_function": MAGNITUDE(
+        "transfer_farmer_to_operator_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.01, 0.02)
         ),
         # Environmental Parameters (Integer positive in [0,inf])

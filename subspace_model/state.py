@@ -43,10 +43,8 @@ INITIAL_STATE = SubspaceModelState(
     other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS - ISSUED_AT_LAUNCH,
     operators_balance=0.0,
     nominators_balance=0.0,
-    holders_balance=ISSUED_AT_LAUNCH,
-    farmers_balance=0.0,
+    farmers_balance=ISSUED_AT_LAUNCH,
     staking_pool_balance=0.0,
-    fund_balance=0.0,
     burnt_balance=0.0,
 
     # Staking Pool Shares
@@ -87,7 +85,6 @@ INITIAL_STATE = SubspaceModelState(
     target_block_fullness=0.0,
     adjustment_variable=0.0,
     storage_fees_to_farmers=0.0,
-    storage_fees_to_fund=0.0,
     target_block_delta=0.0,
     targeted_adjustment_parameter=0.0,
     tx_compute_weight=0.0,

@@ -107,10 +107,8 @@ class SubspaceModelState(TypedDict):
     other_issuance_balance: Credits
     operators_balance: Credits
     nominators_balance: Credits
-    holders_balance: Credits
     farmers_balance: Credits
     staking_pool_balance: Credits
-    fund_balance: Credits
     burnt_balance: Credits
 
     # Staking Pool Shares
@@ -163,7 +161,6 @@ class SubspaceModelState(TypedDict):
     target_block_fullness: float
     adjustment_variable: float
     storage_fees_to_farmers: float
-    storage_fees_to_fund: float
     target_block_delta: float
     targeted_adjustment_parameter: float
     tx_compute_weight: float
@@ -204,14 +201,11 @@ class SubspaceModelParams(TypedDict):
     community_vested_supply_fraction: Percentage
 
     # Fees & Taxes
-    fund_tax_on_proposer_reward: Percentage
-    fund_tax_on_storage_fees: Percentage
     compute_fees_to_farmers: Percentage
     compute_fees_tax_to_operators: Percentage
 
     # Slash Parameters
-    slash_to_fund: Percentage
-    slash_to_holders: Percentage
+    slash_to_farmers: Percentage
 
     # Other
     initial_community_owned_supply_pct_of_max_credits: Percentage
@@ -221,13 +215,13 @@ class SubspaceModelParams(TypedDict):
         'SubspaceModelParams', SubspaceModelState], Percentage]
     nominator_stake_per_ts_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_farmer_to_holder_per_day_function: Callable[[
+    transfer_farmer_to_farmer_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_operator_to_holder_per_day_function: Callable[[
+    transfer_operator_to_farmer_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_nominator_per_day_function: Callable[[
+    transfer_farmer_to_nominator_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_operator_per_day_function: Callable[[
+    transfer_farmer_to_operator_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
 
     # Environmental Parameters

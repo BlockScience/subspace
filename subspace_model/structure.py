@@ -65,25 +65,13 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "issuance_reward": p_reward,
         },
         "variables": {
-            "fund_balance": add_suf,
             "reward_issuance_balance": add_suf,
+            "farmers_balance": add_suf,
+
             "block_reward": replace_suf,
             "reward_to_voters": replace_suf,
             "reward_to_proposer": replace_suf,
-            "farmers_balance": add_suf
         },
-    },
-    {
-        "label": "Farmer Rewards (Outflow)",
-        "ignore": False,
-        "policies": {"split_farmer_rewards": p_split_reward},
-        "variables": {"farmers_balance": add_suf, "fund_balance": add_suf},
-    },
-    {
-        "label": "Operator Rewards",
-        "ignore": False,
-        "policies": {"operator_rewards": p_operator_reward},
-        "variables": {"other_issuance_balance": add_suf, "operators_balance": add_suf},
     },
     {
         "label": "Storage Fees",
@@ -98,9 +86,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             # Reward Distribution
             "farmers_balance": add_suf,
             "storage_fees_to_farmers": replace_suf,
-            "fund_balance": add_suf,
-            "storage_fees_to_fund": replace_suf,
-            "holders_balance": add_suf,
         },
     },
     {
@@ -119,7 +104,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "farmers_balance": add_suf,
             "nominators_balance": add_suf,
             "operators_balance": add_suf,
-            "holders_balance": add_suf,
             "rewards_to_nominators": add_suf,
         },
     },
@@ -128,9 +112,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "ignore": False,
         "policies": {"unvest": p_unvest},
         "variables": {
-            "holders_balance": add_suf,
             "other_issuance_balance": add_suf,
-            
             "allocated_tokens": replace_suf,
             "allocated_tokens_investors": replace_suf,
             "allocated_tokens_founders": replace_suf,
@@ -147,8 +129,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "policies": {"slash": p_slash},
         "variables": {
             "staking_pool_balance": add_suf,
-            "fund_balance": add_suf,
-            "holders_balance": add_suf,
             "operator_pool_shares": add_suf,
             "burnt_balance": add_suf,
         },
@@ -174,7 +154,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             "operators_balance": add_suf,
             "nominators_balance": add_suf,
-            "holders_balance": add_suf,
             "farmers_balance": add_suf,
         },
     },
