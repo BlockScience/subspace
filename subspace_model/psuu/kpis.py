@@ -1,5 +1,7 @@
 from subspace_model.psuu.types import *
 from subspace_model.types import *
+from math import sqrt
+
 ## KPIs
 
 def per_timestep_average_relative_community_owned_supply(df: TrajectoryDataFrame) -> KPI:
@@ -32,7 +34,7 @@ def abs_sum_storage_fees_per_sum_compute_fees(df: TrajectoryDataFrame) -> KPI:
     """
     M(t) = Storage Fee Volume(t) / Compute Fee Volume(t)
     """
-    return df.storage_fee_volume.sum() / (df.storage_fee_volume.sum() + df.compute_fee_volume.sum())
+    return sqrt(abs(df.storage_fee_volume.sum() ** 2 - df.compute_fee_volume.sum() ** 2))
 
 def cumm_rewards(df: TrajectoryDataFrame) -> KPI:
     return df.block_reward.sum()
