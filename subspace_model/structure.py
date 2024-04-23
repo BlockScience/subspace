@@ -83,9 +83,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "storage_fee_in_credits_per_bytes": replace_suf,
             "extrinsic_length_in_bytes": replace_suf,
             "storage_fee_volume": replace_suf,
-            # Reward Distribution
-            "farmers_balance": add_suf,
-            "storage_fees_to_farmers": replace_suf,
         },
     },
     {
@@ -103,8 +100,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             # Fees and rewards distribution
             "farmers_balance": add_suf,
             "nominators_balance": add_suf,
-            "operators_balance": add_suf,
-            "rewards_to_nominators": add_suf,
+            "operators_balance": add_suf
         },
     },
     {
@@ -113,6 +109,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "policies": {"unvest": p_unvest},
         "variables": {
             "other_issuance_balance": add_suf,
+            "farmers_balance": add_suf,
+
+
             "allocated_tokens": replace_suf,
             "allocated_tokens_investors": replace_suf,
             "allocated_tokens_founders": replace_suf,
@@ -198,7 +197,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 community_owned_supply(state, params),
             ),
             "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards", nan_value=0.0),
-            "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fees_to_farmers", "cumm_storage_fees_to_farmers"),
+            "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fee_volume", "cumm_storage_fees_to_farmers"),
             "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers
         },
     },

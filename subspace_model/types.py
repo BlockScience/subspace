@@ -93,7 +93,6 @@ class SubspaceModelState(TypedDict):
     storage_fee_volume: Credits
 
     # Reward Related
-    rewards_to_nominators: Credits
     per_recipient_reward: Credits
     proposer_bonus_reward: Credits
     reward_to_proposer: Credits
@@ -160,7 +159,6 @@ class SubspaceModelState(TypedDict):
     max_bundle_weight: float
     target_block_fullness: float
     adjustment_variable: float
-    storage_fees_to_farmers: float
     target_block_delta: float
     targeted_adjustment_parameter: float
     tx_compute_weight: float
@@ -198,7 +196,6 @@ class SubspaceModelParams(TypedDict):
     reward_proposer_share: Percentage
     max_credit_supply: Credits
     credit_supply_definition: Callable[[SubspaceModelState], Credits]
-    community_vested_supply_fraction: Percentage
 
     # Fees & Taxes
     compute_fees_to_farmers: Percentage

@@ -29,7 +29,6 @@ INITIAL_STATE = SubspaceModelState(
     storage_fee_volume=0.0,
 
     ## Reward Related
-    rewards_to_nominators=0.0,
     per_recipient_reward=0.0,
     proposer_bonus_reward=0.0,
     reward_to_proposer=0.0,
@@ -84,7 +83,6 @@ INITIAL_STATE = SubspaceModelState(
     max_bundle_weight=0.0,
     target_block_fullness=0.0,
     adjustment_variable=0.0,
-    storage_fees_to_farmers=0.0,
     target_block_delta=0.0,
     targeted_adjustment_parameter=0.0,
     tx_compute_weight=0.0,

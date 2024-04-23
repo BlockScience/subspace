@@ -63,6 +63,8 @@ def test_state_variables(sim_df):
                                                         + row['allocated_tokens_foundation']
                                                         + row['allocated_tokens_ssl_priv_sale']
                                                         + row['allocated_tokens_subspace_labs'])
+            
+            assert row['sum_of_stocks'] == pt.approx(MAX_CREDIT_ISSUANCE)
             assert row['circulating_supply'] <= row['sum_of_stocks']
             assert row['total_supply'] <= row['sum_of_stocks']
             assert row['user_supply'] <= row['sum_of_stocks']

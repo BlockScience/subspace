@@ -334,25 +334,13 @@ def p_storage_fees(
         storage_fee_in_credits_per_bytes * extrinsic_length_in_bytes
     )
 
-    # HACK : Constrain total_storage_fees to 1/2 all farmers balance
-    # TODO : Add comment as to why this is needed.
-    eff_storage_fee_volume: Credits = min(
-        storage_fee_volume, state["farmers_balance"] / 2
-    )
-
-    # Storage Fees
-    # Fee distribution
-    storage_fees_to_farmers: Credits = 0.0
 
     return {
         # Fee Calculation
         "free_space": free_space,
         "storage_fee_in_credits_per_bytes": storage_fee_in_credits_per_bytes,
         "extrinsic_length_in_bytes": extrinsic_length_in_bytes,
-        "storage_fee_volume": eff_storage_fee_volume,
-        # Reward Distribution
-        "storage_fees_to_farmers": storage_fees_to_farmers,
-        "farmers_balance": storage_fees_to_farmers,
+        "storage_fee_volume": storage_fee_volume,
     }
 
 
@@ -532,11 +520,12 @@ def p_unvest(
     tokens_to_allocate = allocated_tokens_new - state['allocated_tokens']
 
     farmers_balance = tokens_to_allocate
-    other_issuance_balance = -farmers_balance
+    other_issuance_balance = -1.0 * farmers_balance
 
     return {
         "other_issuance_balance": other_issuance_balance,
         "farmers_balance": farmers_balance,
+
         "allocated_tokens": allocated_tokens_new,
         "allocated_tokens_investors": investors,
         "allocated_tokens_founders": founders,

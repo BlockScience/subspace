@@ -56,7 +56,6 @@ DEFAULT_PARAMS = SubspaceModelParams(
     reward_proposer_share=0.3,  # NOTE: to sweep
     max_credit_supply=MAX_CREDIT_ISSUANCE,  # TODO:
     credit_supply_definition=SUPPLY_ISSUED,  # TODO: Set in stone the def
-    community_vested_supply_fraction=0.225,
     # Fees & Taxes
     compute_fees_to_farmers=0.0,  # NOTE: to sweep
     compute_fees_tax_to_operators=0.05,  # or `nomination_tax`

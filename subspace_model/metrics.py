@@ -51,10 +51,10 @@ def storage_fee_per_rewards(state: SubspaceModelState) -> Credits:
     return state["storage_fee_volume"] / max(1, state["block_reward"])
 
 def community_vested_supply(state: SubspaceModelState, params: SubspaceModelParams) -> Credits:
-    return state['allocated_tokens'] * params['community_vested_supply_fraction']
+    return state['allocated_tokens_testnets'] + state['allocated_tokens_foundation'] + state['allocated_tokens_ambassadors']
 
 def community_owned_supply(state: SubspaceModelState, params: SubspaceModelParams) -> Credits:
-    return issued_supply(state) + community_vested_supply(state, params) + params['initial_community_owned_supply_pct_of_max_credits'] * params['max_credit_supply']
+    return state['cumm_rewards'] + community_vested_supply(state, params)
 
 
 def community_owned_supply_fraction(state: SubspaceModelState, params: SubspaceModelParams):
