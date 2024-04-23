@@ -16,12 +16,12 @@ INITIAL_STATE = SubspaceModelState(
     # Metrics
     ## Supply Related
     circulating_supply=ISSUED_AT_LAUNCH,
-    user_supply=0.0,
-    issued_supply=0.0,
+    user_supply=ISSUED_AT_LAUNCH,
+    issued_supply=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
     sum_of_stocks=MAX_CREDIT_ISSUANCE,
-    earned_supply=0.0,
-    earned_minus_burned_supply=0.0,
-    total_supply=0.0,
+    earned_supply=ISSUED_AT_LAUNCH,
+    earned_minus_burned_supply=ISSUED_AT_LAUNCH,
+    total_supply=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
 
     ## Network Related
     block_utilization=0.0,

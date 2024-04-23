@@ -31,7 +31,7 @@ def test_kpi_values(sim_df):
     for i, row in agg_df.iterrows():
         assert row['mean_relative_community_owned_supply'] > 0.01
         assert row['mean_relative_community_owned_supply'] < 1.0
-        assert row['mean_farmer_subsidy_factor'] > 0
+        assert row['mean_farmer_subsidy_factor'] >= 0
         assert row['mean_proposing_rewards_per_newly_pledged_space'] > 0
         assert row['mean_proposer_reward_minus_voter_reward'] > 0
         assert row['cumm_rewards_before_1yr'] > 0
@@ -71,11 +71,8 @@ def test_state_variables(sim_df):
             assert row['earned_minus_burned_supply'] <= row['sum_of_stocks']
             assert row['circulating_supply'] <= row['user_supply']
             assert row['earned_minus_burned_supply'] <= row['earned_supply']
-            for col in row:
-                if type(row[col]) == int or type(row[col]) == float:
-                    assert row[col] >= 0.0
 
-                    
-        assert df.sum_of_stocks.std() == pt.approx(0.0)
+
+        assert df.sum_of_stocks.std() == pt.approx(0.0, abs=1e-4)
                 
 

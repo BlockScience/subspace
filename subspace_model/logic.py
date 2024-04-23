@@ -108,10 +108,11 @@ def p_reward(
         reward_to_voters = 0.0
 
     return {"block_reward": reward, 
-            "reward_issuance_balance": -total_reward,
+            "reward_issuance_balance": -reward,
             "reward_to_voters": reward_to_voters,
             "reward_to_proposer": reward_to_proposer,
-            'per_recipient_reward': per_recipient_reward}
+            'per_recipient_reward': per_recipient_reward,
+            'farmers_balance': reward}
 
 
 def p_split_reward(
@@ -448,7 +449,7 @@ def p_compute_fees(
         compute_fee_volume, state["holders_balance"])
     eff_scale: float = eff_compute_fee_volume / compute_fee_volume
 
-    fees_to_distribute: Credits = compute_fee_volume
+    fees_to_distribute: Credits = eff_compute_fee_volume
 
     # Bundle relevant fees go to operators rather than farmers
     bundle_share_of_weight = bundles_compute_weight / \
@@ -478,6 +479,8 @@ def p_compute_fees(
         "compute_fee_volume": eff_compute_fee_volume,
         "priority_fee_volume": priority_fee_volume,
         # Taking and distributing fees
+
+        
         "farmers_balance": fees_to_farmers,
         "operators_balance": fees_to_operators,
         "holders_balance": -eff_compute_fee_volume,
@@ -548,32 +551,15 @@ def p_unvest(
     # TODO: what happens if there's less than 51% community owned?
     """
 
-    # Vesting
-    investors = state["allocated_tokens_investors"]
-    founders = state["allocated_tokens_founders"]
-    team = state["allocated_tokens_team"]
-    advisors = state["allocated_tokens_advisors"]
-    vendors = state["allocated_tokens_vendors"]
-    ambassadors = state["allocated_tokens_ambassadors"]
+    start_period_fraction = 0.25 * float(state['days_passed'] >= 365)
+    linear_period_fraction = 0.75 * min((state['days_passed'] - 365) / 3, 1.0)
 
-    if state["days_passed"] < 365:
-        pass
-
-    elif state["days_passed"] == 365:
-        investors += 0.2153 * 0.25 * MAX_CREDIT_ISSUANCE
-        founders += 0.02 * 0.25 * MAX_CREDIT_ISSUANCE
-        team += 0.05 * 0.25 * MAX_CREDIT_ISSUANCE
-        advisors += 0.015 * 0.25 * MAX_CREDIT_ISSUANCE
-        vendors += 0.02 * 0.25 * MAX_CREDIT_ISSUANCE
-        ambassadors += 0.01 * 0.25 * MAX_CREDIT_ISSUANCE
-
-    elif ((state["days_passed"]-365) % int(365/12) == 0) and ((state["days_passed"]-365) // int(365/12) <= 36):
-        investors += 0.2153 * 1/48 * MAX_CREDIT_ISSUANCE
-        founders += 0.02 * 1/48 * MAX_CREDIT_ISSUANCE
-        team += 0.05 * 1/48 * MAX_CREDIT_ISSUANCE
-        advisors += 0.015 * 1/48 * MAX_CREDIT_ISSUANCE
-        vendors += 0.02 * 1/48 * MAX_CREDIT_ISSUANCE
-        ambassadors += 0.01 * 1/48 * MAX_CREDIT_ISSUANCE
+    investors = 0.2153 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
+    founders = 0.02 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
+    team = 0.05 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
+    advisors = 0.015 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
+    vendors = 0.02 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
+    ambassadors = 0.01 * MAX_CREDIT_ISSUANCE * (start_period_fraction + linear_period_fraction)
 
     # Liquid at Launch
     testnets = state["allocated_tokens_testnets"]
@@ -581,9 +567,10 @@ def p_unvest(
     subspace_labs = state["allocated_tokens_subspace_labs"]
     ssl_priv_sale = state["allocated_tokens_ssl_priv_sale"]
 
-    tokens_to_allocate = -state['allocated_tokens'] + investors + founders + team + \
-        advisors + vendors + ambassadors + testnets + \
-        foundation + subspace_labs + ssl_priv_sale
+
+    allocated_tokens_new = (investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale)
+
+    tokens_to_allocate = allocated_tokens_new - state['allocated_tokens']
 
     holders_balance = tokens_to_allocate
     other_issuance_balance = -holders_balance
@@ -591,8 +578,8 @@ def p_unvest(
     return {
         "other_issuance_balance": other_issuance_balance,
         "holders_balance": holders_balance,
-        "allocated_tokens": tokens_to_allocate,
-
+        
+        "allocated_tokens": allocated_tokens_new,
         "allocated_tokens_investors": investors,
         "allocated_tokens_founders": founders,
         "allocated_tokens_team": team,

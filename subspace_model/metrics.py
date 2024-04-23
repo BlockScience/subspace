@@ -13,14 +13,20 @@ def circulating_supply(state: SubspaceModelState) -> Credits:
 
 
 def user_supply(state: SubspaceModelState) -> Credits:
+    "All circulating supply tokens can only go to the Staking Pool Balance"
     return circulating_supply(state) + state["staking_pool_balance"]
 
 
 def earned_supply(state: SubspaceModelState) -> Credits:
+    "Should map back to All Issued (and active) Tokens so far"
     return user_supply(state) + state["fund_balance"]
 
 
 def issued_supply(state: SubspaceModelState) -> Credits:
+    """
+    IssuedSupply = All Vested Tokens + All Issued Tokens so far minus burns
+    Can be interpreted as the all tokens in user possession.
+    """
     return (
         sum_of_stocks(state) - state["burnt_balance"] - state["reward_issuance_balance"]
     )  # TODO Document the identity

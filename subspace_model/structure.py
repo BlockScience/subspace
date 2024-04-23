@@ -69,7 +69,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "reward_issuance_balance": add_suf,
             "block_reward": replace_suf,
             "reward_to_voters": replace_suf,
-            "reward_to_proposer": replace_suf
+            "reward_to_proposer": replace_suf,
+            "farmers_balance": add_suf
         },
     },
     {
@@ -129,8 +130,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             "holders_balance": add_suf,
             "other_issuance_balance": add_suf,
-            "allocated_tokens": add_suf,
-
+            
+            "allocated_tokens": replace_suf,
             "allocated_tokens_investors": replace_suf,
             "allocated_tokens_founders": replace_suf,
             "allocated_tokens_team": replace_suf,
