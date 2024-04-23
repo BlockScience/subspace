@@ -43,7 +43,6 @@ DEFAULT_PARAMS = SubspaceModelParams(
     environmental_label="standard",
     timestep_in_days=1,
     # Mechanism Parameters
-    issuance_function=DEFAULT_ISSUANCE_FUNCTION,
     slash_function=DEFAULT_SLASH_FUNCTION,
     reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     issuance_function_constant=1,

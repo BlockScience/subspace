@@ -86,14 +86,34 @@ def p_issuance_reward(
     Farmer rewards that originates from protocol issuance.
     XXX: there's a hard cap on how much can be issued.
     """
-    issuance_per_day = params["issuance_function"](params, state)
-    reward = issuance_per_day * state["delta_days"]
+    # Extract necessary values from the state
+    S_r = state["reference_subsidy"]
+    F_bar = params["max_block_size"] * \
+        state["storage_fee_in_credits_per_bytes"]
+    g = state["block_utilization"]
+
+    # Fixed parameters. These can be tuned as needed.
+    c = params["issuance_function_constant"]
+    d = 1
+
+    # Calculate b
+    b = S_r - max(S_r - F_bar, 0) / math.tanh(c)
+
+    # Calculate a
+    a = S_r - b * math.tanh(c * d)
+
+    # Calculate s(g)
+    test = g - d
+    s_g = a + b * math.tanh(-c * (g - d))
+
+    # Ensure block_reward is non-negative
+    reward = max(s_g, 0)
 
     # Make sure that the protocol has tokens to issue
     if reward > state["reward_issuance_balance"]:
         reward = state["reward_issuance_balance"]
     else:
-        pass
+        reward = max(state['reward_issuance_balance'], 0.0)
 
     return {"block_reward": reward, "reward_issuance_balance": -reward}
 

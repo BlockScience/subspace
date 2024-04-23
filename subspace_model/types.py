@@ -182,7 +182,6 @@ class SubspaceModelParams(TypedDict):
     timestep_in_days: Days
 
     # Mechanism Parameters
-    issuance_function: Callable
     slash_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Credits]
     reference_subsidy_components: list[SubsidyComponent]
