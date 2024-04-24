@@ -552,8 +552,8 @@ def p_staking(
             state["operator_pool_shares"] + state["nominator_pool_shares"]
         )
         # invariant = 1
-    elif total_shares > 0:
-        invariant = 1
+    elif total_shares >= 0:
+        invariant = 1.0
     else:
         invariant = float('nan')
 
