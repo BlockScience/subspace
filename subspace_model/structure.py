@@ -110,8 +110,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             "other_issuance_balance": add_suf,
             "farmers_balance": add_suf,
-
-
             "allocated_tokens": replace_suf,
             "allocated_tokens_investors": replace_suf,
             "allocated_tokens_founders": replace_suf,

@@ -117,13 +117,10 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],
     "operator_stake_per_ts_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
+        NORMAL_GENERATOR(0.01, 0.02)
     ],
     "nominator_stake_per_ts_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
-    ],
-    "transfer_farmer_to_farmer_per_day_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([1])
+        NORMAL_GENERATOR(0.01, 0.02)
     ],
     "transfer_operator_to_farmer_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
@@ -140,8 +137,8 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
 SPECIAL_ENVIRONMENTAL_SCENARIOS = {
     "stochastic": {
         # Behavioral Parameters Between 0 and 1
-        "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
+        "operator_stake_per_ts_function": NORMAL_GENERATOR(0.01, 0.02),
+        "nominator_stake_per_ts_function": NORMAL_GENERATOR(0.01, 0.02),
         "transfer_operator_to_farmer_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.05, 0.05)
         ),

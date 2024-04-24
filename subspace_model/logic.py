@@ -395,12 +395,7 @@ def p_compute_fees(
                + priority_fee_volume)
     compute_fee_volume: Credits = max(raw_fee,  eff_minimum_fee, )
 
-    # Constrain compute fee volume to be less than farmers balance
-    eff_compute_fee_volume: Credits = min(
-        compute_fee_volume, state["farmers_balance"])
-    eff_scale: float = eff_compute_fee_volume / compute_fee_volume
-
-    fees_to_distribute: Credits = eff_compute_fee_volume
+    fees_to_distribute: Credits = compute_fee_volume
 
     # Bundle relevant fees go to operators rather than farmers
     bundle_share_of_weight = bundles_compute_weight / \
@@ -418,9 +413,10 @@ def p_compute_fees(
     # Calculate total fees
     total_fees: Credits = fees_to_farmers + fees_to_operators
 
-
-    # TODO: check if fees goes to the farmers/nominators balance
-    # or if is auto-staked
+    # HACK: assume that the compute fee are paid jointly by farmers and operators
+    combined_balance = state['farmers_balance'] + state['operators_balance']
+    compute_fee_from_farmers = compute_fee_volume * state['farmers_balance'] / combined_balance
+    compute_fee_from_operators = compute_fee_volume * state['operators_balance'] / combined_balance
 
     return {
         # Compute fee calculations
@@ -428,13 +424,13 @@ def p_compute_fees(
         "targeted_adjustment_parameter": targeted_adjustment_parameter,
         "compute_fee_multiplier": compute_fee_multiplier,
         "tx_compute_weight": tx_compute_weight,
-        "compute_fee_volume": eff_compute_fee_volume,
+        "compute_fee_volume": compute_fee_volume,
         "priority_fee_volume": priority_fee_volume,
         # Taking and distributing fees
 
         
-        "farmers_balance": fees_to_farmers - eff_compute_fee_volume,
-        "operators_balance": fees_to_operators,
+        "farmers_balance": fees_to_farmers - compute_fee_from_farmers,
+        "operators_balance": fees_to_operators - compute_fee_from_operators,
         "fees_to_operators": fees_to_operators,
     }
 
@@ -569,7 +565,7 @@ def p_staking(
         operator_stake = state["operators_balance"] * operator_stake_fraction
     elif invariant > 0:
         operator_stake = (
-            state["operator_pool_shares"] * operator_stake_fraction * invariant
+            -1 * state["operator_pool_shares"] * operator_stake_fraction * invariant
         )
     else:
         operator_stake = 0.0
@@ -584,7 +580,7 @@ def p_staking(
             nominator_stake_fraction
     elif invariant > 0:
         nominator_stake = (
-            state["nominator_pool_shares"] *
+            -1 * state["nominator_pool_shares"] *
             nominator_stake_fraction * invariant
         )
     else:

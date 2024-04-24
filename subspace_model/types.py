@@ -212,8 +212,6 @@ class SubspaceModelParams(TypedDict):
         'SubspaceModelParams', SubspaceModelState], Percentage]
     nominator_stake_per_ts_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_farmer_to_farmer_per_day_function: Callable[[
-        'SubspaceModelParams', SubspaceModelState], Percentage]
     transfer_operator_to_farmer_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
     transfer_farmer_to_nominator_per_day_function: Callable[[
