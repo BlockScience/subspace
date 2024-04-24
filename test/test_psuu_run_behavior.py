@@ -73,6 +73,20 @@ def test_state_variables(sim_df):
             assert row['earned_minus_burned_supply'] <= row['sum_of_stocks']
             assert row['community_owned_supply'] <= row['sum_of_stocks']
 
+            assert row['farmers_balance'] >= 0.0
+            assert row['nominators_balance'] >= 0.0
+            assert row['operators_balance'] >= 0.0
+
+            assert row['circulating_supply'] >= 0.0
+            assert row['total_supply'] >= 0.0
+            assert row['user_supply'] >= 0.0
+            assert row['issued_supply'] >= 0.0
+            assert row['earned_supply'] >= 0.0
+            assert row['earned_minus_burned_supply'] >= 0.0
+            assert row['community_owned_supply'] >= 0.0
+
+            assert row['nominator_pool_shares'] >= 0.0
+            assert row['operator_pool_shares'] >= 0.0
 
             assert row['circulating_supply'] <= row['user_supply']
             assert row['earned_minus_burned_supply'] <= row['earned_supply']

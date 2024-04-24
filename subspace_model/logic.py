@@ -549,9 +549,7 @@ def p_staking(
 
     total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
     if total_shares > 1e-4:
-        invariant = state["staking_pool_balance"] / (
-            state["operator_pool_shares"] + state["nominator_pool_shares"]
-        )
+        invariant = state["staking_pool_balance"] / total_shares
         # invariant = 1
     elif total_shares >= 0:
         invariant = 1.0
@@ -568,7 +566,7 @@ def p_staking(
         operator_stake = state["operators_balance"] * operator_stake_fraction
     elif invariant > 0:
         operator_stake = (
-            -1 * state["operator_pool_shares"] * operator_stake_fraction * invariant
+             state["operator_pool_shares"] * operator_stake_fraction * invariant
         )
     else:
         operator_stake = 0.0
@@ -583,7 +581,7 @@ def p_staking(
             nominator_stake_fraction
     elif invariant > 0:
         nominator_stake = (
-            -1 * state["nominator_pool_shares"] *
+             state["nominator_pool_shares"] *
             nominator_stake_fraction * invariant
         )
     else:
