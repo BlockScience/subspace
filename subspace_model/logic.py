@@ -545,12 +545,14 @@ def p_staking(
     XXX: assumes an invariant product
     TODO: enforce minimum staking amounts
     """
-    if (state["operator_pool_shares"] > 0) or (state["nominator_pool_shares"] > 0):
+
+    total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
+    if total_shares > 1e-4:
         invariant = state["staking_pool_balance"] / (
             state["operator_pool_shares"] + state["nominator_pool_shares"]
         )
         # invariant = 1
-    elif state["operator_pool_shares"] == 0 and state["nominator_pool_shares"] == 0:
+    elif total_shares > 0:
         invariant = 1
     else:
         invariant = float('nan')
