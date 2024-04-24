@@ -355,7 +355,7 @@ def psuu(
     USE_JOBLIB: bool = True,
     RETURN_SIM_DF: bool = False,
     UPLOAD_TO_S3: bool = True
-) -> DataFrame:
+):
     """Function which runs the cadCAD simulations
 
     Returns:
@@ -523,3 +523,17 @@ def psuu(
         return sim_df
     else:
         pass
+
+    if use_joblib and UPLOAD_TO_S3:
+        files = glob(str(output_folder_path / f"trajectory_tensor-*.pkl.gz"))
+        dfs = []
+        for file in files:
+            dfs.append(pd.read_pickle(file))
+        agg_df = pd.concat(dfs)
+        agg_df.to_pickle(str(output_folder_path / f"trajectory_tensor.pkl.gz"))
+        session = boto3.Session()
+        s3 = session.client("s3")
+        s3.upload_file(str(output_folder_path / f"trajectory_tensor.pkl.gz"),
+                        CLOUD_BUCKET_NAME,
+                        str(base_folder / f"trajectory_tensor.pkl.gz"))
+    return None
