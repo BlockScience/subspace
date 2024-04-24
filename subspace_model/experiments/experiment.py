@@ -13,8 +13,12 @@ import re
 from tqdm.auto import tqdm # type: ignore
 import logging
 from pathlib import Path
+from multiprocessing import cpu_count
+from subspace_model.psuu import timestep_tensor_to_trajectory_tensor
+import boto3 # type: ignore
 
 logger = logging.getLogger('subspace-digital-twin')
+CLOUD_BUCKET_NAME = 'subspace-simulations'
 
 
 from subspace_model.const import *
@@ -107,54 +111,6 @@ def standard_stochastic_run(
         deepcopy_off=True,
         supress_print=True
     )
-    return sim_df
-
-
-
-def fund_inclusion(
-    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
-) -> DataFrame:
-    """Function which runs the cadCAD simulations
-
-    Returns:
-        DataFrame: A dataframe of simulation data
-    """
-    TIMESTEPS = int(SIMULATION_DAYS / TIMESTEP_IN_DAYS) + 1
-
-    # Get the sweep parameters in the form of single length arrays
-    param_set_1 = DEFAULT_PARAMS
-    param_set_2 = deepcopy(DEFAULT_PARAMS)
-    param_set_2["label"] = "no-fund"
-    param_set_2["fund_tax_on_proposer_reward"] = 0
-    param_set_2["fund_tax_on_storage_fees"] = 0
-    param_set_2["slash_to_fund"] = 0
-    param_sets = [param_set_1, param_set_2]
-
-    # Create the sweep parameters dictionary
-    sweep_params: dict[str, list] = {k: [] for k in DEFAULT_PARAMS.keys()}
-    for param_set in param_sets:
-        for k, v in param_set.items():
-            sweep_params[k].append(v)
-
-    # Load simulation arguments
-    sim_args = (INITIAL_STATE, sweep_params, SUBSPACE_MODEL_BLOCKS, TIMESTEPS, SAMPLES)
-
-    # Run simulation
-    sim_df = easy_run(
-        *sim_args,
-        assign_params={
-            "label",
-            "environmental_label",
-            "timestep_in_days",
-            "block_time_in_seconds",
-            "max_credit_supply",
-        },
-        exec_mode="single",
-        deepcopy_off=True,
-        supress_print=True
-    )
-
-    # Return the simulation results dataframe
     return sim_df
 
 
@@ -394,10 +350,11 @@ def psuu(
     SAMPLES: int = 2,
     N_SWEEP_SAMPLES: int = 48,
     SWEEPS_PER_PROCESS: int = 20,
-    PROCESSES: int = 4,
+    PROCESSES: int = cpu_count(),
     PARALLELIZE: bool = True,
     USE_JOBLIB: bool = True,
-    RETURN_SIM_DF: bool = False
+    RETURN_SIM_DF: bool = False,
+    UPLOAD_TO_S3: bool = True
 ) -> DataFrame:
     """Function which runs the cadCAD simulations
 
@@ -487,11 +444,13 @@ def psuu(
             for i in range(0, len(list(sweep_params_samples.values())[0]), chunk_size)
         ]
         sim_folder_path = Path("data/simulations")
-        output_folder_path =sim_folder_path / f"psuu_run-{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        base_folder = Path(f"psuu_run-{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        output_folder_path =sim_folder_path / base_folder
         output_folder_path.mkdir(parents=True, exist_ok=True)
+
         output_path = str(output_folder_path / "timestep_tensor")
 
-        def run_chunk(i_chunk, sweep_params):
+        def run_chunk(i_chunk, sweep_params, pickle_file=True, upload_to_s3=UPLOAD_TO_S3, post_process=True):
             logger.debug(f"{i_chunk}, {datetime.now()}")
             sim_args = (
                 INITIAL_STATE,
@@ -508,9 +467,31 @@ def psuu(
                 deepcopy_off=True,
                 supress_print=True
             )
+
+            if upload_to_s3:
+                session = boto3.Session()
+                s3 = session.client("s3")
+
             sim_df["subset"] = i_chunk * SWEEPS_PER_PROCESS + sim_df["subset"]
             output_filename = output_path + f"-{i_chunk}.pkl.gz"
-            sim_df.to_pickle(output_filename)
+
+            if pickle_file or upload_to_s3:
+                sim_df.to_pickle(output_filename)
+            if upload_to_s3:
+                s3.upload_file(str(output_filename),
+                CLOUD_BUCKET_NAME,
+                str(base_folder / f"timestep_tensor-{i_chunk}.pkl.gz") 
+                )
+
+            if post_process:
+                agg_df = timestep_tensor_to_trajectory_tensor(sim_df)
+                agg_output_filename = output_folder_path / f"trajectory_tensor-{i_chunk}.pkl.gz"
+                if pickle_file:
+                    agg_df.to_pickle(agg_output_filename)
+                    if upload_to_s3:
+                        s3.upload_file(str(agg_output_filename),
+                                       CLOUD_BUCKET_NAME,
+                                       str(base_folder / f"trajectory_tensor-{i_chunk}.pkl.gz"))
 
         args = enumerate(split_dicts)
         if use_joblib:

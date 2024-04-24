@@ -1,5 +1,4 @@
 from subspace_model.experiments.experiment import (
-    fund_inclusion,
     reward_split_sweep,
     sanity_check_run,
     standard_stochastic_run,
