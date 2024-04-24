@@ -1,5 +1,10 @@
 from subspace_model.types import *
 import pandas as pd
+from glob import glob
+import re
+import os
+from datetime import datetime
+
 
 
 GOVERNANCE_SURFACE_PARAMS = [
@@ -54,3 +59,22 @@ def timestep_tensor_to_trajectory_tensor(sim_df: pd.DataFrame) -> pd.DataFrame:
 
     all_kpi_df = pd.concat(kpi_dfs, axis=1)
     return all_kpi_df
+
+def create_latest_trajectory_tensor() -> pd.DataFrame:
+# Combine all of the chunks and write simulation results to disk
+    latest = "-".join(
+        sorted(glob("./data/simulations/psuu_run*"))[-1].split("-")[:-1]
+    )
+    parts = glob(f"{latest}*")
+    sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))
+
+    data = []
+    for part in sorted_parts[:5]:
+        print(part)
+        data.append(timestep_tensor_to_trajectory_tensor(pd.read_pickle(part, compression='gzip')))
+
+    trajectory_tensor = pd.concat(data)
+
+    trajectory_tensor.to_pickle(f'./data/trajectory_tensors/{datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")}.pkl.gz', compression='gzip')
+
+    return trajectory_tensor
