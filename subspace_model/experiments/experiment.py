@@ -487,7 +487,7 @@ def psuu(
 
 
             if post_process:
-                agg_df = timestep_tensor_to_trajectory_tensor(sim_df)
+                agg_df = timestep_tensor_to_trajectory_tensor(sim_df).reset_index()
                 agg_output_filename = output_folder_path / f"trajectory_tensor-{i_chunk}.pkl.gz"
                 if pickle_file:
                     agg_df.to_pickle(agg_output_filename)
@@ -531,7 +531,7 @@ def psuu(
         files = glob(str(output_folder_path / f"trajectory_tensor-*.pkl.gz"))
         dfs = []
         for file in files:
-            dfs.append(pd.read_pickle(file))
+            dfs.append(pd.read_pickle(file).reset_index())
         agg_df = pd.concat(dfs)
         agg_df.to_pickle(str(output_folder_path / f"trajectory_tensor.pkl.gz"))
         session = boto3.Session()
