@@ -13,32 +13,37 @@ class SubsidyComponent:
     max_reference_subsidy: CreditsPerBlock  # α_i. The max that can be disbursed per block
 
 
-    def intial_period_start_in_blocks(self) -> Blocks:
+    @property
+    def initial_period_start_in_blocks(self) -> Blocks:
         return self.initial_period_start * BLOCKS_PER_DAY
     
+    @property
     def initial_period_duration_in_blocks(self) -> Blocks:
         return self.initial_period_duration * BLOCKS_PER_DAY
-
+    
+    @property
+    def initial_period_end_duration_in_blocks(self) -> Blocks:
+        return (self.initial_period_start + self.initial_period_end) * BLOCKS_PER_DAY
+    
     # Dataclass constructor method
     def __post_init__(self):
         self.initial_period_end = self.initial_period_start + self.initial_period_duration
 
-    def __call__(self, t: Days) -> float:
+    def __call__(self, t: Blocks) -> float:
         """Allow the instance to be called as a function to calculate the subsidy."""
         return self.calculate_subsidy(t)
 
-    def calculate_subsidy(self, t: Days) -> CreditsPerDay:
+    def calculate_subsidy(self, t: Blocks) -> CreditsPerBlock:
         """Calculate S(t) the subsidy for a given time."""
-        if t < self.initial_period_start:
+        if t < self.initial_period_start_in_blocks:
             return 0.0
-        elif self.initial_period_start <= t < self.initial_period_end:
-            return self.calculate_linear_subsidy(t) * BLOCKS_PER_DAY
+        elif t < self.initial_period_end_duration_in_blocks:
+            return self.calculate_linear_subsidy(t)
         else:
-            return self.calculate_exponential_subsidy(t) * BLOCKS_PER_DAY
+            return self.calculate_exponential_subsidy(t)
 
     def calculate_linear_subsidy(self, t: Days) -> CreditsPerBlock:
         """Calculate S_l(t) the linear subsidy for a given time."""
-
         return self.max_reference_subsidy
 
     def calculate_exponential_subsidy(self, t: float) -> CreditsPerBlock:
@@ -46,7 +51,7 @@ class SubsidyComponent:
         K = self.max_total_subsidy_during_exponential_period
         if K > 0:
             return self.max_reference_subsidy * math.exp(
-                -self.max_reference_subsidy / max(1, K * ((t - self.initial_period_end) * BLOCKS_PER_DAY))
+                -self.max_reference_subsidy / max(1, K * (t - self.initial_period_end_duration_in_blocks))
             )
         else:
             return 0
@@ -55,8 +60,8 @@ class SubsidyComponent:
     def max_total_subsidy_during_exponential_period(self) -> Credits:
         """Calculate K the maximum total subsidy during the exponential period."""
         return self.max_cumulative_subsidy - self.max_reference_subsidy * (
-            self.initial_period_end - self.initial_period_start
-        ) * BLOCKS_PER_DAY
+            self.initial_period_end_duration_in_blocks - self.initial_period_start_in_blocks
+        )
 
     @property
     def halving_period(self) -> Blocks:
@@ -148,7 +153,7 @@ class SubspaceModelState(TypedDict):
 
     # Uncategorized Terms
     storage_fee_per_rewards: float
-    reference_subsidy: float
+    reference_subsidy: CreditsPerBlock
     compute_fee_multiplier: float
     free_space: float
     extrinsic_length_in_bytes: float

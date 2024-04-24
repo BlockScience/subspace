@@ -82,8 +82,9 @@ def p_reward(
         state["storage_fee_in_credits_per_bytes"]
     g = state["block_utilization"]
 
-    utilization_based_reward = S_r - min(S_r, F_bar) * g
-    voting_rewards = S_r
+    utilization_based_reward = (S_r - min(S_r, F_bar) * g) * BLOCKS_PER_DAY
+    voting_rewards = S_r * BLOCKS_PER_DAY
+    
     total_reward = utilization_based_reward + voting_rewards
 
     if  state['reward_issuance_balance'] > total_reward:
