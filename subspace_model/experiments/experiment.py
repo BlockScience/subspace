@@ -13,6 +13,7 @@ import re
 from tqdm.auto import tqdm # type: ignore
 import logging
 from pathlib import Path
+import os
 from multiprocessing import cpu_count
 from subspace_model.psuu import timestep_tensor_to_trajectory_tensor
 import boto3 # type: ignore
@@ -482,6 +483,8 @@ def psuu(
                 CLOUD_BUCKET_NAME,
                 str(base_folder / f"timestep_tensor-{i_chunk}.pkl.gz") 
                 )
+                os.remove(str(output_filename))
+
 
             if post_process:
                 agg_df = timestep_tensor_to_trajectory_tensor(sim_df)
