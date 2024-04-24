@@ -172,10 +172,10 @@ def MAINNET_REFERENCE_SUBSIDY_COMPONENTS():
         0.5 * ISSUANCE_FOR_FARMERS]
 
     component_2_initial_subsidy_duration = [
-        6 * BLOCKS_PER_MONTH,
-        12 * BLOCKS_PER_MONTH,
-        24 * BLOCKS_PER_MONTH,
-        48 * BLOCKS_PER_MONTH,
+        6 * (365.25 / 12),
+        12 * (365.25 / 12),
+        24 * (365.25 / 12),
+        48 * (365.25 / 12),
     ]
     component_2_initial_subsidies = [1, 4, 7]
     component_2_maximum_cumulative_subsidies = [0.1 * ISSUANCE_FOR_FARMERS,
