@@ -6,14 +6,11 @@ from subspace_model.types import SubspaceModelParams, SubspaceModelState
 from subspace_model.experiments.logic import predictable_trajectory
 
 from subspace_model.experiments.logic import (
-    DEFAULT_ISSUANCE_FUNCTION,
     DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
     MAINNET_REFERENCE_SUBSIDY_COMPONENTS,
     DEFAULT_SLASH_FUNCTION,
     MAGNITUDE,
     NORMAL_GENERATOR,
-    NORMAL_INSTANTANEOUS_SHOCK_GENERATOR,
-    NORMAL_SUSTAINED_SHOCK_GENERATOR,
     POISSON_GENERATOR,
     POSITIVE_INTEGER,
     SUPPLY_ISSUED,
@@ -43,10 +40,8 @@ DEFAULT_PARAMS = SubspaceModelParams(
     environmental_label="standard",
     timestep_in_days=1,
     # Mechanism Parameters
-    issuance_function=DEFAULT_ISSUANCE_FUNCTION,
     slash_function=DEFAULT_SLASH_FUNCTION,
     reference_subsidy_components=DEFAULT_REFERENCE_SUBSIDY_COMPONENTS,
-    issuance_function_constant=1,
     utilization_ratio_smooth_num_blocks=100,
     # Implementation parameters
     block_time_in_seconds=BLOCK_TIME,
@@ -61,24 +56,19 @@ DEFAULT_PARAMS = SubspaceModelParams(
     reward_proposer_share=0.3,  # NOTE: to sweep
     max_credit_supply=MAX_CREDIT_ISSUANCE,  # TODO:
     credit_supply_definition=SUPPLY_ISSUED,  # TODO: Set in stone the def
-    community_vested_supply_fraction=0.225,
     # Fees & Taxes
-    fund_tax_on_proposer_reward=0.0,  # TODO: assume
-    fund_tax_on_storage_fees=1 / 10,  # TODO: assume
     compute_fees_to_farmers=0.0,  # NOTE: to sweep
     compute_fees_tax_to_operators=0.05,  # or `nomination_tax`
     # Slash Parameters
-    slash_to_fund=0.0,
-    slash_to_holders=0.05,
+    slash_to_farmers=0.05,
     # Other
     initial_community_owned_supply_pct_of_max_credits=(1 / 33),  # TODO
     # Behavioral Parameters Between 0 and 1
     operator_stake_per_ts_function=operator_stake_per_ts_function,
     nominator_stake_per_ts_function=nominator_stake_per_ts_function,
-    transfer_farmer_to_holder_per_day_function=lambda p, s: 0.05,
-    transfer_operator_to_holder_per_day_function=lambda p, s: 0.05,
-    transfer_holder_to_nominator_per_day_function=lambda p, s: 0.01,
-    transfer_holder_to_operator_per_day_function=lambda p, s: 0.01,
+    transfer_operator_to_farmer_per_day_function=lambda p, s: 0.05,
+    transfer_farmer_to_nominator_per_day_function=lambda p, s: 0.01,
+    transfer_farmer_to_operator_per_day_function=lambda p, s: 0.01,
     # Environmental Parameters (Integer positive in [0,inf])
     ## Environmental: Fees
     priority_fee_function=lambda p, s: 0,
@@ -127,21 +117,18 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0])
     ],
     "operator_stake_per_ts_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
+        NORMAL_GENERATOR(0.01, 0.02)
     ],
     "nominator_stake_per_ts_function": [
+        NORMAL_GENERATOR(0.01, 0.02)
+    ],
+    "transfer_operator_to_farmer_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
     ],
-    "transfer_farmer_to_holder_per_day_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([1])
-    ],
-    "transfer_operator_to_holder_per_day_function": [
-        MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.1])
-    ],
-    "transfer_holder_to_nominator_per_day_function": [
+    "transfer_farmer_to_nominator_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
-    "transfer_holder_to_operator_per_day_function": [
+    "transfer_farmer_to_operator_per_day_function": [
         MAGNITUDE(generator) for generator in SCENARIO_GROUPS([0.025])
     ],
 }
@@ -150,18 +137,15 @@ ENVIRONMENTAL_SCENARIOS: Dict[str, List[Callable]] = {
 SPECIAL_ENVIRONMENTAL_SCENARIOS = {
     "stochastic": {
         # Behavioral Parameters Between 0 and 1
-        "operator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "nominator_stake_per_ts_function": MAGNITUDE(NORMAL_GENERATOR(0.01, 0.02)),
-        "transfer_farmer_to_holder_per_day_function": MAGNITUDE(
+        "operator_stake_per_ts_function": NORMAL_GENERATOR(0.01, 0.02),
+        "nominator_stake_per_ts_function": NORMAL_GENERATOR(0.01, 0.02),
+        "transfer_operator_to_farmer_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.05, 0.05)
         ),
-        "transfer_operator_to_holder_per_day_function": MAGNITUDE(
-            NORMAL_GENERATOR(0.05, 0.05)
-        ),
-        "transfer_holder_to_nominator_per_day_function": MAGNITUDE(
+        "transfer_farmer_to_nominator_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.01, 0.02)
         ),
-        "transfer_holder_to_operator_per_day_function": MAGNITUDE(
+        "transfer_farmer_to_operator_per_day_function": MAGNITUDE(
             NORMAL_GENERATOR(0.01, 0.02)
         ),
         # Environmental Parameters (Integer positive in [0,inf])

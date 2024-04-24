@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-import math
 import random
-from typing import Callable, Dict, List, Any
+from typing import Callable, List, Any
 import numpy as np
 from scipy.stats import norm, poisson  # type: ignore
 from cadCAD.tools.preparation import sweep_cartesian_product  # type: ignore
@@ -9,7 +7,6 @@ from subspace_model.const import (
     BLOCKS_PER_MONTH,
     BLOCKS_PER_YEAR,
     DAY_TO_SECONDS,
-    MAX_CREDIT_ISSUANCE,
     ISSUANCE_FOR_FARMERS
 )
 from subspace_model.metrics import (
@@ -24,42 +21,6 @@ from subspace_model.types import (
     SubspaceModelState,
     SubsidyComponent,
 )
-
-
-def DEFAULT_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
-    # Extract necessary values from the state
-    S_r = state["reference_subsidy"]
-    F_bar = params["max_block_size"] * \
-        state["storage_fee_in_credits_per_bytes"]
-    g = state["block_utilization"]
-
-    # Fixed parameters. These can be tuned as needed.
-    c = params["issuance_function_constant"]
-    d = 1
-
-    # Calculate b
-    b = S_r - max(S_r - F_bar, 0) / math.tanh(c)
-
-    # Calculate a
-    a = S_r - b * math.tanh(c * d)
-
-    # Calculate s(g)
-    test = g - d
-    s_g = a + b * math.tanh(-c * (g - d))
-
-    # Ensure block_reward is non-negative
-    block_reward = max(s_g, 0)
-
-    # return block_reward
-    return block_reward
-
-
-def MOCK_ISSUANCE_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):
-    return state["reward_issuance_balance"] * 0.01  # HACK
-
-
-def MOCK_ISSUANCE_FUNCTION_2(params: SubspaceModelParams, state: SubspaceModelState):
-    return state["reward_issuance_balance"] / 5 * 365  # HACK
 
 
 def DEFAULT_SLASH_FUNCTION(params: SubspaceModelParams, state: SubspaceModelState):

@@ -7,20 +7,24 @@ def circulating_supply(state: SubspaceModelState) -> Credits:
     return (
         state["operators_balance"]
         + state["nominators_balance"]
-        + state["holders_balance"]
         + state["farmers_balance"]
     )
 
 
 def user_supply(state: SubspaceModelState) -> Credits:
+    "All circulating supply tokens can only go to the Staking Pool Balance"
     return circulating_supply(state) + state["staking_pool_balance"]
 
 
 def earned_supply(state: SubspaceModelState) -> Credits:
-    return user_supply(state) + state["fund_balance"]
-
+    "Should map back to All Issued (and active) Tokens so far"
+    return user_supply(state)
 
 def issued_supply(state: SubspaceModelState) -> Credits:
+    """
+    IssuedSupply = All Vested Tokens + All Issued Tokens so far minus burns
+    Can be interpreted as the all tokens in user possession.
+    """
     return (
         sum_of_stocks(state) - state["burnt_balance"] - state["reward_issuance_balance"]
     )  # TODO Document the identity
@@ -47,27 +51,11 @@ def storage_fee_per_rewards(state: SubspaceModelState) -> Credits:
     return state["storage_fee_volume"] / max(1, state["block_reward"])
 
 def community_vested_supply(state: SubspaceModelState, params: SubspaceModelParams) -> Credits:
-    return state['allocated_tokens'] * params['community_vested_supply_fraction']
+    return state['allocated_tokens_testnets'] + state['allocated_tokens_foundation'] + state['allocated_tokens_ambassadors']
 
 def community_owned_supply(state: SubspaceModelState, params: SubspaceModelParams) -> Credits:
-    return issued_supply(state) + community_vested_supply(state, params) + params['initial_community_owned_supply_pct_of_max_credits'] * params['max_credit_supply']
+    return state['cumm_rewards'] + community_vested_supply(state, params)
 
 
 def community_owned_supply_fraction(state: SubspaceModelState, params: SubspaceModelParams):
     return community_owned_supply(state, params) / total_supply(state)
-
-
-def per_recipient_reward(state: SubspaceModelState, params: SubspaceModelParams):
-    return state['block_reward'] * (1 - params['reward_proposer_share']) * (1 / params['reward_recipients'])
-
-
-def proposer_bonus_reward(state: SubspaceModelState, params: SubspaceModelParams):
-    return state['block_reward'] * params['reward_proposer_share']
-
-
-def reward_to_proposer(state: SubspaceModelState, params: SubspaceModelParams):
-    return per_recipient_reward(state, params) + proposer_bonus_reward(state, params)
-
-def reward_to_voters(state: SubspaceModelState, params: SubspaceModelParams):
-    # NOTE: assumes that the only other recipient is the block proposer
-    return per_recipient_reward(state, params) * (params['reward_recipients'] - 1)

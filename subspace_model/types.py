@@ -93,7 +93,6 @@ class SubspaceModelState(TypedDict):
     storage_fee_volume: Credits
 
     # Reward Related
-    rewards_to_nominators: Credits
     per_recipient_reward: Credits
     proposer_bonus_reward: Credits
     reward_to_proposer: Credits
@@ -107,10 +106,8 @@ class SubspaceModelState(TypedDict):
     other_issuance_balance: Credits
     operators_balance: Credits
     nominators_balance: Credits
-    holders_balance: Credits
     farmers_balance: Credits
     staking_pool_balance: Credits
-    fund_balance: Credits
     burnt_balance: Credits
 
     # Staking Pool Shares
@@ -151,7 +148,6 @@ class SubspaceModelState(TypedDict):
 
     # Uncategorized Terms
     storage_fee_per_rewards: float
-    avg_blockspace_usage: float
     reference_subsidy: float
     compute_fee_multiplier: float
     free_space: float
@@ -163,8 +159,6 @@ class SubspaceModelState(TypedDict):
     max_bundle_weight: float
     target_block_fullness: float
     adjustment_variable: float
-    storage_fees_to_farmers: float
-    storage_fees_to_fund: float
     target_block_delta: float
     targeted_adjustment_parameter: float
     tx_compute_weight: float
@@ -183,11 +177,9 @@ class SubspaceModelParams(TypedDict):
     timestep_in_days: Days
 
     # Mechanism Parameters
-    issuance_function: Callable
     slash_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Credits]
     reference_subsidy_components: list[SubsidyComponent]
-    issuance_function_constant: float
     utilization_ratio_smooth_num_blocks: int
 
     # Implementation parameters
@@ -204,17 +196,13 @@ class SubspaceModelParams(TypedDict):
     reward_proposer_share: Percentage
     max_credit_supply: Credits
     credit_supply_definition: Callable[[SubspaceModelState], Credits]
-    community_vested_supply_fraction: Percentage
 
     # Fees & Taxes
-    fund_tax_on_proposer_reward: Percentage
-    fund_tax_on_storage_fees: Percentage
     compute_fees_to_farmers: Percentage
     compute_fees_tax_to_operators: Percentage
 
     # Slash Parameters
-    slash_to_fund: Percentage
-    slash_to_holders: Percentage
+    slash_to_farmers: Percentage
 
     # Other
     initial_community_owned_supply_pct_of_max_credits: Percentage
@@ -224,13 +212,11 @@ class SubspaceModelParams(TypedDict):
         'SubspaceModelParams', SubspaceModelState], Percentage]
     nominator_stake_per_ts_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_farmer_to_holder_per_day_function: Callable[[
+    transfer_operator_to_farmer_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_operator_to_holder_per_day_function: Callable[[
+    transfer_farmer_to_nominator_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_nominator_per_day_function: Callable[[
-        'SubspaceModelParams', SubspaceModelState], Percentage]
-    transfer_holder_to_operator_per_day_function: Callable[[
+    transfer_farmer_to_operator_per_day_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Percentage]
 
     # Environmental Parameters

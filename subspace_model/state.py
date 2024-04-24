@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from subspace_model.const import ISSUANCE_FOR_FARMERS, MAX_CREDIT_ISSUANCE, ISSUED_AT_LAUNCH
 from subspace_model.types import SubspaceModelState
+from subspace_model.metrics import sum_of_stocks
 
 INITIAL_STATE = SubspaceModelState(
     # Time Variables
@@ -15,12 +16,12 @@ INITIAL_STATE = SubspaceModelState(
     # Metrics
     ## Supply Related
     circulating_supply=ISSUED_AT_LAUNCH,
-    user_supply=0.0,
-    issued_supply=0.0,
-    sum_of_stocks=0.0,
-    earned_supply=0.0,
-    earned_minus_burned_supply=0.0,
-    total_supply=0.0,
+    user_supply=ISSUED_AT_LAUNCH,
+    issued_supply=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
+    sum_of_stocks=MAX_CREDIT_ISSUANCE,
+    earned_supply=ISSUED_AT_LAUNCH,
+    earned_minus_burned_supply=ISSUED_AT_LAUNCH,
+    total_supply=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS,
 
     ## Network Related
     block_utilization=0.0,
@@ -28,7 +29,6 @@ INITIAL_STATE = SubspaceModelState(
     storage_fee_volume=0.0,
 
     ## Reward Related
-    rewards_to_nominators=0.0,
     per_recipient_reward=0.0,
     proposer_bonus_reward=0.0,
     reward_to_proposer=0.0,
@@ -42,10 +42,8 @@ INITIAL_STATE = SubspaceModelState(
     other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS - ISSUED_AT_LAUNCH,
     operators_balance=0.0,
     nominators_balance=0.0,
-    holders_balance=ISSUED_AT_LAUNCH,
-    farmers_balance=0.0,
+    farmers_balance=ISSUED_AT_LAUNCH,
     staking_pool_balance=0.0,
-    fund_balance=0.0,
     burnt_balance=0.0,
 
     # Staking Pool Shares
@@ -56,7 +54,7 @@ INITIAL_STATE = SubspaceModelState(
     block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
-    allocated_tokens=0.0,
+    allocated_tokens=(0.0525 + 0.15 + 0.07 + 0.019) * MAX_CREDIT_ISSUANCE,
     buffer_size=0,
 
     # Environmental Variables
@@ -74,7 +72,6 @@ INITIAL_STATE = SubspaceModelState(
 
     # Uncategorized Terms
     storage_fee_per_rewards=0.0,
-    avg_blockspace_usage=0.0,
     reference_subsidy=0.0,
     compute_fee_multiplier=1.0,
     free_space=0.0,
@@ -86,8 +83,6 @@ INITIAL_STATE = SubspaceModelState(
     max_bundle_weight=0.0,
     target_block_fullness=0.0,
     adjustment_variable=0.0,
-    storage_fees_to_farmers=0.0,
-    storage_fees_to_fund=0.0,
     target_block_delta=0.0,
     targeted_adjustment_parameter=0.0,
     tx_compute_weight=0.0,
@@ -109,3 +104,4 @@ INITIAL_STATE = SubspaceModelState(
     cumm_storage_fees_to_farmers=0.0,
     cumm_compute_fees_to_farmers=0.0,
 )
+

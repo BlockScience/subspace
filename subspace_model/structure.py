@@ -40,8 +40,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "average_transaction_size": replace_suf,
             "average_compute_weight_per_bundle": s_average_compute_weight_per_bundle,
             "bundle_count": s_bundle_count,
-            "block_utilization": replace_suf,
-            "avg_blockspace_usage": s_avg_blockspace_usage
+            "block_utilization": replace_suf
         },
     },
     {
@@ -60,29 +59,19 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         },
     },
     {
-        "label": "Farmer Rewards (Inflow)",
+        "label": "Issuance Rewards",
         "ignore": False,
         "policies": {
-            "fund_reward": p_fund_reward,
-            "issuance_reward": p_issuance_reward,
+            "issuance_reward": p_reward,
         },
         "variables": {
-            "fund_balance": add_suf,
             "reward_issuance_balance": add_suf,
+            "farmers_balance": add_suf,
+
             "block_reward": replace_suf,
+            "reward_to_voters": replace_suf,
+            "reward_to_proposer": replace_suf,
         },
-    },
-    {
-        "label": "Farmer Rewards (Outflow)",
-        "ignore": False,
-        "policies": {"split_farmer_rewards": p_split_reward},
-        "variables": {"farmers_balance": add_suf, "fund_balance": add_suf},
-    },
-    {
-        "label": "Operator Rewards",
-        "ignore": False,
-        "policies": {"operator_rewards": p_operator_reward},
-        "variables": {"other_issuance_balance": add_suf, "operators_balance": add_suf},
     },
     {
         "label": "Storage Fees",
@@ -94,12 +83,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             "storage_fee_in_credits_per_bytes": replace_suf,
             "extrinsic_length_in_bytes": replace_suf,
             "storage_fee_volume": replace_suf,
-            # Reward Distribution
-            "farmers_balance": add_suf,
-            "storage_fees_to_farmers": replace_suf,
-            "fund_balance": add_suf,
-            "storage_fees_to_fund": replace_suf,
-            "holders_balance": add_suf,
         },
     },
     {
@@ -117,9 +100,7 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
             # Fees and rewards distribution
             "farmers_balance": add_suf,
             "nominators_balance": add_suf,
-            "operators_balance": add_suf,
-            "holders_balance": add_suf,
-            "rewards_to_nominators": add_suf,
+            "operators_balance": add_suf
         },
     },
     {
@@ -127,10 +108,9 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "ignore": False,
         "policies": {"unvest": p_unvest},
         "variables": {
-            "holders_balance": add_suf,
             "other_issuance_balance": add_suf,
-            "allocated_tokens": add_suf,
-
+            "farmers_balance": add_suf,
+            "allocated_tokens": replace_suf,
             "allocated_tokens_investors": replace_suf,
             "allocated_tokens_founders": replace_suf,
             "allocated_tokens_team": replace_suf,
@@ -146,8 +126,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "policies": {"slash": p_slash},
         "variables": {
             "staking_pool_balance": add_suf,
-            "fund_balance": add_suf,
-            "holders_balance": add_suf,
             "operator_pool_shares": add_suf,
             "burnt_balance": add_suf,
         },
@@ -173,7 +151,6 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
         "variables": {
             "operators_balance": add_suf,
             "nominators_balance": add_suf,
-            "holders_balance": add_suf,
             "farmers_balance": add_suf,
         },
     },
@@ -218,11 +195,8 @@ _SUBSPACE_MODEL_BLOCKS: list[dict] = [
                 community_owned_supply(state, params),
             ),
             "cumm_rewards": s_cumm_generic("block_reward", "cumm_rewards", nan_value=0.0),
-            "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fees_to_farmers", "cumm_storage_fees_to_farmers"),
-            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers,
-            'per_recipient_reward':lambda p, _2, _3, s, _5: ('reward_to_voters', per_recipient_reward(s, p)),
-            'reward_to_voters': lambda p, _2, _3, s, _5: ('reward_to_voters', reward_to_voters(s, p)),
-            'reward_to_proposer': lambda p, _2, _3, s, _5: ('reward_to_proposer', reward_to_proposer(s, p))
+            "cumm_storage_fees_to_farmers": s_cumm_generic("storage_fee_volume", "cumm_storage_fees_to_farmers"),
+            "cumm_compute_fees_to_farmers": s_cumm_compute_fee_to_farmers
         },
     },
 ]
