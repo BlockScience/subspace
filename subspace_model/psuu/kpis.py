@@ -55,7 +55,8 @@ KPI_functions: dict[str, TrajectoryKPIandThreshold] = {
 GOAL_KPI_GROUPS = {
     'G1_rational_economic_incentives': ['mean_proposing_rewards_per_newly_pledged_space', 'mean_proposer_reward_minus_voter_reward'],
     'G2_community_incentives': ['mean_relative_community_owned_supply', 'cumm_rewards_before_1yr'],
-    'G3_supply_demand_equilibrium': ['mean_farmer_subsidy_factor', 'abs_sum_storage_fees_per_sum_compute_fees', 'cumm_rewards']
+    'G3_supply_demand_equilibrium': ['mean_farmer_subsidy_factor', 'abs_sum_storage_fees_per_sum_compute_fees', 'cumm_rewards'],
+    'Combined': list(KPI_functions.keys())
 }
 
 
