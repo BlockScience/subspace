@@ -82,8 +82,9 @@ def p_reward(
         state["storage_fee_in_credits_per_bytes"]
     g = state["block_utilization"]
 
-    utilization_based_reward = S_r - min(S_r, F_bar) * g
-    voting_rewards = S_r
+    utilization_based_reward = (S_r - min(S_r, F_bar) * g) * BLOCKS_PER_DAY
+    voting_rewards = S_r * BLOCKS_PER_DAY
+    
     total_reward = utilization_based_reward + voting_rewards
 
     if  state['reward_issuance_balance'] > total_reward:
@@ -545,13 +546,13 @@ def p_staking(
     XXX: assumes an invariant product
     TODO: enforce minimum staking amounts
     """
-    if (state["operator_pool_shares"] > 0) or (state["nominator_pool_shares"] > 0):
-        invariant = state["staking_pool_balance"] / (
-            state["operator_pool_shares"] + state["nominator_pool_shares"]
-        )
+
+    total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
+    if total_shares > 1e-4:
+        invariant = state["staking_pool_balance"] / total_shares
         # invariant = 1
-    elif state["operator_pool_shares"] == 0 and state["nominator_pool_shares"] == 0:
-        invariant = 1
+    elif total_shares >= 0:
+        invariant = 1.0
     else:
         invariant = float('nan')
 
@@ -565,7 +566,7 @@ def p_staking(
         operator_stake = state["operators_balance"] * operator_stake_fraction
     elif invariant > 0:
         operator_stake = (
-            -1 * state["operator_pool_shares"] * operator_stake_fraction * invariant
+             state["operator_pool_shares"] * operator_stake_fraction * invariant
         )
     else:
         operator_stake = 0.0
@@ -580,7 +581,7 @@ def p_staking(
             nominator_stake_fraction
     elif invariant > 0:
         nominator_stake = (
-            -1 * state["nominator_pool_shares"] *
+             state["nominator_pool_shares"] *
             nominator_stake_fraction * invariant
         )
     else:
