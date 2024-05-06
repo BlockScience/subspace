@@ -163,3 +163,4 @@ notebooks/cache/
 cache/
 data/
 answers.md
+.virtual_documents/
