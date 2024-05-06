@@ -355,7 +355,7 @@ def psuu(
     PARALLELIZE: bool = True,
     USE_JOBLIB: bool = True,
     RETURN_SIM_DF: bool = False,
-    UPLOAD_TO_S3: bool = True
+    UPLOAD_TO_S3: bool = False,
 ):
     """Function which runs the cadCAD simulations
 
