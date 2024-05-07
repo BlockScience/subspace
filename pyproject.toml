@@ -24,6 +24,7 @@ jupyterlab = "^4.1.6"
 pandera = "^0.18.3"
 ipywidgets = "^8.1.2"
 click = "^8.1.7"
+dask = {extras = ["dataframe"], version = "^2024.5.0"}
 
 
 [build-system]
