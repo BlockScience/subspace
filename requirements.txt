@@ -11,6 +11,7 @@ babel==2.15.0
 beautifulsoup4==4.12.3 
 bleach==6.1.0 
 bokeh==3.4.1 
+boto3
 cadCAD @ git+https://github.com/cadCAD-org/cadCAD.git@dff463842775cc2941f55fb16da0f4f316c64f0d
 certifi==2024.2.2 
 cffi==1.16.0 

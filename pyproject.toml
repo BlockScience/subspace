@@ -25,6 +25,7 @@ pandera = "^0.18.3"
 ipywidgets = "^8.1.2"
 click = "^8.1.7"
 dask = {extras = ["dataframe"], version = "^2024.5.0"}
+boto3 = "^1.34.100"
 
 
 [build-system]
