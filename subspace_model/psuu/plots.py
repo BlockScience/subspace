@@ -1,11 +1,14 @@
-import pandas as pd
-from subspace_model.psuu import GOVERNANCE_SURFACE_PARAMS
-import matplotlib.pyplot as plt
-from sklearn.tree import plot_tree  # type: ignore
-from sklearn.tree import DecisionTreeClassifier  # type: ignore
-from sklearn.ensemble import RandomForestClassifier  # type: ignore
-import seaborn as sns
 from typing import Callable
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier  # type: ignore
+from sklearn.tree import DecisionTreeClassifier  # type: ignore
+from sklearn.tree import plot_tree  # type: ignore
+
+from subspace_model.psuu import GOVERNANCE_SURFACE_PARAMS
+
 
 def create_decision_tree_importances_plot(data: pd.DataFrame,
                                           col_name: str,
@@ -106,3 +109,12 @@ def create_impact_dist_plots_by_kpi(df_to_use: pd.DataFrame,
 
     plt.show()
     return fig, axs
+
+
+def create_utility_outcomes_per_parameters_heatmap(utility_df: pd.DataFrame):
+    kpi_by_subset = utility_df.groupby('subset').mean()
+    row_sums = kpi_by_subset.sum(axis=1)
+    sorted_df = kpi_by_subset.loc[row_sums.sort_values(ascending=False).index]
+
+    chart = sorted_df.reset_index(drop=True).hvplot.heatmap(rot=35, height=800, width=800, fontscale=1, cmap='YlGn', title='Sorted Utility outcomes by Parameter Subset', ylabel='Parameter Subset', xlabel='KPI Utility', rasterize=True)
+    return chart
