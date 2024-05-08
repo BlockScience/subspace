@@ -2,12 +2,110 @@
 
 A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 
-
 ![](resources/ssc-stock-flow.png)
-*A stock and flow description for SSC on the tokeconomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
+*A stock and flow description for SSC on the tokenomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
 
-![](resources/shares-stock-flow.png)
-*A stock and flow description for Staking Pool Shares*
+## Table of Contents
+- Introduction
+
+    - Subspace
+Subspace is the first layer-one blockchain that can fully resolve the
+blockchain trilemma. Subspace is built from first principles to
+simultaneously achieve scalability, security and decentralization. At its core,
+Subspace introduces a novel storage-based consensus protocol that separates
+consensus from execution. This proposer-builder separation allows Subspace to
+independently scale transaction throughput and storage requirements while
+maintaining a fully decentralized blockchain. -Subspace Subnomicon
+
+    - Decoupled Consensus
+The Subspace Network decouples consensus from computation by separating
+transaction execution into independent domains. Domains are responsible for
+executing transactions and smart contract calls. When a user sends a
+transaction, this layer processes it and updates the domain app-chain state
+accordingly. Decoupling execution from consensus allows for scalability
+improvements. It means that execution can be parallelized, optimized, or even
+sharded independently of the consensus process.
+
+Domains are run by operators, who pledge their more powerful hardware and stake
+to execution of the domain. They are incentivized through execution fees
+(similar to gas fees on Ethereum).Operators are free to choose any
+infrastructure that meets performance and cost requirements to run their
+domains.
+
+Domains can support any conceivable state transition framework and are
+execution environment agnostic. As the first execution domain launched with
+Subspace Network, the Ethereum Virtual Machine (EVM) domain, Nova, supports
+running Ethereum smart contracts and executing Ethereum transactions. Nova
+allows Ethereum dApps and DeFi protocols to run on Subspace with significantly
+higher throughput, lower costs, and improved scalability. -Subspace Subnomicon
+
+    - Aligning Incentives for Optimal Scalability
+
+Subspace includes a novel algorithm to dynamically adjust the cost of
+blockspace in response to changes in supply and demand to economically secure
+the network in an open environment. Such adjustment naturally keeps the network
+incentive compatible for farmers, providing storage and data availability
+bandwidth and for operators providing raw compute power.
+
+Subspace creates the world's first two-sided marketplace for blockspace,
+allowing it to have a dynamic on-chain cost-of-blockspace and a stable
+off-chain price-of-blockspace without relying on centralized control or
+coordination. On one side are the farmers, who collectively supply blockspace
+bandwidth through their storage of the blockchain history. On the other side
+are dApp developers and users, who demand blockspace to deploy and run their
+applications. Subspace's marketplace algorithm adjusts the on-chain
+cost-of-blockspace paid out to farmers based on real-time supply and demand.
+When demand is high, the cost rises to incentivize more farmers to join. When
+demand is low, the cost falls to disincentivize over-investment in storage.
+This dynamic adjustment process occurs transparently on-chain through the
+protocol rules.
+
+When combined with existing scalability frameworks, Subspace can achieve linear
+scaling of the blockspace as more nodes join the network without sacrificing
+security or decentralization.
+
+    - Relevant Terminology
+
+        - Subspace Network
+Typically means a combination of Subspace consensus chain, domain chains and Distributed Storage Network as a whole system.
+
+        - Blockchain History
+An ordered collection of blocks of the blockchain, specifically in Subspace, means SCALE-encoded blocks of the blockchain.
+
+        - Blockchain State
+The result of executing transactions on a blockchain (like state of account balances, smart contracts, etc.)
+
+        - Dilithium
+The Subspace Network Proof-of-Archival-Storage consensus mechanism which defines Archiving, Plotting, Farming, Proving and Verification.
+
+        - ...
+
+- Background
+    - Subspace Resources
+    - cadCAD Resources
+- Installation
+    - Option 1: Using `venv` virtual environment
+    - Option 2: Using python poetry
+- Usage
+    - Running Tests
+    - Running a Simulation
+    - Generating a PSuU Dataset
+- Advanced Usage
+    - Modifying Default State
+    - Modifying Default Parameter
+    - Modifying Controllable Parameter Sweeps
+    - Modifying Environmental Scenario Sweeps
+    - Defining Custom Experiments
+- Model Implementation
+    - File Structure
+    - Model Structure
+    - State Update Logic
+    - Subspace Mechanism Components
+    - Functional Parameters
+- Research Analysis
+    - Sanity Check Run
+    - PSuU Analysis
+    - PSuU Single Run Analysis
 
 ## Notes on modelling
 
