@@ -10,7 +10,6 @@ A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 ### Installation
 
 **1. Install System Requirements:**
-Requires:
 - [>= Python 3.6](https://www.python.org/downloads/) 
 - One of [`venv`](https://docs.python.org/3/library/venv.html) or [`poetry`](https://python-poetry.org/) for python virtual environment.
 
@@ -31,6 +30,9 @@ source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# If you want to deactivate the virtual environment
+deactivate
 ```
 
 **Option 2**: Using python poetry
@@ -40,6 +42,9 @@ poetry install
 
 # Activate the poetry shell
 poetry shell
+
+# To exit the poetry shell
+exit
 ```
 
 ### Usage
@@ -53,20 +58,20 @@ pytest
 
 **Get Help on Available Options:**  
 ```bash
-python -m subspace_model -h
+python -m subspace_model --help
 ```
 
-**Running the standard simulation and saving results:**  
+**Run the standard simulation and save results:**  
 ```bash
 python -m subspace_model -p
 ```
 
-**Generating a PSuU Dataset with 2 montecarlo runs and 2 parameter subsets and saving the results:**  
+**Generate a PSuU Dataset with 2 Monte Carlo runs and 2 parameter subsets and save the results:**  
 ```bash
 python -m subspace_model -e psuu -s 2 -sw 2 -p
 ```
 
-**Analyzing Data in Jupyter:**  
+**Analyze Simulation Results in Jupyter:**  
 ```bash
 jupyter lab
 ```
