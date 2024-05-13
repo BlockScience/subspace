@@ -60,9 +60,9 @@ def timestep_tensor_to_trajectory_tensor(sim_df: pd.DataFrame) -> pd.DataFrame:
     all_kpi_df = pd.concat(kpi_dfs, axis=1)
     return all_kpi_df
 
-def create_latest_trajectory_tensor() -> pd.DataFrame:
+def create_latest_trajectory_tensor(directory:str="./data/simulations/") -> pd.DataFrame:
 # Combine all of the chunks and write simulation results to disk
-    latest = sorted(glob("./data/simulations/psuu_run*"))[-1]
+    latest = sorted(glob(f"{directory}psuu_run*"))[-1]
     parts = sorted(glob(f"{latest}/*"), key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))
 
     data = []

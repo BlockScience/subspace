@@ -163,3 +163,5 @@ notebooks/cache/
 cache/
 data/
 answers.md
+.virtual_documents/
+notebooks/workflows/s3-cache/
