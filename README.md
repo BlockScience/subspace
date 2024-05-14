@@ -59,10 +59,8 @@ pytest
 **Get Help on Available Options:**  
 ```bash
 python -m subspace_model --help
-
 ```
 
-Running the above will output the following help message:
 ```
 Usage: python -m subspace_model [OPTIONS]
 
@@ -70,33 +68,22 @@ Options:
   -e, --experiment [sanity_check_run|psuu]
                                   Select an experiment to run.
   -p, --pickle                    Pickle results to data/simulations/.
-  -i, --interactive               Drop into an IPython shell for interactive
-                                  exploration.
-  -l, --log-level [debug|info|warning|error|critical]
-                                  Set the logging level.
   -a, --run-all                   Run all experiments.
-  -v, --visualize                 Visualize the most recent results of the
-                                  selected experiment. Combine with -e or -a
-                                  to select which experiment results to
-                                  visualize.
   -s, --samples INTEGER           Set Sample size; if not set runs default
                                   sample size.
   -d, --days INTEGER              Number of simulation days.
-  -m, --metrics                   Run experiment metrics calculations.
-                                  Optionally save to disk with -p.
-  -gn, --generate_notebooks       Generate notebooks from templates.
-  -gt, --generate_template        Generate template from notebook.
   -sw, --sweep_samples INTEGER    Number of sweep combinations to sample (if
                                   applicable for the experiment)
   --help                          Show this message and exit.
 ```
 
-**Run the sanity check simulation and save results:**  
+**Example 1:**
+Run the sanity check simulation and save results:
 ```bash
 python -m subspace_model -e sanity_check_run -p 
 ```
 
-**Generate a PSuU Dataset with 2 Monte Carlo runs and 2 parameter subsets and save the results:**  
+**Example 2:** Generate a PSuU Dataset with 2 Monte Carlo runs and 2 parameter subsets and save the results
 ```bash
 python -m subspace_model -e psuu -s 2 -sw 2 -p
 ```
