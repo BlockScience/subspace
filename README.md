@@ -5,6 +5,17 @@ A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 ![](resources/ssc-stock-flow.png)
 *A stock and flow description for SSC on the tokenomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
 
+## Table of Contents
+1. [Table of Contents](#table-of-contents)
+2. [Quick Start Guide](#quick-start-guide)
+3. [Introduction](#introduction)
+4. [Background](#background)
+5. [Methodology](#methodology)
+6. [Analysis Results](#analysis-results)
+7. [Advanced Usage](#advanced-usage)
+8. [Additional Resources](#additional-resources)
+
+
 ## Quick Start Guide
 
 ### Installation
@@ -93,17 +104,29 @@ python -m subspace_model -e psuu -s 2 -sw 2 -p
 jupyter lab
 ```
 
-## Table of Contents
-1. [Quick Start Guide](#quick-start-guide)
-2. [Table of Contents](#table-of-contents)
-3. [Introduction](#introduction)
-4. [Background](#background)
-5. [Methodology](#methodology)
-6. [Analyzing Results](#analyzing-results)
-7. [Advanced Usage](#advanced-usage)
-8. [Additional Resources](#additional-resources)
+
 
 ## Introduction
+
+### Economic Modeling with cadCAD
+
+Complex Adaptive Dynamics Computer-Aided Design (cadCAD) is a python based
+modeling framework for modeling, simulation, and validation of complex systems
+designs.
+
+Given a model of a complex system, cadCAD can simulate the impact that a set of
+actions might have on it. This helps users make informed, rigorously tested
+decisions on how best to modify or interact with the system in order to achieve
+their goals. cadCAD supports different system modeling approaches and can be
+easily integrated with common empirical data science workflows. Monte Carlo
+methods, A/B testing, and parameter sweeping features are natively supported.
+
+For more information on cadCAD:
+
+- https://community.cadcad.org/t/introduction-to-cadcad/15
+- https://community.cadcad.org/t/putting-cadcad-in-context/19
+- https://github.com/cadCAD-org/demos
+
 
 ### The Subspace Economic Model
 
@@ -143,25 +166,6 @@ following python modules:
 
 
 ## Background
-
-### Economic Modeling with cadCAD
-
-Complex Adaptive Dynamics Computer-Aided Design (cadCAD) is a python based
-modeling framework for modeling, simulation, and validation of complex systems
-designs.
-
-Given a model of a complex system, cadCAD can simulate the impact that a set of
-actions might have on it. This helps users make informed, rigorously tested
-decisions on how best to modify or interact with the system in order to achieve
-their goals. cadCAD supports different system modeling approaches and can be
-easily integrated with common empirical data science workflows. Monte Carlo
-methods, A/B testing, and parameter sweeping features are natively supported.
-
-For more information on cadCAD:
-
-- https://community.cadcad.org/t/introduction-to-cadcad/15
-- https://community.cadcad.org/t/putting-cadcad-in-context/19
-- https://github.com/cadCAD-org/demos
 
 ### Subspace
 
@@ -225,10 +229,27 @@ For additional terminology, please refer to the [terminology section of the subn
 
 For further information on the methodology used in this work, please refer to the [Subspace PSUU Work Plan Methodology Document](resources/subspace-psuu-work-plan-methodology.md).
 
-## Analyzing Results
-- Sanity Check Run
-- PSuU Analysis
-- PSuU Single Run Analysis
+## Analysis Results
+
+The following notebooks highlight the results of the subspace parameter selection research phase: 
+| Notebook | Purpose |
+|:--------|:--------|
+|  [PSuU Analysis](notebooks/workflows/psuu.ipynb)  |  This notebook showcases the PSuU methodology workflow to produce parameter selection decision trees from the trajectory tensor.  |
+|  [PSuU Single Run Analysis](notebooks/research)  |  This notebook explores a single run from the PSuU timestep tensor.  |
+|  [Sanity Check Run](notebooks/per-experiment/01-santity_check_run.ipynb)  |  This notebook explores the state trajectory of a single run with default parameters.  |
+
+
+For a fully comprehensive review of research and analysis, see the following sections in the [notebooks](notebooks) directory:
+
+| Analysis Section | Purpose |
+|:--------|:--------|
+|  [Exploratory](notebooks/exploratory)  |  A set of notebooks that perform exploratory analysis on simulation results.  |
+|  [Per-Experiment](notebooks/per-experiment)  |  A set of templated notebooks that correspond to a series of experiments designed throughout the research phase of this project. The notebooks in this directory correspond to the functions found in [experiment.py](subspace_model/experiments/experiment.py).  |
+|  [Research](notebooks/research)  |  A set of notebooks that perform verification, validation, and benchmarking of specific components of the system.  |
+|  [Workflows](notebooks/workflows)  |  A set of notebooks that showcase the parameter selection under uncertainty (PSuU) workflows.  |
+
+
+For a complete overview of the parameter selection research phase, please see the [Subspace Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.md).
 
 
 ## Advanced Usage
