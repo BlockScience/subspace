@@ -44,7 +44,7 @@ from subspace_model.structure import SUBSPACE_MODEL_BLOCKS
 
 
 def sanity_check_run(
-    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1
+    SIMULATION_DAYS: int = 183, TIMESTEP_IN_DAYS: int = 1, SAMPLES: int = 1, **kwargs
 ) -> DataFrame:
     """
     This experiment tests the model with default parameters and with deterministic parameters.
@@ -508,22 +508,16 @@ def psuu(
 
 
         if RETURN_SIM_DF:
-            # TODO: this code needs to be checked.
-                        # Combine all of the chunks and write simulation results to disk
-            latest_folder = "-".join(
-                sorted(glob(f"./{str(sim_folder_path)}/psuu_run*"))[-1].split("-")[:-1]
-            )
-            parts = glob(f"{latest_folder}*")
-            sorted_parts = sorted(parts, key=lambda x: int(re.search(r"-([0-9]+)\.pkl\.gz$", x).group(1)))  # type: ignore
             sim_df = pd.concat(
-                [pd.read_pickle(part, compression="gzip") for part in sorted_parts]
+                [pd.read_pickle(part, compression="gzip") for part in glob(output_path+"*")]
             )
+
     end_start_time = datetime.now()
     duration: float = (end_start_time - sim_start_time).total_seconds()
     logger.info(f"PSuU Run finished at {end_start_time}, ({end_start_time - sim_start_time} since sim start)")
     logger.info(f"PSuU Run Performance Numbers; Duration (s): {duration:,.2f}, Measurements Per Second: {N_measurements/duration:,.2f} M/s, Measurements per Job * Second: {N_measurements/(duration * PROCESSES):,.2f} M/(J*s)")
-    if RETURN_SIM_DF == True:
-        return sim_df
+    if RETURN_SIM_DF:
+        return sim_df # type: ignore
     else:
         pass
 

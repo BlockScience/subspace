@@ -201,7 +201,7 @@ def run_calculate_metrics(sim_df: pd.DataFrame, experiment: str):
 
 
 def run_experiment(
-    experiment: str, samples: int | None = None, days: int | None = None, sweep_samples: int | None = None
+    experiment: str, samples: int | None = None, days: int | None = None, sweep_samples: int | None = None, RETURN_SIM_DF: bool = False
 ):
     """
     Run an experiment with for a given number of days and samples.
@@ -211,7 +211,9 @@ def run_experiment(
 
     kwargs = dict(SAMPLES=samples,
                   SIMULATION_DAYS=days,
-                  N_SWEEP_SAMPLES=sweep_samples)
+                  N_SWEEP_SAMPLES=sweep_samples,
+                  RETURN_SIM_DF=RETURN_SIM_DF,
+                  )
     
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
     df = experiment_run(**kwargs)
@@ -242,7 +244,7 @@ def process_experiment(
         save_charts(experiment)
         return
     else:
-        sim_df = run_experiment(experiment, samples, days, sweep_samples)
+        sim_df = run_experiment(experiment, samples, days, sweep_samples, RETURN_SIM_DF=pickle)
         if calculate_metrics:
             timestep_metrics_df, trajectory_metrics_df = run_calculate_metrics(
                 sim_df,
@@ -370,22 +372,22 @@ def generate_template_from_notebook(experiment: str):
     is_flag=True,
     help="Run experiment metrics calculations. Optionally save to disk with -p.",
 )
-# @click.option(
-#     "-gn",
-#     "--generate_notebooks",
-#     "generate_notebooks",
-#     default=False,
-#     is_flag=True,
-#     help="Generate notebooks from templates.",
-# )
-# @click.option(
-#     "-gt",
-#     "--generate_template",
-#     "generate_template",
-#     default=False,
-#     is_flag=True,
-#     help="Generate template from notebook.",
-# )
+@click.option(
+    "-gn",
+    "--generate_notebooks",
+    "generate_notebooks",
+    default=False,
+    is_flag=True,
+    help="Generate notebooks from templates.",
+)
+@click.option(
+    "-gt",
+    "--generate_template",
+    "generate_template",
+    default=False,
+    is_flag=True,
+    help="Generate template from notebook.",
+)
 @click.option(
     "-sw",
     "--sweep_samples",
@@ -404,8 +406,8 @@ def main(
     samples: int | None,
     days: int | None,
     calculate_metrics: bool,
-    # generate_notebooks: bool,
-    # generate_template: bool,
+    generate_notebooks: bool,
+    generate_template: bool,
     sweep_samples: int
 ) -> None:
     # Initialize logging
