@@ -33,57 +33,55 @@ Based on the above, it is possible to develop a set of recommendations that can 
     - This can be done readily by applying the [`cadCAD_machine_search`](https://github.com/cadCAD-org/cadCAD_machine_search) library, although more sophisticated approaches can be implemented as time and requirements allows.
     - This analysis may also admit a variation on which trajectories are grouped per Controllable Parameters and per Environmental Group.
 
+## Methodology
 
-## Goals
+### Assumptions of the Model
+To enable such an economic model, several assumptions were made. Assumption implementations are indicated with XXX tags through out the repository. Some of the assumptions of the model include:
+- There is a hard cap on farmer rewards issuance
+- Nominators and Operators will stake a portion of their free balance on every timestep
+- average_priority_fee is stochastically sampled
+- average_compute_weight_per_tx is stochastically sampled
+- average_compute_weight_per_bundle is stochastically sampled
 
-- G1: Rational Economic Incentives
-    - E.g. Incentives should be proportional to effort. Participation is smooth.
-- G2: Community Incentivization
-    - E.g. COS should somehow be maximized or required to fullfill certain requirements.
-    - E.g. Rewards should be spread across as many actors as possible
-    - E.g. Early adopters should be incentivized
-- G3: Supply and Demand Equilibrium / Distributional Equilibrium
-    - E.g. Increases in supply (eg. space pledged and operator pools) should track increases in demand (eg. storage & compute fees). 
+### Goals of the System
+The overarching goals for the protocol issuance were designed to align the economic parameters with the broader objectives of the network:
 
-### Per-Goal Utility Functions
-
-\begin{align}
-\pi_j(C) &= \sum k_i * T_i,  T_i \in \mathcal{T}_j\\
-\end{align}
-
-
-## Per Trajectory Metrics
-
-### Threshold Rules
-
-- BMaT: Below the Median across Trajectories
-- LMaT: Larger than the Median across Trajectories
-
-### Metrics
-
-- Missing Metrics: 
-    - How to measure optimized distribution between proposers & voters?
-    - How to measure Reasonable rewards per-block/hour/month/etc. In USD terms
-    - How to measure operator incentivization
-    - How to measure network usage
-    - How to measure resilence towards usage shocks
-
-|Identifier|Metric|Applicable Goals|Threshold|Importance Weight|Meaning|
-|-|-|-|-|-|-|
-|T1|Average over Daily-Average Community Owned Supply Fraction|G2|LMaT|1|Higher average COSf is preferred|
-|T2|Average over Daily-Average Farmer Subsidy Factor|G3|BMaT|1|Having less subsidies relative to fees is preferred|
-|T3|Average over Daily-Sum of Proposing Rewards per Newly Pledged Space|G1|LMaT|1|Proposing rewards being higher than proposing costs is preferred|
-|T4|Average over Daily-Sum of Proposer Reward Minus Per-Voter Reward|G1|LMaT|1|Proposers having a reward premium over voters is preferred|
-|T5|Sum over Daily-Sum of Rewards for the first 1 year|G2|LMaT|1|Priotization of early adopters us preferred
-|T6|Modulus of Average-1 over Daily-Sum of Storage Fees Per Daily-Sum of (Storage Fees + Compute Fees)|G3|BMaT|1|The order of magnitude of Storage and Compute Fees are as close as possible|
-|T7|Sum over Daily-Sum of Rewards|G3|BMaT|1|Less Issuance is preferred|
+1. **Rational Economic Incentives:** Ensuring the economic parameters encourage behaviors supporting the network's long-term viability and growth.
+    - Incentives should be proportional to effort. 
+    - Participation is smooth.
+2. **Community Incentivization:** Creating incentives that encourage participation from all defined stakeholders (farmers, operators, nominators).
+    - Community owned supply should be maximized
+    - Rewards should be spread across as many actors as possible
+    - Early adopters should be incentivized
+3. **Supply and Demand Equilibrium / Distributional Equilibrium:** Balancing the issuance and distribution of tokens to support both the network's scalability and the fair distribution of resources among participants.
+- Increase in supply (eg. space pledged and operator pools) should track increases in demand (eg. storage & compute fees).
 
 
-## Governance Surface
+### Key Performance Indicators
+1. **Community Owned Supply Percentage:** How much of total supply is held by the community?
+2. **Average Daily Farmer Subsidy Factor:** What percentage of farmer rewards are coming from the reference subsidy?
+3. **Average Daily Proposer Rewards per Pledged Space:** How many SSC are proposers rewarded per pledged space?
+4. **Average Daily Proposer Rewards Not Including Voting Rewards:** Proposer rewards without voting rewards.
+5. **Cumulative Rewards Distributed in First Year:** Total block rewards in first year.
+6. **Ratio of Storage Fees per Compute Fees:** How many storage fees are paid per compute fee paid?
+7. **Cumulative Rewards:** Total block rewards distributed over the entire simulation (3 years).
 
+### Controllable Parameters
 
+The purpose of this economic modeling work is to advise the subspace team
+towards the selection of initialization parameters for the subspace system. The
+space of possible initialization configurations is known as the governance
+surface. The purpose of the PSuU methodology is to identify points on the
+governance surface that increasing the likely utility of KPIs that are
+associated with desired goals. 
 
+The following subspace network initialization parameters have been analyzed using the PSuU methodology:
+1. **Reference Subsidy Component #1:** 
+2. **Reference Subsidy Component #2:**
+3. **Reward Proposer Share:**
+4. **Compute Weight to Fee Parameter:**
 
+### Governance Surface
 
 | Parameter| Prioritization | Set of Values to Test |
 | -------- | -------- | -------- |
@@ -104,42 +102,28 @@ Based on the above, it is possible to develop a set of recommendations that can 
 |Expected Votes per Block|Out of Scope|{1}|
 | Ref. Subsidy Component 1, Initial Subsidy Duration|Out of Scope|{0.0}|
 
-## Environmental Scenarios
 
-### Environmental Variables
+### Environmental Scenarios
 
-| Variable | Type | Observable? |
-| -------- | -------- | -------- |
-|Priority Fee per Time | Possibly Dynamical| Yes     |
-|Compute Weights per Transaction|Random|Yes||
-|Compute Weights per Bundle|Random|Yes||
-|Size per Transaction|Random|Yes||
-|Size per Bundle|Random|Yes||
-|Slash Count per Time|Random|Yes||
-|Transaction Count per Time|Behavioral|Yes||
-|Bundle Count per Time|Behavioral|Yes||
-|New Sectors per Time|Behavioral|Yes||
-|Operator Stake per Time|Behavioral|Yes||
-|Nominator Stake per Time|Behavioral|Yes||
-|Farmer-Holder Transfer per Time|Behavioral|No||
-|Operator-Holder Transfer per Time|Behavioral|No||
-|Holder-Nominator Transfer per Time|Behavioral|No||
-|Holder-Operator Transfer per Time|Behavioral|No||
+The following behavioral inputs are modulated per run according to the defined environmental scenarios:
+1. **Utilization Ratio**
+2. **Operator Stake per Transaction**
+3. **Nominator Stake per Transaction**
+4. **Transfers from Operators to Farmers per Day**
+5. **Transfers from Farmers to Nominators per Day**
+6. **Transfers from Farmers to Operators per Day**
+
 
 ### Scenario Groups
 
-- Scenario Group 1: Predictable Trajectory
-    - All behavioral variables are assigned a low-volatility distribution. (eg. CoV of 30%)
-- Scenario Group 2: High-Volatility Trajectory
-    - All behavioral variables are assigned a high-volatility distribution. (eg. CoV of 500%)
-- Scenario Group 3: Predictable Trajectory with Instantaeous Shocks
-    - All behavioral variables are assigned a low-volatility distribution (eg. CoV of 30%), with intermittent shocks (eg. an order of magnitude decrease or increase) occuring on average every N weeks
-- Scenario Group 4: Predictable Trajectory with Sustained Shocks
-    - All behavioral variables are assigned a low-volatility distribution (eg. CoV of 30%), with intermittent shocks (eg. an order of magnitude decrease or increase) occuring on average every N weeks. Those shocks will be sustained by an certain amount of days (eg. M days on average)
+The four types of environmental scenarios include the following:
+1. **Standard Run:** Value is sampled from a normal distribution with low coefficient of variation
+2. **Volatile Run:** Value is sampled from a normal distribution with high coefficient of variation
+3. **Standard Run with Instantaneous Shocks:** Value is sampled from a normal distribution with low coefficient of variation, with periodic instances of high variation.
+4. **Standard Run with Sustained Shocks:** Value is sampled from a normal distribution with low coefficient of variation, with periodic durations of high variation.
+
 
 ### Environmental Variable Values
-
-
 - DAo: Daily Average Of
 - Parameters
     - DAo Utilization Ratio = `{0.5%, 1%, 2%}`
@@ -157,12 +141,68 @@ Based on the above, it is possible to develop a set of recommendations that can 
     -  Holder-Operator Transfer per Time = `{2.5%}`
 
 
+### Trajectory Datasets
+Running the PSuU methodology across the parameters described above generates two key datasets:
+
+**The Timestep Tensor:** An (CXSXTXRXM) Tensor  
+- C = Controllable Parameter Sweeps
+- S = Scenario Sweeps
+- R = Number of Monte Carlo Runs per Simulation
+- T = Number of Timesteps per Run
+- M = Number of Measurements Observe per Timestep
+
+**The Trajectory Tensor:** An (CXSXRXK) Tensor  
+- K is the number of KPIs
+- This is The Timestep Tensor aggregated over time by run
+- Contains Controllable Parameters as Index
+- Contains KPI Outcomes as Values
+- Can be Used for Machine Learning Analysis
+
+**The Utility Tensor:** An (CXSXRXK) Binary Tensor  
+- This is the result of Utility Functions applied to the Trajectory Tensor
+- KPI values are mapped to 0 or 1 to indicate whether or not they meet a success criteria
+
+Observe that the size of the Trajectory Tensor is K/(T*M) the size of the
+Timestep Tensor. Considering K=7, T=1096, M=40, then the Trajectory Tensor is
+about 1/6000 the size of the Timestep Tensor. This is important to keep in mind
+When running large simulations, as timestep tensors might not always fit in
+memory or on disk.
+
+### Per Trajectory Metrics
+
+|Identifier|Metric|Applicable Goals|Threshold|Importance Weight|Meaning|
+|-|-|-|-|-|-|
+|T1|Average over Daily-Average Community Owned Supply Fraction|G2|LMaT|1|Higher average COSf is preferred|
+|T2|Average over Daily-Average Farmer Subsidy Factor|G3|BMaT|1|Having less subsidies relative to fees is preferred|
+|T3|Average over Daily-Sum of Proposing Rewards per Newly Pledged Space|G1|LMaT|1|Proposing rewards being higher than proposing costs is preferred|
+|T4|Average over Daily-Sum of Proposer Reward Minus Per-Voter Reward|G1|LMaT|1|Proposers having a reward premium over voters is preferred|
+|T5|Sum over Daily-Sum of Rewards for the first 1 year|G2|LMaT|1|Priotization of early adopters us preferred
+|T6|Modulus of Average-1 over Daily-Sum of Storage Fees Per Daily-Sum of (Storage Fees + Compute Fees)|G3|BMaT|1|The order of magnitude of Storage and Compute Fees are as close as possible|
+|T7|Sum over Daily-Sum of Rewards|G3|BMaT|1|Less Issuance is preferred|
+
+### Threshold Rules
+
+- BMaT: Below the Median across Trajectories
+- LMaT: Larger than the Median across Trajectories
 
 
+### Per-Goal Utility Functions
+
+$$
+\pi_j(C) = \sum k_i * T_i, \, T_i \in \mathcal{T}_j
+$$
 
 
+### Machine Learning Analysis
 
-## Resources
+**Utility Maximizing Decision Trees:**  
+    - Decision trees are applied to the Utility Tensor to illustrate the importance of parameter selection values on utility criteria outcomes.
+
+**Regressing Analysis of Parameter Impact on Goals:**  
+    - Density plots and linear regression are used to indicate the effects of parameter selection on utility outcomes.
+
+
+## Additional Resources
 
 - [How to Perform Parameter Selection Under Uncertainty (essay)](https://medium.com/block-science/how-to-perform-parameter-selection-under-uncertainty-976931ba7e5d)
 - [From High Dimensional Data to Insights](https://hackmd.io/1iTUMQoAS8WCQu4IvyXMzA)
