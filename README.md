@@ -82,7 +82,7 @@ jupyter lab
 3. [Introduction](#introduction)
 4. [Background](#background)
 5. [Methodology](#methodology)
-6. [Analysis](#analysis-results)
+6. [Analysis](#analyzing-results)
 7. [Advanced Usage](#advanced-usage)
 8. [Additional Resources](#additional-resources)
 
@@ -116,12 +116,12 @@ following python modules:
 |  [types.py](subspace_model/types.py)  |  Type definitions for the model state and parameters.  |
 |  [const.py](subspace_model/const.py)  |  System constants  |
 |  [params.py](subspace_model/params.py)  |  System parameters, environmental parameters, and governance surface.  |
-|  [params.py](subspace_model/state.py)  |  System inital state.  |
+|  [state.py](subspace_model/state.py)  |  System inital state.  |
 |  [logic.py](subspace_model/logic.py)  |  Policy and state update logic. |
 |  [structure.py](subspace_model/structure.py)  |  The block update structure of the model.  |
 |  [\_\_main\_\_.py](subspace_model/__main__.py)  |  The command line interface to the subspace model.  |
-|  [experiments/experiment.py](subspace_model/experiment/experiments.py)  |  Defines experiments such as standard run and psuu.  |
-|  [experiments/logic.py](subspace_model/experiment/logic.py)  |  Behavioral and mechanism logic for experiments.  |
+|  [experiments/experiment.py](subspace_model/experiments/experiment.py)  |  Defines experiments such as standard run and psuu.  |
+|  [experiments/logic.py](subspace_model/experiments/logic.py)  |  Behavioral and mechanism logic for experiments.  |
 |  [psuu/](subspace_model/psuu/)  |  Pipeline components for analyzing PSuU datasets.  |
 
 
@@ -204,11 +204,11 @@ For additional terminology, please refer to the [terminology section of the subn
 - [Staking](https://subnomicon.subspace.network/docs/decex/staking)
 - [Rewards and Fees](https://subnomicon.subspace.network/docs/rewards_fees)
 
-### Methodology
+## Methodology
 
 For further information on the methodology used in this work, please refer to the [Subspace PSUU Work Plan Methodology Document](resources/subspace-psuu-work-plan-methodology.md).
 
-## Analysis Results
+## Analyzing Results
 - Sanity Check Run
 - PSuU Analysis
 - PSuU Single Run Analysis
@@ -221,4 +221,7 @@ For further information on the methodology used in this work, please refer to th
 - Modifying Environmental Scenarios
 
 ## Additional Resources
+- [Subspace Work Plan Methodology](resources/subspace-psuu-work-plan-methodology.md)
+- [Subpace Parameter Selection Report](resources/subspace-parameter-selection-report.pdf)
+- [The Subnomicon](https://subnomicon.subspace.network/docs/intro)
 
