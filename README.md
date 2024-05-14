@@ -82,7 +82,7 @@ jupyter lab
 3. [Introduction](#introduction)
 4. [Background](#background)
 5. [Methodology](#methodology)
-6. [Analysis](#analyzing-results)
+6. [Analyzing Results](#analyzing-results)
 7. [Advanced Usage](#advanced-usage)
 8. [Additional Resources](#additional-resources)
 

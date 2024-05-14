@@ -370,22 +370,22 @@ def generate_template_from_notebook(experiment: str):
     is_flag=True,
     help="Run experiment metrics calculations. Optionally save to disk with -p.",
 )
-@click.option(
-    "-gn",
-    "--generate_notebooks",
-    "generate_notebooks",
-    default=False,
-    is_flag=True,
-    help="Generate notebooks from templates.",
-)
-@click.option(
-    "-gt",
-    "--generate_template",
-    "generate_template",
-    default=False,
-    is_flag=True,
-    help="Generate template from notebook.",
-)
+# @click.option(
+#     "-gn",
+#     "--generate_notebooks",
+#     "generate_notebooks",
+#     default=False,
+#     is_flag=True,
+#     help="Generate notebooks from templates.",
+# )
+# @click.option(
+#     "-gt",
+#     "--generate_template",
+#     "generate_template",
+#     default=False,
+#     is_flag=True,
+#     help="Generate template from notebook.",
+# )
 @click.option(
     "-sw",
     "--sweep_samples",
@@ -404,8 +404,8 @@ def main(
     samples: int | None,
     days: int | None,
     calculate_metrics: bool,
-    generate_notebooks: bool,
-    generate_template: bool,
+    # generate_notebooks: bool,
+    # generate_template: bool,
     sweep_samples: int
 ) -> None:
     # Initialize logging
