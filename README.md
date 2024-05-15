@@ -247,22 +247,20 @@ For further information on the methodology used in this work, please refer to th
 
 ## Analysis Results
 
-The following notebooks highlight the results of the subspace parameter selection research phase: 
-| Notebook | Purpose |
-|:--------|:--------|
-|  [PSuU Analysis](notebooks/workflows/psuu.ipynb)  |  This notebook showcases the PSuU methodology workflow to produce parameter selection decision trees from the trajectory tensor.  |
-|  [PSuU Single Run Analysis](notebooks/research)  |  This notebook explores a single run from the PSuU timestep tensor.  |
-|  [Sanity Check Run](notebooks/per-experiment/01-santity_check_run.ipynb)  |  This notebook explores the state trajectory of a single run with default parameters.  |
-
-
 For a fully comprehensive review of research and analysis, see the following sections in the [notebooks](notebooks) directory:
-
 | Analysis Section | Purpose |
 |:--------|:--------|
 |  [Exploratory](notebooks/exploratory)  |  A set of notebooks that perform exploratory analysis on simulation results.  |
 |  [Per-Experiment](notebooks/per-experiment)  |  A set of templated notebooks that correspond to a series of experiments designed throughout the research phase of this project. The notebooks in this directory correspond to the functions found in [experiment.py](subspace_model/experiments/experiment.py).  |
 |  [Research](notebooks/research)  |  A set of notebooks that perform verification, validation, and benchmarking of specific components of the system.  |
 |  [Workflows](notebooks/workflows)  |  A set of notebooks that showcase the parameter selection under uncertainty (PSuU) workflows.  |
+
+The following notebooks highlight the results of the subspace parameter selection research phase: 
+| Notebook | Purpose |
+|:--------|:--------|
+|  [PSuU Analysis](notebooks/workflows/psuu.ipynb)  |  This notebook showcases the PSuU methodology workflow to produce parameter selection decision trees from the trajectory tensor.  |
+|  [PSuU Single Run Analysis](notebooks/research)  |  This notebook explores a single run from the PSuU timestep tensor.  |
+|  [Sanity Check Run](notebooks/per-experiment/01-santity_check_run.ipynb)  |  This notebook explores the state trajectory of a single run with default parameters.  |
 
 
 For a complete overview of the parameter selection research phase, please see the [Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.md).
