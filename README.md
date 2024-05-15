@@ -127,6 +127,22 @@ For more information on cadCAD:
 - https://community.cadcad.org/t/putting-cadcad-in-context/19
 - https://github.com/cadCAD-org/demos
 
+### cadCAD Terminology
+- **State:** All state values of the system at a particular timestep.
+- **Parameters:** Inputs to the model fixed over a run.
+- **Functional Parameters:** Parameters that are callable, used to introduce stochasticity, behavioral logic, and mechanisms like the issuance function.
+- **Logic:** State update and policy functions that define how the system state updates given its current state and parameterization.
+- **Run:** Executing a model from its initial state, through T timesteps.
+- **Monte Carlo:** Collecting multiple runs over a single parameterization.
+- **Subset:** A particular parameterization of the model that may be probed using Monte Carlo.
+- **Simulation:** Running the model over parameter sweeps and Monte Carlo runs.
+- **Sweep:** Systematically varying parameter values to explore their impact on the model through multiple runs.
+- **Timestep:** A discrete time interval at which the system's state is updated.
+- **Trajectory:** The path taken by the system's state over time during a single run.
+- **KPI (Key Performance Indicator):** A metric used to evaluate the system's performance in achieving its objectives.
+- **Success Criteria:** Predefined conditions that determine whether the simulation results are considered successful.
+- **PSuU (Parameter Selection under Uncertainty):** A methodology for selecting robust parameters while considering system uncertainties.
+- **Experiment:** A structured set of simulation runs designed to test specific hypotheses or explore the effects of varying parameters.
 
 ### The Subspace Economic Model
 
@@ -207,7 +223,7 @@ following python modules:
 -[Subspace Subnomicon](https://subnomicon.subspace.network/docs/advancements#aligning-incentives-for-optimal-scalability)
 
 
-### Terminology
+### Subspace Terminology
 - **Fees**: The payments for transactions on the network.
 - **Rewards**: The compensation for the work performed by the participants of the network via the issuance of the newly minted tokens by the protocol.
 - **Issuance:** The amount of tokens minted as a Reward per block, total for all recipients.
@@ -253,13 +269,30 @@ For a complete overview of the parameter selection research phase, please see th
 
 
 ## Advanced Usage
-- Modifying Default State
-- Modifying Default Parameters
-- Modifying Controllable Parameters
-- Modifying Environmental Scenarios
+#### Modifying Default State
+1. Navigate to [state.py](subspace_model/state.py)
+2. Change the appropriate values
+3. If adding or removing fields from state, be sure to update [types.py](subspace-parameter-selection-report/types.py)
+4. Run a simulation
+#### Modifying Default Parameters
+1. Navigate to [params.py](subspace_model/state.py)
+2. Modify values in the `DEFAULT_PARAMS` dictionary
+3. If adding or removing fields from default params, be sure to update [types.py](subspace-parameter-selection-report/types.py)
+4. Run a simulation
+#### Modifying Controllable Parameters
+1. Navigate to [params.py](subspace_model/state.py)
+2. Modify values in the `GOVERNANCE_SURFACE` dictionary
+3. Each parameter excepts a list of values to be swept over.
+4. Run a simulation
+#### Modifying Environmental Scenarios
+1. Navigate to [params.py](subspace_model/state.py)
+2. Modify values in the `ENVIRONMENTAL_SCENARIOS` dictionary
+3. Modify the list of values that is being passed to the `SCENARIO_GROUPS` function
+4. Optionally modify `SCENARIO_GROUPS` in [experiments/logic.py](subspace_model/experiments/logic.py)
+5. Run a simulation
 
 ## Additional Resources
 - [Subspace Work Plan Methodology](resources/subspace-psuu-work-plan-methodology.md)
-- [Subpace Parameter Selection Report](resources/subspace-parameter-selection-report.pdf)
+- [Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.pdf)
 - [The Subnomicon](https://subnomicon.subspace.network/docs/intro)
 
