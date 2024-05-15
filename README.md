@@ -249,7 +249,7 @@ For a fully comprehensive review of research and analysis, see the following sec
 |  [Workflows](notebooks/workflows)  |  A set of notebooks that showcase the parameter selection under uncertainty (PSuU) workflows.  |
 
 
-For a complete overview of the parameter selection research phase, please see the [Subspace Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.md).
+For a complete overview of the parameter selection research phase, please see the [Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.md).
 
 
 ## Advanced Usage
