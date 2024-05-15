@@ -418,6 +418,10 @@ def p_compute_fees(
     combined_balance = state['farmers_balance'] + state['operators_balance']
     compute_fee_from_farmers = compute_fee_volume * state['farmers_balance'] / combined_balance
     compute_fee_from_operators = compute_fee_volume * state['operators_balance'] / combined_balance
+    
+    # Hack: To unsure operators and farmers balance does not go negative, assume all compute fees that go to farmers are paid by the farmers themselves, and all the compute fees that go to operators are paid by the operators.
+    fees_to_farmers = compute_fee_from_farmers
+    fees_to_operators = compute_fee_from_operators
 
     return {
         # Compute fee calculations
