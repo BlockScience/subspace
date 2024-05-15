@@ -322,8 +322,18 @@ For a fully comprehensive review of research and analysis, see the following sec
 The following notebooks highlight the results of the subspace parameter selection research phase: 
 | Notebook | Purpose |
 |:--------|:--------|
-|  [PSuU Analysis](notebooks/workflows/psuu.ipynb)  |  This notebook showcases the PSuU methodology workflow to produce parameter selection decision trees from the trajectory tensor.  |
-|  [PSuU Single Run Analysis](notebooks/exploratory/inspect_psuu_timestep_tensor.ipynb)  |  This notebook explores a single run from the PSuU timestep tensor.  |
+|  [PSuU Timestep Analysis](notebooks/exploratory/inspect_psuu_timestep_tensor.ipynb)  |  This notebook explores a a set of runs from the PSuU timestep tensor.  |
+|  [PSuU Trajectory Analysis](notebooks/workflows/psuu.ipynb)  |  This notebook showcases the PSuU methodology workflow to produce parameter selection decision trees from the trajectory tensor.  |
+
+Example: PSuU Timestep Tensor Run Analysis
+![image](https://github.com/BlockScience/subspace/assets/31582215/9288b992-587d-4540-a426-032312bc8f4e)
+
+Example: PSuU Workflow Goal #1 Decision Tree over Controllable Parameters
+![image](https://github.com/BlockScience/subspace/assets/31582215/614107ac-74cf-4b06-b98f-2b538fc58be3)
+
+Example: PSuU Worklow Controllable Parameters Influence on KPIs
+![image](https://github.com/BlockScience/subspace/assets/31582215/6c8c0753-1eab-4b47-bc4c-e111e786ac51)
+
 
 
 For a complete overview of the parameter selection research phase, please see the [Subspace Parameter Selection Report](resources/subspace-parameter-selection-report.md).
