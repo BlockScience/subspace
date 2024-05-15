@@ -148,7 +148,6 @@ def s_average_compute_weight_per_bundle(
     Simulate the ts-average compute weights per transaction through a Gaussian process.
     XXX: depends on an stochastic process assumption.
     """
-    # TODO: verify that is implemented correctly
     return (
         "average_compute_weight_per_budle",
         max(
@@ -167,7 +166,6 @@ def s_bundle_count(
     Simulate the bs-average transaction size through a Poisson process.
     XXX: depends on an stochastic process assumption.
     """
-    # TODO: refactor
     bundle_count = max(
         params["bundle_count_per_day_function"](
             params,
@@ -201,8 +199,8 @@ def p_archive(
     params: SubspaceModelParams, _2, _3, state: SubspaceModelState
 ) -> PolicyOutput:
     """
-    TODO: check if underlying assumptions / terminology are valid.
-    TODO: revisit assumption on the supply & demand matching.
+    XXX: check if underlying assumptions / terminology are valid.
+    XXX: revisit assumption on the supply & demand matching.
     FIXME: homogenize terminology
     """
     # The header volume. The bytes stored in the chain for each transaction header.
@@ -445,7 +443,6 @@ def p_slash(
 ) -> PolicyOutput:
     """
     XXX: depends on an stochastic process assumption.
-    TODO: validate if correct
     """
     slash_value = 0.0
     slash_to_farmers = 0.0
@@ -495,9 +492,6 @@ def p_unvest(
     Impl notes: 30% of total.
     22% to be unvested with 24mo and 8% to be unvested with 48mo.
     25% total to be unlocked after 12mo and linearly afterwards.
-
-    # TODO: parametrize / generalize the schedule
-    # TODO: what happens if there's less than 51% community owned?
     """
 
     start_period_fraction = 0.25 * float(state['days_passed'] >= 365)
@@ -548,7 +542,7 @@ def p_staking(
     XXX: this assumes that operators and nominators will always
     stake a given % of their free balance every timestep.
     XXX: assumes an invariant product
-    TODO: enforce minimum staking amounts
+    XXX: No minimum staking amounts enforced
     """
 
     total_shares = state['operator_pool_shares'] + state['nominator_pool_shares']
@@ -675,7 +669,7 @@ def s_cumm_generic(source_col, target_col, nan_value=0.0):
             if isnan(past_value):
                 past_value = nan_value
             value += past_value
-        value += state[source_col]  # TODO: check if there's no double counting
+        value += state[source_col]  # XXX: check if there's no double counting
         return (target_col, value)
     return suf
 
@@ -685,7 +679,6 @@ def s_cumm_compute_fee_to_farmers(p: SubspaceModelParams, _2, history: list[list
     value = 0.0
     for h in history:
         value += h[-1]['compute_fee_volume']
-    # TODO: check if there's no double counting
     value += state['compute_fee_volume']
     value *= p['compute_fees_to_farmers']
     return ("cumm_compute_fees_to_farmers", value)

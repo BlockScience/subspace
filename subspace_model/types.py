@@ -170,9 +170,9 @@ class SubspaceModelState(TypedDict):
 
 
     ## Cummulative Metrics
-    cumm_rewards: Credits # TODO: implement logic
-    cumm_storage_fees_to_farmers: Credits # TODO: implement logic
-    cumm_compute_fees_to_farmers: Credits # TODO: implement logic
+    cumm_rewards: Credits 
+    cumm_storage_fees_to_farmers: Credits 
+    cumm_compute_fees_to_farmers: Credits 
 
 
 class SubspaceModelParams(TypedDict):
@@ -245,7 +245,7 @@ class SubspaceModelParams(TypedDict):
     min_transaction_size: Bytes
     bundle_size_function: Callable[[
         'SubspaceModelParams', SubspaceModelState], Bytes]
-    min_bundle_size: Bytes  # TODO: confirm
+    min_bundle_size: Bytes  # XXX
 
     # Environmental: Tx Count
     transaction_count_per_day_function: Callable[[

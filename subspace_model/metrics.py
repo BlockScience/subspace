@@ -27,7 +27,7 @@ def issued_supply(state: SubspaceModelState) -> Credits:
     """
     return (
         sum_of_stocks(state) - state["burnt_balance"] - state["reward_issuance_balance"]
-    )  # TODO Document the identity
+    ) 
 
 
 def earned_minus_burned_supply(state: SubspaceModelState) -> Credits:

@@ -54,15 +54,15 @@ DEFAULT_PARAMS = SubspaceModelParams(
     # Economic Parameters
     reward_recipients=10,
     reward_proposer_share=0.3,  # NOTE: to sweep
-    max_credit_supply=MAX_CREDIT_ISSUANCE,  # TODO:
-    credit_supply_definition=SUPPLY_ISSUED,  # TODO: Set in stone the def
+    max_credit_supply=MAX_CREDIT_ISSUANCE,
+    credit_supply_definition=SUPPLY_ISSUED,
     # Fees & Taxes
     compute_fees_to_farmers=0.0,  # NOTE: to sweep
     compute_fees_tax_to_operators=0.05,  # or `nomination_tax`
     # Slash Parameters
     slash_to_farmers=0.05,
     # Other
-    initial_community_owned_supply_pct_of_max_credits=(1 / 33),  # TODO
+    initial_community_owned_supply_pct_of_max_credits=(1 / 33), # XXX
     # Behavioral Parameters Between 0 and 1
     operator_stake_per_ts_function=operator_stake_per_ts_function,
     nominator_stake_per_ts_function=nominator_stake_per_ts_function,
@@ -74,14 +74,14 @@ DEFAULT_PARAMS = SubspaceModelParams(
     priority_fee_function=lambda p, s: 0,
     ## Enviromental: Compute Weights per Tx
     compute_weights_per_tx_function=compute_weights_per_tx_function,
-    min_compute_weights_per_tx=6_000_000,  # TODO
+    min_compute_weights_per_tx=6_000_000,  # XXX
     compute_weight_per_bundle_function=lambda p, s: 10_000_000_000,
-    min_compute_weights_per_bundle=2_000_000_000,  # TODO
+    min_compute_weights_per_bundle=2_000_000_000,  # XXX
     ## Environmental: Tx Sizes
     transaction_size_function=lambda p, s: 256,
-    min_transaction_size=100,  # TODO
+    min_transaction_size=100,  # XXX
     bundle_size_function=lambda p, s: 1500,
-    min_bundle_size=250,  # TODO
+    min_bundle_size=250,  # XXX
     ## Environmental: Tx Count
     bundle_count_per_day_function=lambda p, s: 6 * BLOCKS_PER_DAY,
     transaction_count_per_day_function=TRANSACTION_COUNT_PER_DAY_FUNCTION_FROM_UTILIZATION_RATIOS,
