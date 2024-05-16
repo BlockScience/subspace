@@ -300,20 +300,20 @@ For further information on the methodology used in this modeling work, please re
 3. If adding or removing fields from state, be sure to update [types.py](subspace-parameter-selection-report/types.py)
 4. Run a simulation
 ### Modifying Default Parameters
-1. Navigate to [params.py](subspace_model/params.py)
+1. Navigate to [params.py](https://github.com/BlockScience/subspace/blob/main/subspace_model/params.py#L37)
 2. Modify values in the `DEFAULT_PARAMS` dictionary
 3. If adding or removing fields from default params, be sure to update [types.py](subspace-parameter-selection-report/types.py)
 4. Run a simulation
 ### Modifying Controllable Parameters
-1. Navigate to [params.py](subspace_model/params.py)
+1. Navigate to the governance surface definition in [params.py](https://github.com/BlockScience/subspace/blob/main/subspace_model/params.py#L97)
 2. Modify values in the `GOVERNANCE_SURFACE` dictionary
 3. Each parameter excepts a list of values to be swept over.
 4. Run a simulation
 ### Modifying Environmental Scenarios
-1. Navigate to [params.py](subspace_model/params.py)
+1. Navigate to [params.py](https://github.com/BlockScience/subspace/blob/95ed541d2c149e0aebf76af6bbc10e10b832472c/subspace_model/params.py#L109)
 2. Modify values in the `ENVIRONMENTAL_SCENARIOS` dictionary
 3. Modify the list of values that is being passed to the `SCENARIO_GROUPS` function
-4. Optionally modify `SCENARIO_GROUPS` in [experiments/logic.py](subspace_model/experiments/logic.py)
+4. Optionally modify `SCENARIO_GROUPS` in [experiments/logic.py](https://github.com/BlockScience/subspace/blob/main/subspace_model/experiments/logic.py#L118)
 5. Run a simulation
 ### Modifying Logic Such as Reward Issuance
 1. Navigate to [logic.py](https://github.com/BlockScience/subspace/blob/d5946f46d920545d6733a0758e30e58ea8d984be/subspace_model/logic.py#L72)
