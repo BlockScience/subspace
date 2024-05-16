@@ -316,7 +316,7 @@ For further information on the methodology used in this modeling work, please re
 4. Optionally modify `SCENARIO_GROUPS` in [experiments/logic.py](subspace_model/experiments/logic.py)
 5. Run a simulation
 ### Modifying Logic Such as Reward Issuance
-1. Navigate to [logic.py](subspace_model/logic.py)
+1. Navigate to [logic.py](https://github.com/BlockScience/subspace/blob/d5946f46d920545d6733a0758e30e58ea8d984be/subspace_model/logic.py#L72)
 2. Modify logic appropriately
 3. Run a simulation
 
