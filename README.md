@@ -9,18 +9,17 @@ A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
 The above model displays the SSC stocks, flows, and metrics that are defined in this software package. The purpose of this package is the generation of datasets that may be analyzed to discover insights about the system. Model development was at first motivated by the development of various specific experiments, and later adapted to a general workflow for parameter selection known as the Parameter Selection Under Uncertainty Framework, or PSUU. In addition to the data generating model package, there are workflows and analysis results provided in the form of jupyter notebooks. For convenience, the results of the notebooks can be viewed directly on github in the browser.  
 
 ## Table of Contents
-1. [Stock and Flow Model Diagram](#the-subspace-network-economic-digital-twin)
+1. [Stock and Flow Diagram](#the-subspace-network-economic-digital-twin)
 2. [Table of Contents](#table-of-contents)
 3. [Quick Start Guide](#quick-start-guide)
     1. [Installation](#installation)
     2. [Usage](#usage)
-4. [Introduction](#the-subspace-economic-model)
-    1. [The Subspace Economic Model](#the-subspace-economic-model)
-    2. [Economic Modeling with cadCAD](#economic-modeling-with-cadcad)
-    3. [Subspace Model Terminology](#subspace-model-terminology)
-    4. [Structure of the Model](#structure-of-the-model)
-    5. [Goals of the System](#goals-of-the-system)
-    6. [Methodology](#methodology)
+4. [The Subspace Economic Model](#the-subspace-economic-model)
+    1. [Economic Modeling with cadCAD](#economic-modeling-with-cadcad)
+    2. [Subspace Model Terminology](#subspace-model-terminology)
+    3. [Structure of the Model](#structure-of-the-model)
+    4. [Goals of the System](#goals-of-the-system)
+    5. [Methodology](#methodology)
 5. [Background](#background)
     1. [Subspace](#subspace)
     2. [Aligning Incentives for Optimal Scalability](#aligning-incentives-for-optimal-scalability)
@@ -126,7 +125,7 @@ Alternatively, skip the local data generation, and load a psuu timestep dataset 
 
 
 
-## Introduction
+## The Subspace Economic Model
 
 The Subspace Economic Model is a Digital Twin Stock & Flow representation for the SSC token dynamics as they flow through Subspace's distinct mechanisms. The parameters, mechanisms and their constituent logic are based on The Subnomicon and Token Economics design documents provided by the Subspace Team. 
 
