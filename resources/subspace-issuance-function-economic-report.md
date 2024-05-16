@@ -15,19 +15,19 @@ BlockScience's main goal related to the Subspace Issuance Function is to:
 
 ## Summary of proposals and supporting documents
 
-* **Problem statement: [Issuance Function design elements](https://hackmd.io/@blockscience/rJDEKiQBa)** (Nov 25th)
+* **Problem statement: [Issuance Function design elements](https://github.com/BlockScience/subspace/blob/main/resources/subspace-issuance-function.md)** (Nov 25th)
 This initial formulation of the problem statement summarized function properties (requirements and desirables) and proposed three basic functional forms that may be fesible, given available state information (data from the protocol).
 
-* **Proposal: [Subspace Dynamic Issuance Function](https://hackmd.io/GUzjDVm0TW2CulWAbetBWA?view)** (Dec 7th)
+* **Proposal: [Subspace Dynamic Issuance Function](https://github.com/BlockScience/subspace/blob/main/resources/subspace-dynamic-issuance-mechanism.md)** (Dec 7th)
 This proposal describes a functional form that is dynamic with respect to block utilization while considering constraints set in the original problem statement.
 
     > We propose a block reward function (*"hyperbolic issuance"*) of the form $s(g(t)) := a + b \tanh(-c(g(t) - d))$
 
     This proposal raised further questions related to farmer costs and how to ensure sufficient incentive (reward) at all levels of block utilization.
 
-    This also sparked an economic design thread around the definition of Credit Supply, from which a [taxonomy of Credit Supply definitions](https://hackmd.io/@blockscience/SJrmGneDT) was developed to support the decision-making process.
+    This also sparked an economic design thread around the definition of Credit Supply, from which a [taxonomy of Credit Supply definitions](https://github.com/BlockScience/subspace/blob/main/resources/subspace-credit-supply-for-storage-fee-purposes.md) was developed to support the decision-making process.
 
-* **Proposal: [Component-based piecewise exponential subsidies](https://hackmd.io/zu1jRV27SBy_HjPp_vKpYg?view)** (Dec 23rd)
+* **Proposal: [Component-based piecewise exponential subsidies](https://github.com/BlockScience/subspace/blob/main/resources/subspace-component-based-piece-wise-exponential-subsidies.md)** (Dec 23rd)
 This proposal was a modification of the original dynamic issuance function where terminology related to "costs" was replaced towards "reference subsidies". A key advantage noted for this proposal was that it enabled modifications to the issuance by adding or removing piecewise components.
 
     > The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
@@ -46,10 +46,10 @@ This proposal was a modification of the original dynamic issuance function where
 
     Following this proposal, an additional question was raised to clarify how the current functional form incentivizes/rewards voters (an original design requirement).
 
-* **Final proposal: [Decoupled Issuance](https://hackmd.io/@blockscience/SkEPigvFa)** (Jan 18th)
+* **Final proposal: [Decoupled Issuance](https://github.com/BlockScience/subspace/blob/main/resources/subspace-decoupled-issuance.md)** (Jan 18th)
 This document proposes the notion of a Vectorial Issuance Function, which enables to decouple issuance across different classes of recipients. The 3 different representations are intended to clarify protocol rewards from the perspective of block proposers, voters, and data blocks in order to verify that the required & desired incentives are indeed captured by the mechanism.
 
-    >The issuance (vectorial) function, on which the Proposers will be subsidied through the [Dynamic Issuance Functional Form](/GUzjDVm0TW2CulWAbetBWA) and the Voters and Data Blocks will be subsidied through a independent implementations of the [Component-based Halving Subsidies ](/zu1jRV27SBy_HjPp_vKpYg)
+    >The issuance (vectorial) function, on which the Proposers will be subsidied through the [Dynamic Issuance Functional Form](https://github.com/BlockScience/subspace/blob/main/resources/subspace-dynamic-issuance-mechanism.md) and the Voters and Data Blocks will be subsidied through a independent implementations of the [Component-based Halving Subsidies ](https://github.com/BlockScience/subspace/blob/main/resources/subspace-component-based-piece-wise-exponential-subsidies.md)
     >
     >
     >
@@ -67,19 +67,19 @@ This document proposes the notion of a Vectorial Issuance Function, which enable
     >$$b=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}} \text{          (Linear Sensitivity Parameter)}{}$$
     >
     >and:
-    >* $B(t)$ is defined as the [Hyperbolic Dynamic Issuance Mechanism](https://hackmd.io/GUzjDVm0TW2CulWAbetBWA?view)
-    >* both $C_p(t)$ and $C_v(t)$ are defined as per the [Component-based Halving Subsidies](/zu1jRV27SBy_HjPp_vKpYg):
+    >* $B(t)$ is defined as the [Hyperbolic Dynamic Issuance Mechanism](https://github.com/BlockScience/subspace/blob/main/resources/subspace-dynamic-issuance-mechanism.md)
+    >* both $C_p(t)$ and $C_v(t)$ are defined as per the [Component-based Halving Subsidies](https://github.com/BlockScience/subspace/blob/main/resources/subspace-component-based-piece-wise-exponential-subsidies.md):
     >$$C_j(t)=\sum_i \alpha_{i,j} (1 \cdot [\tau_{0, i,j} < t \lt \tau_{1, i,j}]+ e^{-\frac{\alpha_{i,j}}{K_{i,j}}(t-\tau_{1, i,j})} \cdot [\tau_{1, i,j} < t])$$
 
-    Update: added **[Example 4: Adding Voter Rewards on top of Dynamic Issuance](https://hackmd.io/@blockscience/SkEPigvFa#Example-4-Adding-Voter-Rewards-on-top-of-Dynamic-Issuance)** (Feb 1st)
+    Update: added **[Example 4: Adding Voter Rewards on top of Dynamic Issuance](https://github.com/BlockScience/subspace/blob/main/resources/subspace-decoupled-issuance.md#example-4-adding-voter-rewards-on-top-of-dynamic-issuance)** (Feb 1st)
     In this example adds an extra term for voters as being the "Vote Rewards" to show that the rewards per voter don't change when having extra or less voters on a given block.
 
-    Update: added **[Example 5: Equitable rewards with bonus for proposers](https://hackmd.io/w7mKLY7kRZ2Tm7FAaL3ibQ?both#Example-5-Equitable-Rewards-with-Bonus-for-Proposers)** (Feb 15th)
+    Update: added **[Example 5: Equitable rewards with bonus for proposers](https://github.com/BlockScience/subspace/blob/main/resources/subspace-decoupled-issuance.md#example-5-equitable-rewards-with-bonus-for-proposers)** (Feb 15th)
 This example verifies that the current proposed functional form can also ensure that proposers will receive a bonus per non-proposer recipient (which is defined as $\alpha \pi_n$) so that they're incentivized to include as many recipients as possible.
 
 
 
 ## Next Step: Parameter Selection
-Work towards the next step of parameter selection of this mechanism (and additional system parameters) is captured in the [Subspace System Parameter Selection Report](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg?view).
+Work towards the next step of parameter selection of this mechanism (and additional system parameters) is captured in the [Subspace System Parameter Selection Report](https://github.com/BlockScience/subspace/blob/main/resources/subspace-parameter-selection-report.md).
 
 Note that this document is still living - mechanism changes are possible as we learn more about the mechanism through simulations and experiments.
