@@ -33,6 +33,7 @@ INITIAL_STATE = SubspaceModelState(
     proposer_bonus_reward=0.0,
     reward_to_proposer=0.0,
     reward_to_voters=0.0,
+    issued_rewards=0.0,
 
     # Governance Variables
     dsf_relative_disbursal_per_day=0.0,  # How much %/day of DSF's goes to farmers
@@ -42,7 +43,7 @@ INITIAL_STATE = SubspaceModelState(
     other_issuance_balance=MAX_CREDIT_ISSUANCE - ISSUANCE_FOR_FARMERS - ISSUED_AT_LAUNCH,
     operators_balance=0.0,
     nominators_balance=0.0,
-    farmers_balance=ISSUED_AT_LAUNCH,
+    farmers_balance=0.0,
     staking_pool_balance=0.0,
     burnt_balance=0.0,
 
@@ -54,7 +55,7 @@ INITIAL_STATE = SubspaceModelState(
     block_reward=0.0,
     blockchain_history_size=0,
     total_space_pledged=0,
-    allocated_tokens=(0.0525 + 0.15 + 0.07 + 0.019) * MAX_CREDIT_ISSUANCE,
+    allocated_tokens=ISSUED_AT_LAUNCH * MAX_CREDIT_ISSUANCE,
     buffer_size=0,
 
     # Environmental Variables

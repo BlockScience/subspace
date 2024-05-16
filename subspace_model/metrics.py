@@ -17,8 +17,10 @@ def user_supply(state: SubspaceModelState) -> Credits:
 
 
 def earned_supply(state: SubspaceModelState) -> Credits:
-    "Should map back to All Issued (and active) Tokens so far"
-    return user_supply(state)
+    ""
+    return (
+        state["issued_rewards"] + state["allocated_tokens"]
+    )
 
 def issued_supply(state: SubspaceModelState) -> Credits:
     """
@@ -26,7 +28,7 @@ def issued_supply(state: SubspaceModelState) -> Credits:
     Can be interpreted as the all tokens in user possession.
     """
     return (
-        sum_of_stocks(state) - state["burnt_balance"] - state["reward_issuance_balance"]
+        sum_of_stocks(state) - state["burnt_balance"] - state["reward_issuance_balance"] - state["other_issuance_balance"]
     ) 
 
 

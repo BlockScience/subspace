@@ -104,7 +104,9 @@ def p_reward(
 
             "reward_to_voters": reward_to_voters,
             "reward_to_proposer": reward_to_proposer,
-            'per_recipient_reward': per_recipient_reward}
+            'per_recipient_reward': per_recipient_reward,
+            'issued_rewards': reward,
+            }
 
 
 # Operator Rewards
@@ -513,15 +515,8 @@ def p_unvest(
 
     allocated_tokens_new = (investors + founders + team + advisors + vendors + ambassadors + testnets + foundation + subspace_labs + ssl_priv_sale)
 
-    tokens_to_allocate = allocated_tokens_new - state['allocated_tokens']
-
-    farmers_balance = tokens_to_allocate
-    other_issuance_balance = -1.0 * farmers_balance
-
     return {
-        "other_issuance_balance": other_issuance_balance,
-        "farmers_balance": farmers_balance,
-
+        "other_issuance_balance": -allocated_tokens_new,
         "allocated_tokens": allocated_tokens_new,
         "allocated_tokens_investors": investors,
         "allocated_tokens_founders": founders,

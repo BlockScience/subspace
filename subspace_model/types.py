@@ -102,6 +102,7 @@ class SubspaceModelState(TypedDict):
     proposer_bonus_reward: Credits
     reward_to_proposer: Credits
     reward_to_voters: Credits
+    issued_rewards: Credits
 
     # Governance Variables
     dsf_relative_disbursal_per_day: Percentage
