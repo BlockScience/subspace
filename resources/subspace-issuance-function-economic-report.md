@@ -33,9 +33,9 @@ This proposal was a modification of the original dynamic issuance function where
     > The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
     > $$S_r(t) = \sum_i s_i(t)$$
     > 
-    > $$s_i(t) = \alpha_i \text{if }{}\tau_{0, i}<t<\tau_{1, i}$$
+    > $$s_i(t) = \alpha_i \text{if }{}\tau_{0, i}<t<\tau_{1, i}{}$$
     > 
-    > $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{if }{}\tau_{1, i}<t$$
+    > $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{if }{}\tau_{1, i}{}<t$$
     > 
     > $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
     > 
