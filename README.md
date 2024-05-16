@@ -16,15 +16,14 @@ The above model displays the SSC stocks, flows, and metrics that are defined in 
     2. [Usage](#usage)
 4. [The Subspace Economic Model](#the-subspace-economic-model)
     1. [Economic Modeling with cadCAD](#economic-modeling-with-cadcad)
-    2. [Subspace Model Terminology](#subspace-model-terminology)
-    3. [Structure of the Model](#structure-of-the-model)
-    4. [Goals of the System](#goals-of-the-system)
-    5. [Methodology](#methodology)
+    2. [Goals of the System](#goals-of-the-system)
+    3. [Model Terminology](#model-terminology)
+    4. [Structure of the Model](#structure-of-the-model)
+    5. [Analysis Methodology](#analysis-methodology)
 5. [Background](#background)
     1. [Subspace](#subspace)
     2. [Aligning Incentives for Optimal Scalability](#aligning-incentives-for-optimal-scalability)
-    3. [Subspace Terminology](#subspace-terminology)
-    4. [Recommended Readings from the Subnomicon](#recommended-readings-from-the-subnomicon)
+    3. [Recommended Readings from the Subnomicon](#recommended-readings-from-the-subnomicon)
 6. [Advanced Usage](#advanced-usage)
     1. [Modifying Default State](#modifying-default-state)
     2. [Modifying Default Parameters](#modifying-default-parameters)
@@ -232,7 +231,7 @@ following python modules:
 |  [psuu/](subspace_model/psuu/)  |  Pipeline components for analyzing PSuU datasets.  |
 
 
-### Methodology
+### Analysis Methodology
 
 For further information on the methodology used in this modeling work, please refer to the [Subspace PSUU Work Plan Methodology Document](resources/subspace-psuu-work-plan-methodology.md).
 
