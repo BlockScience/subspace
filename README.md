@@ -139,9 +139,26 @@ achieving desired goals.
 
 #### Economic Modeling with cadCAD
 
+**What is cadCAD?**  
 Complex Adaptive Dynamics Computer-Aided Design (cadCAD) is a python based
 modeling framework for modeling, simulation, and validation of complex systems
 designs.
+
+**What is being mapped with a general simulation?**  
+- cadCAD model is the rules of the game
+- cadCAD allows defines how stocks evolve each timestep to create data sets called trajectories.
+- the cadCAD model is a data generator
+- [structure.py](subspace_model/structure.py) is a high-level big picture of those rules. 
+- [logic.py](subspace_model/logic.py) contains granular definitions of those rules.
+- the data has been generated through a representation of the system
+
+**What does the data look like?**  
+- Given a simulation run, data is output as a compressed pickle file (pandas dataframe)
+- The data contains the trajectories of the state variables and metrics of the system over all timesteps
+
+**What can be done with this data?**  
+- See the [methodology](#methodology) and [analysis](#analysis-results) sections below
+
 
 Given a model of a complex system, cadCAD can simulate the impact that a set of
 actions might have on it. This helps users make informed, rigorously tested
