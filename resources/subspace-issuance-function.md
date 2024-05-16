@@ -1,5 +1,6 @@
 # Issuance Function for Subspace
 
+*the original version of [this document on HackMD](https://hackmd.io/@blockscience/rJDEKiQBa)*
 
 ## Elements for Designing an Issuance Function
 
