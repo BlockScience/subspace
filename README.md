@@ -38,7 +38,7 @@ The above model displays the SSC stocks, flows, and metrics that are defined in 
 
 ## Quick Start Guide
 
-#### Installation
+### Installation
 
 1. Install System Requirements
 - [>= Python 3.6](https://www.python.org/downloads/) 
@@ -78,7 +78,7 @@ poetry shell
 exit
 ```
 
-#### Usage
+### Usage
 Inside of the `subspace/` package directory and inside of
 your python virtual environment.
 
@@ -137,7 +137,7 @@ purpose of selecting configuration parameters that increase the likelihood of
 achieving desired goals.
 
 
-#### Economic Modeling with cadCAD
+### Economic Modeling with cadCAD
 
 **What is cadCAD?**  
 Complex Adaptive Dynamics Computer-Aided Design (cadCAD) is a python based
@@ -173,7 +173,7 @@ For more information on cadCAD:
 - https://community.cadcad.org/t/putting-cadcad-in-context/19
 - https://github.com/cadCAD-org/demos
 
-#### Model Terminology
+### Model Terminology
 - **Fees**: The payments for transactions on the network.
 - **Rewards**: The compensation for the work performed by the participants of the network via the issuance of the newly minted tokens by the protocol.
 - **Issuance:** The amount of tokens minted as a Reward per block, total for all recipients.
@@ -195,7 +195,7 @@ For more information on cadCAD:
 - **Success Criteria:** Predefined conditions that determine whether the simulation results are considered successful.
 - **PSuU (Parameter Selection under Uncertainty):** A methodology for selecting robust parameters while considering system uncertainties.
 
-#### Structure of the Model
+### Structure of the Model
 
 The Subspace Network's economic model is built using cadCAD and is composed of the
 following python modules:
@@ -214,7 +214,7 @@ following python modules:
 |  [psuu/](subspace_model/psuu/)  |  Pipeline components for analyzing PSuU datasets.  |
 
 
-#### Goals of the System
+### Goals of the System
 
 The purpose of the economic model is to enable the subspace team to optimize the following goals given their choices of initialization parameters for the system.
 
@@ -231,7 +231,7 @@ The purpose of the economic model is to enable the subspace team to optimize the
     - Balancing the issuance and distribution of tokens to support both the network's scalability and the fair distribution of resources among participants.
     - Increase in supply (eg. space pledged and operator pools) should track increases in demand (eg. storage & compute fees).
 
-#### Methodology
+### Methodology
 
 For further information on the methodology used in this modeling work, please refer to the [Subspace PSUU Work Plan Methodology Document](resources/subspace-psuu-work-plan-methodology.md).
 
@@ -239,7 +239,7 @@ For further information on the methodology used in this modeling work, please re
 
 ## Background
 
-#### Subspace
+### Subspace
 
 > Subspace is the first layer-one blockchain that can fully resolve the
 > blockchain trilemma. Subspace is built from first principles to
@@ -251,7 +251,7 @@ For further information on the methodology used in this modeling work, please re
 
 -[Subspace Subnomicon](https://subnomicon.subspace.network/docs/intro)
 
-#### Aligning Incentives for Optimal Scalability
+### Aligning Incentives for Optimal Scalability
 
 > Subspace includes a novel algorithm to dynamically adjust the cost of
 > blockspace in response to changes in supply and demand to economically secure
@@ -279,7 +279,7 @@ For further information on the methodology used in this modeling work, please re
 -[Subspace Subnomicon](https://subnomicon.subspace.network/docs/advancements#aligning-incentives-for-optimal-scalability)
 
 
-#### Recommended Readings from the Subnomicon
+### Recommended Readings from the Subnomicon
 - [Architecture Overview](https://subnomicon.subspace.network/docs/overview)
 - [Advancing Blockchain](https://subnomicon.subspace.network/docs/advancements)
 - [Consensus](https://subnomicon.subspace.network/docs/category/consensus)
@@ -294,22 +294,22 @@ For further information on the methodology used in this modeling work, please re
 
 
 ## Advanced Usage
-#### Modifying Default State
+### Modifying Default State
 1. Navigate to [state.py](subspace_model/params.py)
 2. Change the appropriate values
 3. If adding or removing fields from state, be sure to update [types.py](subspace-parameter-selection-report/types.py)
 4. Run a simulation
-#### Modifying Default Parameters
+### Modifying Default Parameters
 1. Navigate to [params.py](subspace_model/params.py)
 2. Modify values in the `DEFAULT_PARAMS` dictionary
 3. If adding or removing fields from default params, be sure to update [types.py](subspace-parameter-selection-report/types.py)
 4. Run a simulation
-#### Modifying Controllable Parameters
+### Modifying Controllable Parameters
 1. Navigate to [params.py](subspace_model/params.py)
 2. Modify values in the `GOVERNANCE_SURFACE` dictionary
 3. Each parameter excepts a list of values to be swept over.
 4. Run a simulation
-#### Modifying Environmental Scenarios
+### Modifying Environmental Scenarios
 1. Navigate to [params.py](subspace_model/params.py)
 2. Modify values in the `ENVIRONMENTAL_SCENARIOS` dictionary
 3. Modify the list of values that is being passed to the `SCENARIO_GROUPS` function
@@ -319,7 +319,7 @@ For further information on the methodology used in this modeling work, please re
 
 ## Analysis Results
 
-#### Analysis Groups
+### Analysis Groups
 For a fully comprehensive review of research and analysis, see the following sections in the [notebooks](notebooks) directory:
 | Analysis Section | Purpose |
 |:--------|:--------|
@@ -328,7 +328,7 @@ For a fully comprehensive review of research and analysis, see the following sec
 |  [Research](notebooks/research)  |  A set of notebooks that perform verification, validation, and benchmarking of specific components of the system.  |
 |  [Workflows](notebooks/workflows)  |  A set of notebooks that showcase the parameter selection under uncertainty (PSuU) workflows.  |
 
-#### PSuU Analysis
+### PSuU Analysis
 The following notebooks highlight the results of the subspace parameter selection research phase: 
 | Notebook | Purpose |
 |:--------|:--------|
