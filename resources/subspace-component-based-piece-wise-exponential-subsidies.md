@@ -48,10 +48,13 @@ This approach has several advantages, which includes: **1)** They're bounded in 
 ## Specification
 
 $$S_r(t) = \sum_i s_i(t)$$
-$$s_i(t) = \alpha_i & \text{if }  \tau_{0, i}<t<\tau_{1, i}$$
-$$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} &  \text{if }\tau_{1, i}<t$$
+
+$$s_i(t) = \alpha_i \text{          if }  \tau_{0, i}<t<\tau_{1, i}$$
+
+$$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{          if }\tau_{1, i}<t$$
 
 $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
+
 $$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
 
 $$\sum_i \Omega_i < \text{TotalRewardSupply}{}$$
