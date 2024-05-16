@@ -3,6 +3,8 @@
 
 *Danilo Lessa Bernardineli (BlockScience), 20 December 2023*
 
+*this document [originally on HackMD](https://hackmd.io/@blockscience/SJrmGneDT)*
+
 ## Conclusions
 
 Based on the expressed requirements, adopting **Circulating Supply** as the measure of Credit Supply is the option that satifies most items, with concerns added on the game-ability due to the possibility of users staking / un-staking in order to interefere with the Storage Fee Price.
