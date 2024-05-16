@@ -1,7 +1,11 @@
 # Decoupled Issuance
 
+*this document [originally on HackMD](https://hackmd.io/@blockscience/SkEPigvFa)*
+
 ![Screenshot 2024-01-18 at 17.45.56](https://hackmd.io/_uploads/SkNXC-vY6.png)
 [Interactive visualization for the Hybrid Decoupled Issuance](https://www.desmos.com/calculator/h1idbmxlpj). Red and Blue line indicates the rewards for Proposers and Voters respectively, while Red Dashed indicates the Proposers Revenue (Reward + Storage Fees) 
+
+
 
 
 ## Summary
@@ -10,7 +14,7 @@ On this document, we propose the notion of a Vectorial Issuance Function, which 
 
 ## Introduction
 
-On the [Dynamic Issuance Functional Form](/GUzjDVm0TW2CulWAbetBWA) document, a scalar Block Reward function $B(t)$ was proposed on which its value [Stock & Flow Description for the Subspace Network Tokeconomics](/iFjTBsS3Qj6HlB0fLIWF5A) denotes the inflow from the Protocol Issuance stock towards the Farmers ($\hat{f}$) population. This inflow is then split between three Farmer subpopulations: Block Proposers ($\hat{p}$), Block Voters ($\hat{v}$) and Data Blocks ($\hat{d}$). Effectively, this means that the causal relationship is that the protocol does issue rewards, which is then split and disbursed to the fractional recipients.
+On the [Dynamic Issuance Functional Form](https://github.com/BlockScience/subspace/blob/main/resources/subspace-dynamic-issuance-mechanism.md) document, a scalar Block Reward function $B(t)$ was proposed on which its value [Stock & Flow Description for the Subspace Network Tokeconomics]() denotes the inflow from the Protocol Issuance stock towards the Farmers ($\hat{f}$) population. This inflow is then split between three Farmer subpopulations: Block Proposers ($\hat{p}$), Block Voters ($\hat{v}$) and Data Blocks ($\hat{d}$). Effectively, this means that the causal relationship is that the protocol does issue rewards, which is then split and disbursed to the fractional recipients.
 
 On this document, we propose to reduce the intermediary steps above by making the protocol issuing directly the fractional rewards. This is made by defining a Vectorial Issuance Function rather than a Scalar one. The new function is a strict superset of the old one and has the advantages of increasing the clarity and the governance surface of the issuance mechanism. We name this capacity of being multi-dimensional with issuance as "Decoupled Issuance".
 
@@ -67,7 +71,7 @@ b&=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}}
 \end{align}
 $$
 
-and both $C_p$, $C_v$ and $C_d$ are defined as per the [Component-based Halving Subsidies](/zu1jRV27SBy_HjPp_vKpYg):
+and both $C_p$, $C_v$ and $C_d$ are defined as per the [Component-based Halving Subsidies](https://github.com/BlockScience/subspace/blob/main/resources/subspace-component-based-piece-wise-exponential-subsidies.md):
 
 $$
 \begin{align}
