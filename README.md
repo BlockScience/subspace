@@ -1,8 +1,9 @@
 # The Subspace Network Economic Digital Twin 
 
 A cadCAD Design Digital Twin for Subspace Network Economic Dynamics.
+![image](https://github.com/BlockScience/subspace/assets/31582215/2fef3394-156a-4a1f-8435-226ce83c5bfa)
 
-![](resources/ssc-stock-flow.png)
+
 *A stock and flow description for SSC on the tokenomics of Subspace. This model uses this as the departure point for the dynamics being simulated.*
 
 ## Table of Contents
