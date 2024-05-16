@@ -30,6 +30,7 @@ The above model displays the SSC stocks, flows, and metrics that are defined in 
     2. [Modifying Default Parameters](#modifying-default-parameters)
     3. [Modifying Controllable Parameters](#modifying-controllable-parameters)
     4. [Modifying Environmental Scenarios](#modifying-environmental-scenarios)
+    5. [Modifying Logic Such as Reward Issuance](#modifying-logic-such-as-reward-issuance)
 7. [Analysis Results](#analysis-results)
     1. [Analysis Groups](#analysis-groups)
     2. [PSuU Analysis](#psuu-analysis)
@@ -314,6 +315,10 @@ For further information on the methodology used in this modeling work, please re
 3. Modify the list of values that is being passed to the `SCENARIO_GROUPS` function
 4. Optionally modify `SCENARIO_GROUPS` in [experiments/logic.py](subspace_model/experiments/logic.py)
 5. Run a simulation
+### Modifying Logic Such as Reward Issuance
+1. Navigate to [logic.py](subspace_model/logic.py)
+2. Modify logic appropriately
+3. Run a simulation
 
 
 ## Analysis Results
