@@ -2,7 +2,7 @@
 
 [![hackmd-github-sync-badge](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg/badge)](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg)
 
-
+*the original version of [this document on HackMD](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg?view)*
 
 *Fig: Speed run over the [`PSuU` workflow analysis notebook](https://github.com/BlockScience/subspace/blob/recommendations-v1/notebooks/workflows/psuu.ipynb)*
 ![Screen Recording 2024-04-24 at 23.05.38](https://hackmd.io/_uploads/B1CNiEv-R.gif)
@@ -11,7 +11,7 @@
 ## Intro
 
 **Summary**
-Following the [economic design initiative](https://hackmd.io/fWCDFbEASJK50OpIQfEo4Q?view) to propose the Subspace Issuance Function, this parameter selection initiative will involve a computational science workflow to support the parameter selection decision-making process for the subspace economic system.
+Following the [economic design initiative]([https://hackmd.io/fWCDFbEASJK50OpIQfEo4Q?view](https://github.com/BlockScience/subspace/blob/main/resources/subspace-issuance-function-economic-report.md)) to propose the Subspace Issuance Function, this parameter selection initiative will involve a computational science workflow to support the parameter selection decision-making process for the subspace economic system.
 
 In this document, we will
 * describe the simulation that generated our data,
@@ -23,7 +23,7 @@ Determine the "best" initial parameter ranges for the newly designed issuance fu
 
 ## Simulation Details
 
-The simulations were prepared and interpreted as per the [Subspace PSuU Methodology](/iFeP7NemRH--KtWbPP_W0w) document. The model and notebooks used by the analysis can be found on the `BlockScience/subspace` GitHub repository, tagged as [`recommendations-v1`](https://github.com/BlockScience/subspace/tree/recommendations-v1). In particular, we've used the [`exploratory/inspect_psuu_timestep_tensor` notebook](https://github.com/BlockScience/subspace/blob/recommendations-v1/notebooks/exploratory/inspect_psuu_timestep_tensor.ipynb) for inspecting individual runs and the [`workflows/psuu.ipynb` notebook](https://github.com/BlockScience/subspace/blob/recommendations-v1/notebooks/workflows/psuu.ipynb) for interprating the aggregated data.
+The simulations were prepared and interpreted as per the [Subspace PSuU Methodology](https://github.com/BlockScience/subspace/blob/main/resources/subspace-psuu-work-plan-methodology.md) document. The model and notebooks used by the analysis can be found on the `BlockScience/subspace` GitHub repository, tagged as [`recommendations-v1`](https://github.com/BlockScience/subspace/tree/recommendations-v1). In particular, we've used the [`exploratory/inspect_psuu_timestep_tensor` notebook](https://github.com/BlockScience/subspace/blob/recommendations-v1/notebooks/exploratory/inspect_psuu_timestep_tensor.ipynb) for inspecting individual runs and the [`workflows/psuu.ipynb` notebook](https://github.com/BlockScience/subspace/blob/recommendations-v1/notebooks/workflows/psuu.ipynb) for interprating the aggregated data.
 
 The data (timestep and trajectory tensors) can be found on an Amazon S3 bucket located at https://subspace-simulations.s3.us-east-2.amazonaws.com.
 
