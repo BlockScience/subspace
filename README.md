@@ -173,6 +173,23 @@ For more information on cadCAD:
 - https://community.cadcad.org/t/putting-cadcad-in-context/19
 - https://github.com/cadCAD-org/demos
 
+### Goals of the System
+
+The purpose of the economic model is to enable the subspace team to optimize the following goals given their choices of initialization parameters for the system.
+
+1. **Rational Economic Incentives** 
+    - Ensuring the economic parameters encourage behaviors supporting the network's long-term viability and growth.
+    - Incentives should be proportional to effort. 
+    - Participation is smooth.
+2. **Community Incentivization** 
+    - Creating incentives that encourage participation from all defined stakeholders (farmers, operators, nominators).
+    - Community owned supply should be maximized
+    - Rewards should be spread across as many actors as possible
+    - Early adopters should be incentivized
+3. **Supply and Demand Equilibrium / Distributional Equilibrium** 
+    - Balancing the issuance and distribution of tokens to support both the network's scalability and the fair distribution of resources among participants.
+    - Increase in supply (eg. space pledged and operator pools) should track increases in demand (eg. storage & compute fees).
+
 ### Model Terminology
 - **Fees**: The payments for transactions on the network.
 - **Rewards**: The compensation for the work performed by the participants of the network via the issuance of the newly minted tokens by the protocol.
@@ -214,27 +231,9 @@ following python modules:
 |  [psuu/](subspace_model/psuu/)  |  Pipeline components for analyzing PSuU datasets.  |
 
 
-### Goals of the System
-
-The purpose of the economic model is to enable the subspace team to optimize the following goals given their choices of initialization parameters for the system.
-
-1. **Rational Economic Incentives** 
-    - Ensuring the economic parameters encourage behaviors supporting the network's long-term viability and growth.
-    - Incentives should be proportional to effort. 
-    - Participation is smooth.
-2. **Community Incentivization** 
-    - Creating incentives that encourage participation from all defined stakeholders (farmers, operators, nominators).
-    - Community owned supply should be maximized
-    - Rewards should be spread across as many actors as possible
-    - Early adopters should be incentivized
-3. **Supply and Demand Equilibrium / Distributional Equilibrium** 
-    - Balancing the issuance and distribution of tokens to support both the network's scalability and the fair distribution of resources among participants.
-    - Increase in supply (eg. space pledged and operator pools) should track increases in demand (eg. storage & compute fees).
-
 ### Methodology
 
 For further information on the methodology used in this modeling work, please refer to the [Subspace PSUU Work Plan Methodology Document](resources/subspace-psuu-work-plan-methodology.md).
-
 
 
 ## Background
