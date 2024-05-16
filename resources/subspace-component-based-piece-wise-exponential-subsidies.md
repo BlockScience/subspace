@@ -1,23 +1,5 @@
 # Component-based Piece-Wise Exponential Subsidies 
 
-<style>
-img[src*='#left'] {
-    float: left;
-}
-img[src*='#right'] {
-    float: right;
-}
-img[src*='#center'] {
-    display: block;
-    margin: auto;
-}
-    
-    
-    p {
-        text-align: justify;
-    }   
-</style>
-
 *BlockScience, December 21, 2023. Updated at 11 January 2024*
 
 ## Executive Summary
@@ -65,20 +47,17 @@ This approach has several advantages, which includes: **1)** They're bounded in 
 
 ## Specification
 
-$$
-\begin{equation}
-\begin{split}
-S_r(t) & = \sum_i s_i(t) & \\
-s_i(t) & = \alpha_i & \text{if }  \tau_{0, i}<t<\tau_{1, i}\\
-s_i(t) & = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} &  \text{if }\tau_{1, i}<t \\
-\\
-\Omega_i &= K_i + \alpha_i \cdot \Delta \tau_i \\
-\lambda_i &= \frac{K_i \log{2}}{\alpha_i}
-\\
-\sum_i \Omega_i &< \text{TotalRewardSupply}{}
-\end{split}
-\end{equation}
-$$
+$$S_r(t) = \sum_i s_i(t)$$
+
+$$s_i(t)=\alpha_i \text{          if }{}\tau_{0,i} < t < \tau_{1,i}$$
+
+$$s_i(t) = \alpha_i*e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{          if }{}\tau_{1, i} < t$$
+
+$$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
+
+$$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
+
+$$\sum_i \Omega_i < \text{TotalRewardSupply}{}$$
 
 On which the terms are described as being:
 - $S_r(t)$ is the Reference Subsidy at time $t$ 

@@ -31,20 +31,18 @@ This proposal describes a functional form that is dynamic with respect to block 
 This proposal was a modification of the original dynamic issuance function where terminology related to "costs" was replaced towards "reference subsidies". A key advantage noted for this proposal was that it enabled modifications to the issuance by adding or removing piecewise components.
 
     > The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
-$$
-\begin{equation}
-\begin{split}
-S_r(t) & = \sum_i s_i(t) & \\
-s_i(t) & = \alpha_i & \text{if }  \tau_{0, i}<t<\tau_{1, i}\\
-s_i(t) & = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} &  \text{if }\tau_{1, i}<t \\
-\\
-\Omega_i &= K_i + \alpha_i \cdot \Delta \tau_i \\
-\lambda_i &= \frac{K_i \log{2}}{\alpha_i}
-\\
-\sum_i \Omega_i &< \text{TotalRewardSupply}{}
-\end{split}
-\end{equation}
-$$
+    > $$S_r(t) = \sum_i s_i(t)$$
+    > 
+    > $$s_i(t) = \alpha_i \text{          if }{}\tau_{0,i} < t < \tau_{1,i}$$
+    > 
+    > $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})}  \text{          if }{}\tau_{1, i} < t$$
+    > 
+    > $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
+    > 
+    > $$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
+    > 
+    > $$\sum_i \Omega_i < \text{          TotalRewardSupply}{}$$
+    > 
 
     Following this proposal, an additional question was raised to clarify how the current functional form incentivizes/rewards voters (an original design requirement).
 
@@ -54,32 +52,24 @@ This document proposes the notion of a Vectorial Issuance Function, which enable
     >The issuance (vectorial) function, on which the Proposers will be subsidied through the [Dynamic Issuance Functional Form](/GUzjDVm0TW2CulWAbetBWA) and the Voters and Data Blocks will be subsidied through a independent implementations of the [Component-based Halving Subsidies ](/zu1jRV27SBy_HjPp_vKpYg)
     >
     >
-    >$$\begin{align}
-    >\vec{\pi}(t) &= \pi_p(t) \hat{p} + \pi_v(t) \hat{v} + \pi_d(t) \hat{d} \\
-    >\\
-    >\pi_p(t) &= f_p B(t) & \text{(Proposer Issuance)} \\
-    >\pi_v(t) &= f_v B(t) + V(t) & \text{(Voter Issuance)} \\
-    >\pi_d(t) &= f_d B(t) & \text{(Data Blocks Issuance)} \\
-    >\\
-    >V(t)&=\frac{n_\text{voters}(t)}{\langle n_\text{voters} \rangle} C_v(t) & \text{(Vote Rewards)} \\
-    >B(t) &= a+b \tanh{-c (g(t)-d)} & \text{(Block Reward through Hyperbolic Dynamic Issuance)} \\
-    >\end{align}$$
+    >
+    >$$\vec{\pi}(t) = \pi_p(t) \hat{p} + \pi_v(t) \hat{v} + \pi_d(t) \hat{d}$$
+    >
+    >$$\pi_p(t) = f_p B(t)  \text{          (Proposer Issuance)}{}$$
+    >$$\pi_v(t) = f_v B(t) + V(t) \text{          (Voter Issuance)}{}$$
+    >$$\pi_d(t) = f_d B(t) \text{          (Data Blocks Issuance)}{}$$
+    >
+    >$$V(t)=\frac{n_\text{voters}{}(t)}{\langle n_\text{voters}{} \rangle} C_v(t) \text{          (Vote Rewards)}{}$$
+    >$$B(t) = a+b \tanh{-c (g(t)-d)} \text{          (Block Reward through Hyperbolic Dynamic Issuance)}{}$$
     >
     >Where:
-    >$$
-    >\begin{align}
-    > a&=C_p(t)-b\tanh{(c\cdot d)} & \text{(Offset Parameter)}  \\
-    >b&=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}} & \text{(Linear Sensitivity Parameter)} \\
-    >\end{align}
-    >$$
+    >$$a=C_p(t)-b\tanh{(c\cdot d)} \text{          (Offset Parameter)}{}$$
+    >$$b=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}} \text{          (Linear Sensitivity Parameter)}{}$$
+    >
     >and:
     >* $B(t)$ is defined as the [Hyperbolic Dynamic Issuance Mechanism](https://hackmd.io/GUzjDVm0TW2CulWAbetBWA?view)
     >* both $C_p(t)$ and $C_v(t)$ are defined as per the [Component-based Halving Subsidies](/zu1jRV27SBy_HjPp_vKpYg):
-    >$$
-    >\begin{align}
-    >C_j(t)=\sum_i \alpha_{i,j} (1 \cdot [\tau_{0, i,j} < t \lt \tau_{1, i,j}]+ e^{-\frac{\alpha_{i,j}}{K_{i,j}}(t-\tau_{1, i,j})} \cdot [\tau_{1, i,j} < t])
-    >\end{align}
-    >$$
+    >$$C_j(t)=\sum_i \alpha_{i,j} (1 \cdot [\tau_{0, i,j} < t \lt \tau_{1, i,j}]+ e^{-\frac{\alpha_{i,j}}{K_{i,j}}(t-\tau_{1, i,j})} \cdot [\tau_{1, i,j} < t])$$
 
     Update: added **[Example 4: Adding Voter Rewards on top of Dynamic Issuance](https://hackmd.io/@blockscience/SkEPigvFa#Example-4-Adding-Voter-Rewards-on-top-of-Dynamic-Issuance)** (Feb 1st)
     In this example adds an extra term for voters as being the "Vote Rewards" to show that the rewards per voter don't change when having extra or less voters on a given block.

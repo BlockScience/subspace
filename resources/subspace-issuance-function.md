@@ -43,7 +43,7 @@ One or many hypothesis on $B(t) = \int_t^{t+1}b(t) dt$, where $t$ is in any of B
 - I6: Vested Supply per block since launch
 - I7: Transaction Count per block since launch
 - I8: Block Utilization per block since launch
-    - Defined as $u(t)=\frac{\sum_i \#(t_i)*\text{size}(t_i)}{\text{MaxBlockSize}}$
+    - Defined as $u(t)=\frac{\sum_i \text{num}(t_i)*\text{size}(t_i)}{\text{MaxBlockSize}}$
 - 
 
 ### Issuance Functions that were considered
@@ -51,7 +51,7 @@ One or many hypothesis on $B(t) = \int_t^{t+1}b(t) dt$, where $t$ is in any of B
 - F1 (before DI): $B(t) = B_0 e^{-kt} \pi^T(1-u(t))$, where $B_0$ is the block reward at $t=0$, $k$ is an decay constant, $\pi^T$ is the target inflation rate and $u(t)$ is the utilization rate.
     - $B(t)$ is defined as the total block reward disbursed at year $t\in\mathbb{N}$.
     - Note: In order to be valid, an continuous Issuance function $b(t)$ would need to be defined such as $\int_{0+i*n_y}^{(i+1)n_y}b(t)dt = \pi(t), \forall i \in \mathbb{N}$ and $n_y$ is the count of blocks per year. The Block Reward between $t-1$ and $t$ would then be defined as $\int_{t-1}^t b(t) dt$
-- F2 (DI): $\pi(t) = \int_{{t_i}}^{t_{i+1}} \alpha G(t)dt$, where $\alpha$ is the Subsidy Parameter and $G(t)$ is the Output Gap, defined as $G(t) =\text{MaxBlockSize} - \sum_i \#(t_i)*\text{size}(t_i)$ (associated with the Utilization Rate).
+- F2 (DI): $\pi(t) = \int_{{t_i}}^{t_{i+1}} \alpha G(t)dt$, where $\alpha$ is the Subsidy Parameter and $G(t)$ is the Output Gap, defined as $G(t) =\text{MaxBlockSize} - \sum_i \text{num}(t_i)*\text{size}(t_i)$ (associated with the Utilization Rate).
     - Matt suggests using $\alpha=\frac{\text{FarmerRevenue(t)}-\text{FarmerCosts(t)}}{G(t)}$, which leads to $\pi(t) = \int_{t_i}^{t_{i+1}} \text{FarmerRevenue}(t) - \text{FarmerCosts}(t)$. He suggests defining $\text{FarmerRevenue(t)} = \sum_\tau \text{WillingnessToPay}(\tau) + Subsidy(\tau)$. He also did suggest using opportunity costs (such as average S3 storage costs) for the $\text{FarmerCosts}$
         - $\text{Subsidy}(t)$ probably means $\int_{t_1}^{t_2}b(t) dt$
         - $\text{WillingnessToPay}$ can be pretty much anything (incl. negative values associated with discount factors?)

@@ -1,4 +1,4 @@
-# Subspace Parameter Selection Report [WIP]
+# Subspace Parameter Selection Report
 
 [![hackmd-github-sync-badge](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg/badge)](https://hackmd.io/UUqsTyzaQd2l2yANtLV3Pg)
 
