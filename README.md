@@ -119,28 +119,11 @@ Analyze Simulation Results in Jupyter
 jupyter lab
 ```
 
-Create a notebook in [notebooks/exploratory/](notebooks/exploratory):
+Analyze the generated data.  
+Create a notebook to analyze the data like in [local psuu timestep run analysis example](notebooks/exploratory/inspect_psuu_local.ipynb).
 
-```python
-import pandas as pd
-pd.set_option('display.max_columns', None)
-import glob
-import os
-import sys
-sys.path.append('../../')
+Alternatively, skip the local data generation, and load a psuu timestep dataset directly from the cloud like the [psuu single run analysis](notebooks/workflows/psuu.ipynb) or load a trajectory dataset from the cloud like in [psuu trajectory analysis notebooks](notebooks/workflows/inspect_psuu_timestep_tensor.ipynb).
 
-
-# Path to the directory containing the files
-directory = '../../data/simulations/'
-
-# Get a list of all '.pkl.gz' files in the directory, sorted by modification time
-latest_file = max(glob.glob(os.path.join(directory, '*.pkl.gz')), key=os.path.getmtime)
-
-# Load the latest file
-sim_df = pd.read_pickle(latest_file)
-```
-
-Perform analysis such as the following:
 
 
 ## Introduction
