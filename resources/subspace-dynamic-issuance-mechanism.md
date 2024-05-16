@@ -87,15 +87,21 @@ $$s(1) = a + b\tanh(c(d-1)) = \underline s$$
 $$s(g(t)) = \underline s + b\tanh(c(1 - g(t))) \qquad \qquad (*)$$
 4. Note that the magnitude of $c$ determines the range of values of the utilization rate for which the block reward is insensitive to utilization: for example, a very high value of $c$ implies that the block reward "maxes out" at $\bar s \simeq \underline s + b$ even for utilization rates significantly different from zero. By contrast, setting a low value of $c$ implies that even if utilization is very near zero, the block reward does not appreciably move from $\underline s + b\tanh(c) \simeq \underline s$. 
 5. As shown in #4 above, the parameter $b$ sets the overall scale of the block reward--for non-extreme values of $c$, when the utilization rate is very low the block reward will achieve a maximum value of $\bar s = \underline s + b$.
-6. This form implies that the maximum _instantaneous_ rate of issuance is $\DeclareMathOperator{\sech}{sech}$
-$$\frac{d s}{d t} = \frac{d s}{d g}\frac{d g}{d t} = -bc\sech^2(c(1-g(t)))g'(t)$$
+6. This form implies that the maximum _instantaneous_ rate of issuance is
+
+$$\frac{d s}{d t} = \frac{d s}{d g}\frac{d g}{d t} = -bc\text{sech}{}^2(c(1-g(t)))g'(t)$$
+
 or
+
 $$\left (e^{c(1-g(t))} + e^{-c(1-g(t))} \right )g'(t)$$
+
 7. **Inflation**: The maximum _cumulative_ issuance over a period of time $T$ is just $T \times \bar s$, since the maximum block reward possible for any block is $\bar s$. If the supply at time $t$ is $S_t$, then the inflation rate $\pi_{t+1}$ over the following period (block) is just
+
 $$\pi_{t+1} := \frac{s(g(t))}{S_t} < \frac{\bar s}{S_t}$$
 
 Thus, a desired **_maximum target inflation rate_** can be specified by selecting values for $b$ and $c$ (up to their non-negativity and farmer incentivization conditions, cf. below). Note that under this specification, the maximum inflation rate goes to a minimum value $1/\bar T$ as $S_t \rightarrow \bar S$, with $\bar S$ the capped supply and $\bar T$ the ecosystem horizon (see #8).
-  9. **Capped Supply:** Suppose that stakeholder requirements specify a maximum supply $\bar S$ over the lifetime of token distribution for block rewards (block reward). For example, the [Subspace Issuance Model Logic document](https://www.notion.so/subspacelabs/Subspace-Issuance-Model-Logic-750054765d5e4083a0811a77b3402255?pvs=4) puts this amount at 43% of the total lifetime token supply of $3e8$ tokens, or around $1.29e8$ tokens. Then given a maximum lifetime (in number of blocks) $\bar T$, the per-block maximum block reward is just $\bar s := \bar S / \bar T$. Given that utilization will never be zero for every block, this immediately implies that actual supply distributed over the lifetime of the ecosystem will be strictly less than $\bar S$. This specification also ensures that a _declining_ issuance over time is achieved precisely when there is an _increasing block utilization_, i.e. that the ecosystem is achieving a measurable success in its use of available block storage to process transactions.
+
+8. **Capped Supply:** Suppose that stakeholder requirements specify a maximum supply $\bar S$ over the lifetime of token distribution for block rewards (block reward). For example, the [Subspace Issuance Model Logic document](https://www.notion.so/subspacelabs/Subspace-Issuance-Model-Logic-750054765d5e4083a0811a77b3402255?pvs=4) puts this amount at 43% of the total lifetime token supply of $3e8$ tokens, or around $1.29e8$ tokens. Then given a maximum lifetime (in number of blocks) $\bar T$, the per-block maximum block reward is just $\bar s := \bar S / \bar T$. Given that utilization will never be zero for every block, this immediately implies that actual supply distributed over the lifetime of the ecosystem will be strictly less than $\bar S$. This specification also ensures that a _declining_ issuance over time is achieved precisely when there is an _increasing block utilization_, i.e. that the ecosystem is achieving a measurable success in its use of available block storage to process transactions.
 
 
 ### Block Reward Distribution: Farmer Attributes
@@ -116,7 +122,7 @@ The selection of the set $M_t$ of transactions to include is up to the farmer. T
 
 In general, given a set of messages $\bar M_t$ available in the mempool to be included in a block at time $t$ , the farmer selects messages for incluision $M_t \subseteq \bar M_t$ each period to maximize their lifetime profits:
 
-$$\pi = \max_{\{M_t\}_{t=0}^\infty} \mathbb{E}_0 \left [ \sum_{t=0}^\infty \beta^t\left ( s(g(t)) + F(g(t)) - C(g(t)) \right ) \right ]$$
+$$\pi = \max_{\{M_t\}_{t=0}^\infty} \mathbb{E}_0 [\sum_{t=0}^\infty \beta^t( s(g(t)) + F(g(t)) - C(g(t)))]$$
 
 where $\beta \in (0,1)$ is the _subjective discount factor_ of the farmer, and there is a _capacity function_  $f$ such that
 
@@ -138,7 +144,7 @@ where $p \in (0,1]$ is the probability the farmer 'wins' the block proposal in a
 
 $$s (g(t)) + F(g(t)) - C(g(t)) \geq 0$$
 
-for any actual utilization rate $g(t)$. To achieve this is to 'pin down' some of the free parameters in $s$, _without knowing the full characteristics of every farmer's cost function $C(\cdot)$_. Thus, the above inequality will be addressed in the polar utilization cases, with the structure of $F(\cdot)$ and $C(\cdot)$ providing assurances that the inequality is (perhaps in expectation only) attained in the general utilization case.
+for any actual utilization rate $g(t)$. To achieve this is to 'pin down' some of the free parameters in $s$, _without knowing the full characteristics of every farmer's cost function_ $C(\cdot)$. Thus, the above inequality will be addressed in the polar utilization cases, with the structure of $F(\cdot)$ and $C(\cdot)$ providing assurances that the inequality is (perhaps in expectation only) attained in the general utilization case.
 
 #### Polar case functional form determination
 
