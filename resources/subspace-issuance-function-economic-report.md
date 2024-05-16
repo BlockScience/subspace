@@ -32,13 +32,16 @@ This proposal was a modification of the original dynamic issuance function where
 
     > The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
 > $$S_r(t) = \sum_i s_i(t)$$
+> 
 > $$s_i(t) = \alpha_i \text{if }{}  \tau_{0, i}<t<\tau_{1, i}$$
+> 
 > $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{if }{}\tau_{1, i}<t$$
 > 
 > $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
+> 
 > $$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
 > 
-> $$\sum_i \Omega_i < \text{   TotalRewardSupply}{}$$
+> $$\sum_i \Omega_i < \text{          TotalRewardSupply}{}$$
 
     Following this proposal, an additional question was raised to clarify how the current functional form incentivizes/rewards voters (an original design requirement).
 
@@ -51,16 +54,16 @@ This document proposes the notion of a Vectorial Issuance Function, which enable
     >
     >$$\vec{\pi}(t) = \pi_p(t) \hat{p} + \pi_v(t) \hat{v} + \pi_d(t) \hat{d}$$
     >
-    >$$\pi_p(t) = f_p B(t)  \text{(Proposer Issuance)}{}$$
-    >$$\pi_v(t) = f_v B(t) + V(t) \text{(Voter Issuance)}{}$$
-    >$$\pi_d(t) = f_d B(t) \text{(Data Blocks Issuance)}{}$$
+    >$$\pi_p(t) = f_p B(t)  \text{          (Proposer Issuance)}{}$$
+    >$$\pi_v(t) = f_v B(t) + V(t) \text{          (Voter Issuance)}{}$$
+    >$$\pi_d(t) = f_d B(t) \text{          (Data Blocks Issuance)}{}$$
     >
-    >$$V(t)=\frac{n_\text{voters}{}(t)}{\langle n_\text{voters}{} \rangle} C_v(t) \text{(Vote Rewards)}{}$$
-    >$$B(t) = a+b \tanh{-c (g(t)-d)} \text{(Block Reward through Hyperbolic Dynamic Issuance)}{}$$
+    >$$V(t)=\frac{n_\text{voters}{}(t)}{\langle n_\text{voters}{} \rangle} C_v(t) \text{          (Vote Rewards)}{}$$
+    >$$B(t) = a+b \tanh{-c (g(t)-d)} \text{          (Block Reward through Hyperbolic Dynamic Issuance)}{}$$
     >
     >Where:
-    >$$a=C_p(t)-b\tanh{(c\cdot d)} \text{(Offset Parameter)}{}$$
-    >$$b=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}} \text{(Linear Sensitivity Parameter)}{}$$
+    >$$a=C_p(t)-b\tanh{(c\cdot d)} \text{          (Offset Parameter)}{}$$
+    >$$b=\frac{C_p(t) - (C_p(t) - \bar{F}(t))^+}{\tanh{c}} \text{          (Linear Sensitivity Parameter)}{}$$
     >
     >and:
     >* $B(t)$ is defined as the [Hyperbolic Dynamic Issuance Mechanism](https://hackmd.io/GUzjDVm0TW2CulWAbetBWA?view)
