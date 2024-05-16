@@ -1,7 +1,7 @@
 # Subspace Dynamic Issuance Mechanism
 
 *BlockScience, November 30, 2023. Updated at 11 January 2024*
-
+*this document [originally on HackMD](https://hackmd.io/@blockscience/ryLQNMiSa)*
 --- 
 tags: 
 #subspace 
@@ -40,7 +40,7 @@ tags:
     - Hyperbolic Dynamical Issuance
 
 
-## Requirements (from [problem statement doc](https://hackmd.io/@blockscience/rJDEKiQBa))
+## Requirements (from [problem statement doc](https://github.com/BlockScience/subspace/blob/main/resources/subspace-issuance-function.md))
 
 1. Capped Supply (cumulative issuance or circulating supply?)
 2. Token supply should be at least 51% owned
