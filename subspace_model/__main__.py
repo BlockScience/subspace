@@ -322,6 +322,7 @@ def generate_template_from_notebook(experiment: str):
     "interactive",
     default=False,
     is_flag=True,
+    hidden=True,
     help="Drop into an IPython shell for interactive exploration.",
 )
 @click.option(
@@ -330,6 +331,7 @@ def generate_template_from_notebook(experiment: str):
     "log_level",
     type=click.Choice(log_levels.keys(), case_sensitive=False),
     default="info",
+    hidden=True,
     help="Set the logging level.",
 )
 @click.option(
@@ -346,6 +348,7 @@ def generate_template_from_notebook(experiment: str):
     "visualize",
     default=False,
     is_flag=True,
+    hidden=True,
     help="Visualize the most recent results of the selected experiment. Combine with -e or -a to select which experiment results to visualize.",
 )
 @click.option(
@@ -370,6 +373,7 @@ def generate_template_from_notebook(experiment: str):
     "calculate_metrics",
     default=False,
     is_flag=True,
+    hidden=True,
     help="Run experiment metrics calculations. Optionally save to disk with -p.",
 )
 @click.option(
@@ -378,6 +382,7 @@ def generate_template_from_notebook(experiment: str):
     "generate_notebooks",
     default=False,
     is_flag=True,
+    hidden=True,
     help="Generate notebooks from templates.",
 )
 @click.option(
@@ -386,6 +391,7 @@ def generate_template_from_notebook(experiment: str):
     "generate_template",
     default=False,
     is_flag=True,
+    hidden=True,
     help="Generate template from notebook.",
 )
 @click.option(
