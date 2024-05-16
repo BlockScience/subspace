@@ -31,17 +31,18 @@ This proposal describes a functional form that is dynamic with respect to block 
 This proposal was a modification of the original dynamic issuance function where terminology related to "costs" was replaced towards "reference subsidies". A key advantage noted for this proposal was that it enabled modifications to the issuance by adding or removing piecewise components.
 
     > The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
-> $$S_r(t) = \sum_i s_i(t)$$
-> 
-> $$s_i(t) = \alpha_i \text{if }{}  \tau_{0, i}<t<\tau_{1, i}$$
-> 
-> $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{if }{}\tau_{1, i}<t$$
-> 
-> $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
-> 
-> $$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
-> 
-> $$\sum_i \Omega_i < \text{          TotalRewardSupply}{}$$
+    > $$S_r(t) = \sum_i s_i(t)$$
+    > 
+    > $$s_i(t) = \alpha_i \text{if }{}\tau_{0, i}<t<\tau_{1, i}$$
+    > 
+    > $$s_i(t) = \alpha_i e^{-\frac{\alpha_i}{K_i}(t-\tau_{1, i})} \text{if }{}\tau_{1, i}<t$$
+    > 
+    > $$\Omega_i = K_i + \alpha_i \cdot \Delta \tau_i$$
+    > 
+    > $$\lambda_i = \frac{K_i \log{2}}{\alpha_i}$$
+    > 
+    > $$\sum_i \Omega_i < \text{          TotalRewardSupply}{}$$
+    > 
 
     Following this proposal, an additional question was raised to clarify how the current functional form incentivizes/rewards voters (an original design requirement).
 
