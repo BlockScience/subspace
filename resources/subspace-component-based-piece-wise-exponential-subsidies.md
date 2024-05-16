@@ -2,9 +2,11 @@
 
 *BlockScience, December 21, 2023. Updated at 11 January 2024*
 
+*this document [originally on HackMD](https://hackmd.io/@blockscience/rJ5pJAgwa)*
+
 ## Executive Summary
 
-- We propose continuing using the [Hyperbolic Dynamic Issuance as described in the Issuance Mechanism Proposal](/GUzjDVm0TW2CulWAbetBWA), but with the following modifications:
+- We propose continuing using the [Hyperbolic Dynamic Issuance as described in the Issuance Mechanism Proposal](https://github.com/BlockScience/subspace/blob/main/resources/subspace-dynamic-issuance-mechanism.md), but with the following modifications:
     - The terminology on "costs" is replaced towards "reference subsidies" by setting $C(t)=S_r(t)$, where $S_r$ is the Reference Subsidy at time $t$
 - The Reference Subsidy ($S_r$) is to be defined as a summation over piece-wise functions (or subsidy components). Each Subsidy Component has two terms: one which involves assigning a constant Reference Subsidy over a fixed period, and a second on which Reference Subsidy becomes halving.
     - The free parameters for each component are: **1)** The Maximum Possible Cumulative Subsidy ($\Omega_i$) that can be disbursed through this component (distinct from actual); **2)** The Maximum Reference Subsidy ($\alpha_i$) at the beginning of the component life; **3)** The initial period duration ($[\tau_{0, i},\tau_{1, i}]$).
